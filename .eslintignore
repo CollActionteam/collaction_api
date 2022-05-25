@@ -1,0 +1,8 @@
+dist/
+node_modules/
+/.nyc_output
+coverage/
+.eslintrc.js
+jest.config.js
+commitlint.config.js
+*.json
