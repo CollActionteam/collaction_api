@@ -1,0 +1,79 @@
+import { Body, Controller, Get, Param, Post, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Identifiable } from '@domain/core';
+import { ProfileService } from '@modules/profile';
+import { CreateProfileDto, ProfileDto, UpdateProfileDto } from '@infrastructure/profile';
+import { ICQRSHandler } from '@common/cqrs';
+import { CreateProfileCommand, UpdateProfileCommand, UploadProfileImageCommand } from '@modules/profile/cqrs/command';
+import { IdentifiableResponse } from '@api/rest/core';
+import { CurrentUser, FirebaseGuard } from '@modules/auth/decorators';
+import { AuthUser } from '@domain/auth/entity';
+import { Profile } from '@domain/profile';
+import { UserRole } from '@domain/auth/enum';
+
+@Controller('v1/profiles')
+@ApiTags('Profiles')
+export class ProfileController {
+    constructor(private readonly profileService: ProfileService, private readonly cqrsHandler: ICQRSHandler) {}
+
+    @Get('/me')
+    @FirebaseGuard(UserRole.ADMIN, UserRole.MODERATOR, UserRole.USER)
+    @ApiOperation({ summary: 'Retrieves an authenticated users profile' })
+    @ApiResponse({
+        status: 200,
+        description: 'Returns the found Profile if any',
+        type: ProfileDto, // TODO: Fix Response Type
+    })
+    async getAuthedProfile(@CurrentUser() user: AuthUser): Promise<Profile> {
+        return await this.profileService.findByUserIdOrFail(user.uid);
+    }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Retrieve a profile by userId' })
+    @ApiResponse({
+        status: 200,
+        description: 'Returns the found Profile if any',
+        type: ProfileDto, // TODO: Fix Response Type
+    })
+    @ApiQuery({ name: 'id', required: true, example: '6288b49f089eaf827a77c6f1' })
+    async getProfile(@Param('id') id: string): Promise<Profile> {
+        return await this.profileService.findByIdOrFail(id);
+    }
+
+    // TODO: Consider Consolidating Post and Put Methods
+    @Post()
+    @FirebaseGuard(UserRole.ADMIN, UserRole.MODERATOR, UserRole.USER)
+    @ApiResponse({
+        status: 201,
+        description: 'Returns the ID of the Profile',
+        type: IdentifiableResponse,
+    })
+    @ApiOperation({ summary: 'Create a profile if does not exist by authenticated user' })
+    async createProfile(@CurrentUser() user: AuthUser, @Body() createProfileBody: CreateProfileDto): Promise<Identifiable> {
+        const id = await this.cqrsHandler.execute(CreateProfileCommand, { ...createProfileBody, userId: user.uid });
+        return { id };
+    }
+
+    // TODO: Consider returning the new Profile
+    // TODO: Remove Phonenumber from Patch
+    @Put()
+    @FirebaseGuard(UserRole.ADMIN, UserRole.MODERATOR, UserRole.USER)
+    @ApiResponse({
+        status: 201,
+        description: 'Returns the ID of the Profile',
+        type: IdentifiableResponse,
+    })
+    @ApiOperation({ summary: 'Updates a users profile' })
+    async updateProfile(@CurrentUser() user: AuthUser, @Body() updateProfileBody: UpdateProfileDto): Promise<Identifiable> {
+        const { id } = await this.cqrsHandler.execute(UpdateProfileCommand, { ...updateProfileBody, userId: user.uid });
+        return { id };
+    }
+
+    @Post('/me/image')
+    @FirebaseGuard(UserRole.ADMIN, UserRole.MODERATOR, UserRole.USER)
+    @UseInterceptors(FileInterceptor('file'))
+    async updateImage(@CurrentUser() user: AuthUser, @UploadedFile() file: any): Promise<void> {
+        await this.cqrsHandler.execute(UploadProfileImageCommand, { file, id: user.uid });
+    }
+}
