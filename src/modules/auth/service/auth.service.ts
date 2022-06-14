@@ -14,7 +14,7 @@ export class AuthService {
 
             const { users } = await this.adminAuth.getUsers([{ uid }]);
             const [user] = users.map(async (record) => {
-                // Note: This is a workaround to give users without a claim the User Role
+                // TODO: Remove when users have claims
                 if (!record.customClaims) {
                     await this.addDefaultClaims(record.uid);
 
