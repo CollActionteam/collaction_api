@@ -2,7 +2,7 @@
   "name": "collaction",
   "version": "0.0.1",
   "description": "CollAction API",
-  "author": "Mathias Mogensen",
+  "author": "CollAction.org",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

@@ -5,6 +5,8 @@ import mime from 'mime';
 import { IS3Client } from '@core/s3-client.interface';
 import { UploadImageTypeEnum } from './enum';
 
+const MIME = mime;
+
 @Injectable()
 export class S3Client implements IS3Client {
     private readonly s3Client: S3;
@@ -20,12 +22,14 @@ export class S3Client implements IS3Client {
     async upload(file: any, id: string, type: UploadImageTypeEnum): Promise<void> {
         const directory = this.getDirectory(type);
 
-        // eslint-disable-next-line import/no-named-as-default-member
-        const imageType = mime.extension(file.mimetype);
+        const imageType = MIME.extension(file.mimetype);
         const uploadParams = {
             Bucket: this.configService.get('AWS_BUCKET_NAME'),
-            Body: file.buffer,
             Key: directory + id + '.' + imageType,
+            ContentType: file.mimetype,
+            Body: file.buffer,
+            ACL: 'public-read',
+            ETag: id,
         };
 
         this.s3Client.upload(uploadParams).promise();

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Identifiable } from '@domain/core';
 import { ProfileService } from '@modules/profile';
@@ -29,16 +29,16 @@ export class ProfileController {
         return await this.profileService.findByUserIdOrFail(user.uid);
     }
 
-    @Get(':id')
+    @Get(':userId')
     @ApiOperation({ summary: 'Retrieve a profile by userId' })
+    @ApiParam({ name: 'userId', required: true, example: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2' })
     @ApiResponse({
         status: 200,
         description: 'Returns the found Profile if any',
         type: ProfileDto, // TODO: Fix Response Type
     })
-    @ApiQuery({ name: 'id', required: true, example: '6288b49f089eaf827a77c6f1' })
-    async getProfile(@Param('id') id: string): Promise<Profile> {
-        return await this.profileService.findByIdOrFail(id);
+    async getProfile(@Param('userId') id: string): Promise<Profile> {
+        return await this.profileService.findByUserIdOrFail(id);
     }
 
     // TODO: Consider Consolidating Post and Put Methods
