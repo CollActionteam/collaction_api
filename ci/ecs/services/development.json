@@ -1,0 +1,28 @@
+{
+    "cluster": "development",
+    "serviceName": "collaction-api-development",
+    "taskDefinition": "collaction-api-development-task",
+    "desiredCount": 1,
+    "launchType": "EC2",
+    "deploymentConfiguration": {
+        "deploymentCircuitBreaker": {
+            "enable": false,
+            "rollback": true
+        },
+        "maximumPercent": 100,
+        "minimumHealthyPercent": 0
+    },
+    "placementStrategy": [
+        {
+            "type": "spread",
+            "field": "instanceId"
+        }
+    ],
+    "schedulingStrategy": "REPLICA",
+    "deploymentController": {
+        "type": "ECS"
+    },
+    "enableECSManagedTags": true,
+    "propagateTags": "SERVICE",
+    "enableExecuteCommand": true
+}
