@@ -29,6 +29,7 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: collaction-api
+        IMAGE_TAG: development
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_BASE_REF .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_BASE_REF
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile.prod .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
