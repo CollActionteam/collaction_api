@@ -29,6 +29,7 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: collaction-api
+        BASE_REF: ${{ github.base_ref }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_BASE_REF .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_BASE_REF
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$BASE_REF -f Dockerfile.prod .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$BASE_REF
