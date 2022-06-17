@@ -1,0 +1,24 @@
+{
+    "taskRoleArn": "arn:aws:iam::156764677614:role/AWSElasticContainerServiceTaskRole",
+    "containerDefinitions": [
+        {
+            "essential": true,
+            "image": "156764677614.dkr.ecr.eu-central-1.amazonaws.com/collaction-api:production",
+            "name": "collaction-api-production-container",
+            "portMappings": [
+                {
+                    "hostPort": 3100,
+                    "protocol": "tcp",
+                    "containerPort": 3000
+                }
+            ]
+        }
+    ],
+    "cpu": "256",
+    "family": "collaction-api-production-task",
+    "memory": "512",
+    "runtimePlatform": {
+        "operatingSystemFamily": "LINUX"
+    },
+    "requiresCompatibilities": ["EC2"]
+}
