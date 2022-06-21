@@ -50,9 +50,6 @@ You can now run either the start or watch command, to run the service:
 
 ### Running the Service in Docker
 
-If you haven't already, build the Service using:
--   `npm run build`
-
 To run the service in Docker, you must first build the image. You can achieve that simply by doing:
 -   `docker build -t collaction-api --no-cache .` Notice the no cache option, which forces Docker to build the image from scratch.
 
