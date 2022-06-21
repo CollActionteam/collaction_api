@@ -31,3 +31,9 @@ export class CrowdActionMustBeInTheFutureError extends ApiError {
         super({ message: `CrowdAction must start in the future, not the past` });
     }
 }
+
+export class CrowdActionDoesNotExist extends ApiError {
+    constructor() {
+        super({ message: `Could not find any CrowdAction that fit the criteria` });
+    }
+}
