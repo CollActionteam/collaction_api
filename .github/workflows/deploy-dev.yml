@@ -41,3 +41,4 @@ jobs:
                   service: collaction-api-development
                   cluster: development
                   wait-for-service-stability: true
+                  force-new-deployment: true
