@@ -16,7 +16,7 @@ export class CrowdActionRepository implements ICrowdActionRepository {
         const document = new this.documentModel(entityLike);
         await document.save();
 
-        return this.findOne({ id: document.id });
+        return { id: document.id };
     }
 
     async patch(id: string, entityLike: PatchCrowdAction): Promise<void> {
