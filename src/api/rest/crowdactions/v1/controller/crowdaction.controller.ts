@@ -3,9 +3,8 @@ import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from 
 import { Identifiable, IPaginatedList } from '@domain/core';
 import { CrowdActionStatusEnum, ICrowdAction } from '@domain/crowdaction';
 import { ICQRSHandler } from '@common/cqrs';
-import { CreateCrowdActionCommand, ListCrowdActionsQuery } from '@modules/crowdaction/cqrs';
 import { CrowdActionDto, PaginatedCrowdActionResponse } from '@infrastructure/crowdaction';
-import { CrowdActionService } from '@modules/crowdaction';
+import { FindCrowdActionByIdQuery, CreateCrowdActionCommand, ListCrowdActionsQuery } from '@modules/crowdaction';
 import { PaginationDto } from '@infrastructure/pagination';
 import { IdentifiableResponse } from '@api/rest/core';
 import { FirebaseGuard } from '@modules/auth/decorators';
@@ -14,7 +13,7 @@ import { UserRole } from '@domain/auth/enum';
 @Controller('v1/crowdactions')
 @ApiTags('CrowdAction')
 export class CrowdActionController {
-    constructor(private readonly crowdActionService: CrowdActionService, private readonly cqrsHandler: ICQRSHandler) {}
+    constructor(private readonly cqrsHandler: ICQRSHandler) {}
 
     @Get()
     @ApiOperation({ summary: 'Retrieve a paginated list of CrowdActions' })
@@ -45,7 +44,7 @@ export class CrowdActionController {
     @ApiOperation({ summary: 'Retrieves a specific CrowdAction by ID' })
     @ApiParam({ name: 'id', required: true })
     async getCrowdAction(@Param('id') id: string): Promise<Omit<ICrowdAction, 'joinEndAt'>> {
-        return await this.crowdActionService.findByIdOrFail(id);
+        return await this.cqrsHandler.fetch(FindCrowdActionByIdQuery, id);
     }
 
     @Post()
