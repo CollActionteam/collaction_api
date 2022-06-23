@@ -6,5 +6,8 @@ export interface ICommitmentOption {
     readonly label: string;
     readonly description: string;
     readonly points: number;
-    readonly blocks: string[]; // IDs of other CommitmentOptions to be blocked
+    readonly blocks?: string[]; // IDs of other CommitmentOptions to be blocked
+
+    readonly createdAt: Date;
+    readonly updatedAt: Date;
 }
