@@ -8,10 +8,16 @@ import {
     ProfilePersistence,
     ProfileSchema,
 } from '@infrastructure/mongo/persistence';
-import { CrowdActionRepository, ParticipationRepository, ProfileRepository } from '@infrastructure/mongo/repository';
+import {
+    CommitmentOptionRepository,
+    CrowdActionRepository,
+    ParticipationRepository,
+    ProfileRepository,
+} from '@infrastructure/mongo/repository';
 import { ICrowdActionRepository } from '@domain/crowdaction';
 import { IProfileRepository } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
+import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 
 @Module({
     imports: [
@@ -33,6 +39,10 @@ import { IParticipationRepository } from '@domain/participation';
         {
             provide: IParticipationRepository,
             useClass: ParticipationRepository,
+        },
+        {
+            provide: ICommitmentOptionRepository,
+            useClass: CommitmentOptionRepository,
         },
     ],
     exports: [ICrowdActionRepository, IProfileRepository, IParticipationRepository],
