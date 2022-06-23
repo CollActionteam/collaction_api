@@ -1,8 +1,10 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ICommitmentOption } from '@domain/commitmentoption';
 import { CrowdActionCategoryEnum } from '@domain/crowdaction';
 
 export type CommitmentOptionDocument = CommitmentOptionPersistence & Document;
+
+@Schema({ collection: 'commitmentoptions', autoCreate: true, versionKey: false, timestamps: true })
 export class CommitmentOptionPersistence implements Omit<ICommitmentOption, 'id' | 'createdAt' | 'updatedAt'> {
     @Prop({ enum: CrowdActionCategoryEnum, required: true })
     readonly category: CrowdActionCategoryEnum;
