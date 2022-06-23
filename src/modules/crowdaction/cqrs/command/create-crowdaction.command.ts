@@ -12,12 +12,13 @@ import { TYPE_TO_ALLOWED_OPTIONS } from '@modules/crowdaction/crowdaction.utils'
 import { CrowdActionDto } from '@infrastructure/crowdaction';
 import { getCountryByCode } from '@domain/country/country.utils';
 import { CountryMustBeValidError } from '@modules/core';
+import { Identifiable } from '@domain/core';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
     constructor(private readonly crowdActionRepository: ICrowdActionRepository) {}
 
-    async execute(data: CrowdActionDto): Promise<string> {
+    async execute(data: CrowdActionDto): Promise<Identifiable> {
         if (new Date() < data.startAt) {
             throw new CrowdActionMustBeInTheFutureError();
         }
@@ -54,7 +55,7 @@ export class CreateCrowdActionCommand implements ICommand {
         }
 
         const now = new Date();
-        const { id } = await this.crowdActionRepository.create({
+        return await this.crowdActionRepository.create({
             ...data,
             participantCount: 0,
             joinEndAt,
@@ -62,6 +63,5 @@ export class CreateCrowdActionCommand implements ICommand {
             joinStatus: joinEndAt < now ? CrowdActionJoinStatusEnum.CLOSED : CrowdActionJoinStatusEnum.OPEN,
             status: data.startAt < now ? CrowdActionStatusEnum.STARTED : CrowdActionStatusEnum.WAITING,
         });
-        return id;
     }
 }
