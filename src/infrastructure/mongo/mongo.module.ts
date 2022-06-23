@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
+    CommitmentOptionPersistence,
+    CommitmentOptionSchema,
     CrowdActionPersistence,
     CrowdActionSchema,
     ParticipationPersistence,
@@ -25,6 +27,7 @@ import { ICommitmentOptionRepository } from '@domain/commitmentoption';
             { name: CrowdActionPersistence.name, schema: CrowdActionSchema },
             { name: ProfilePersistence.name, schema: ProfileSchema },
             { name: ParticipationPersistence.name, schema: ParticipationSchema },
+            { name: CommitmentOptionPersistence.name, schema: CommitmentOptionSchema },
         ]),
     ],
     providers: [
