@@ -57,7 +57,6 @@ export class CrowdActionController {
     })
     @ApiBody({ type: CrowdActionDto, description: 'Creates a new CrowdAction' })
     async createCrowdAction(@Body() createCrowdActionBody: CrowdActionDto): Promise<Identifiable> {
-        const id = await this.cqrsHandler.execute(CreateCrowdActionCommand, createCrowdActionBody);
-        return { id };
+        return await this.cqrsHandler.execute(CreateCrowdActionCommand, createCrowdActionBody);
     }
 }

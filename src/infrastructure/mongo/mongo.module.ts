@@ -48,6 +48,6 @@ import { ICommitmentOptionRepository } from '@domain/commitmentoption';
             useClass: CommitmentOptionRepository,
         },
     ],
-    exports: [ICrowdActionRepository, IProfileRepository, IParticipationRepository],
+    exports: [ICrowdActionRepository, IProfileRepository, IParticipationRepository, ICommitmentOptionRepository],
 })
 export class MongoModule {}
