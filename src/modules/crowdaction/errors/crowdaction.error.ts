@@ -12,14 +12,6 @@ export class MustJoinBeforeEndError extends ApiError {
     }
 }
 
-export class CommitmentOptionsMustBelongToCrowdActionTypeError extends ApiError {
-    constructor(type: string, commitmentOptions: string[]) {
-        super({
-            message: `CommitmentOptions must belong to the CrowdActionType (${type}) which these do not: ${commitmentOptions.join(', ')}`,
-        });
-    }
-}
-
 export class CategoryAndSubcategoryMustBeDisimilarError extends ApiError {
     constructor() {
         super({ message: `Category and Subcategory must be disimilar` });

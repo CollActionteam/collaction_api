@@ -3,8 +3,7 @@ import { ICommand } from '@nestjs/cqrs';
 import { IParticipationRepository } from '@domain/participation';
 import { ToggleParticipationDto, ToggleParticipationResponse } from '@infrastructure/participation';
 import { CrowdActionDeosNotExistError, ParticipationRequiresCommitmentError } from '@modules/participation/error';
-import { CommitmentOptionsMustBelongToCrowdActionTypeError, TYPE_TO_ALLOWED_OPTIONS } from '@modules/crowdaction';
-import { CommitmentOptionEnum, ICrowdActionRepository } from '@domain/crowdaction';
+import { ICrowdActionRepository } from '@domain/crowdaction';
 
 export interface ToggleParticipationCommandArgs {
     readonly userId: string;
@@ -33,15 +32,6 @@ export class ToggleParticipationCommand implements ICommand {
         const [crowdAction] = await this.crowdActionRepository.findAll({ id: toggleParticipation.crowdActionId });
         if (!crowdAction) {
             throw new CrowdActionDeosNotExistError();
-        }
-
-        const allowedCommitmentOptions = TYPE_TO_ALLOWED_OPTIONS.get(crowdAction.type);
-        const invalidCommitmentOptions = toggleParticipation.commitmentOptions.filter(
-            (option: CommitmentOptionEnum) => !allowedCommitmentOptions?.includes(option),
-        );
-
-        if (invalidCommitmentOptions.length) {
-            throw new CommitmentOptionsMustBelongToCrowdActionTypeError(crowdAction.type, invalidCommitmentOptions);
         }
 
         const { id } = await this.participationRepository.create({

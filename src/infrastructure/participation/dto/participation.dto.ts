@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CommitmentOptionEnum } from '@domain/crowdaction';
 import { IParticipation } from '@domain/participation';
 
 export class ParticipationDto implements Omit<IParticipation, 'id' | 'joinDate' | 'dailyCheckIns'> {
@@ -11,13 +10,11 @@ export class ParticipationDto implements Omit<IParticipation, 'id' | 'joinDate' 
 
     @ApiProperty({
         name: 'commitmentOptions',
-        type: [CommitmentOptionEnum],
-        enum: CommitmentOptionEnum,
+        type: [String],
         isArray: true,
-        example: [CommitmentOptionEnum.DAIRY_FREE, CommitmentOptionEnum.NO_CHEESE],
         required: true,
     })
-    readonly commitmentOptions: CommitmentOptionEnum[];
+    readonly commitmentOptions: string[];
 }
 
 export class ToggleParticipationDto {
@@ -26,13 +23,11 @@ export class ToggleParticipationDto {
 
     @ApiProperty({
         name: 'commitmentOptions',
-        type: [CommitmentOptionEnum],
-        enum: CommitmentOptionEnum,
+        type: [String],
         isArray: true,
-        example: [CommitmentOptionEnum.DAIRY_FREE, CommitmentOptionEnum.NO_CHEESE],
         required: false,
     })
-    readonly commitmentOptions?: CommitmentOptionEnum[];
+    readonly commitmentOptions?: string[];
 }
 
 export class ToggleParticipationResponse {

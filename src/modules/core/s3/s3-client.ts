@@ -2,8 +2,8 @@ import S3 from 'aws-sdk/clients/s3';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import { IS3Client } from '@core/s3-client.interface';
-import { UploadImageTypeEnum } from './enum';
 import { FileTypeInvalidError } from '../errors';
+import { UploadImageTypeEnum } from './enum';
 
 const MIMETYPE_MAP = {
     'image/jpeg': '.jpg',
