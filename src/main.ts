@@ -1,5 +1,6 @@
 import fs from 'fs';
 import * as firebaseAdmin from 'firebase-admin';
+import { initializeApp } from 'firebase/app';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -9,6 +10,12 @@ import { ApiErrorFilter } from '@common/filter';
 import { AppModule } from './app.module';
 
 function initializeFirebase() {
+    initializeApp({
+        appId: process.env.FIREBASE_APP_ID,
+        apiKey: process.env.FIREBASE_API_KEY,
+        authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+        projectId: process.env.FIREBASE_PROJECT_ID,
+    });
     // eslint-disable-next-line import/namespace
     firebaseAdmin.initializeApp();
 }
@@ -54,6 +61,7 @@ async function bootstrap() {
 
     const app = await NestFactory.create(AppModule, { logger });
     const configService = app.get(ConfigService);
+
     const port = configService.get('PORT');
     const hostUrl = configService.get('HOST_URL');
     const restPath = configService.get('REST_PATH');
