@@ -16,9 +16,6 @@ const mongo: MongoConnectionOptions = {
     migrations: [`${migrationsDir}/!(*.draft).{ts,js}`],
     migrationsTableName: 'migrations',
     migrationsRun: false,
-    cli: {
-        migrationsDir,
-    },
 };
 
 export = mongo;
