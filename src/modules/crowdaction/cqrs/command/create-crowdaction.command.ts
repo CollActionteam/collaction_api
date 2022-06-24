@@ -1,24 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { ICommand } from '@common/cqrs';
-import { CommitmentOptionEnum, CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
+import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
 import {
     CategoryAndSubcategoryMustBeDisimilarError,
-    CommitmentOptionsMustBelongToCrowdActionTypeError,
     CrowdActionMustBeInTheFutureError,
     MustEndAfterStartError,
     MustJoinBeforeEndError,
 } from '@modules/crowdaction/errors';
-import { TYPE_TO_ALLOWED_OPTIONS } from '@modules/crowdaction/crowdaction.utils';
-import { CrowdActionDto } from '@infrastructure/crowdaction';
 import { getCountryByCode } from '@domain/country/country.utils';
 import { CountryMustBeValidError } from '@modules/core';
 import { Identifiable } from '@domain/core';
+import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
     constructor(private readonly crowdActionRepository: ICrowdActionRepository) {}
 
-    async execute(data: CrowdActionDto): Promise<Identifiable> {
+    async execute(data: CreateCrowdActionDto): Promise<Identifiable> {
         if (new Date() < data.startAt) {
             throw new CrowdActionMustBeInTheFutureError();
         }
@@ -38,15 +36,6 @@ export class CreateCrowdActionCommand implements ICommand {
 
         if (data.subcategory && data.category === data.subcategory) {
             throw new CategoryAndSubcategoryMustBeDisimilarError();
-        }
-
-        const allowedCommitmentOptions = TYPE_TO_ALLOWED_OPTIONS.get(data.type);
-        const invalidCommitmentOptions = data.commitmentOptions.filter(
-            (option: CommitmentOptionEnum) => !allowedCommitmentOptions?.includes(option),
-        );
-
-        if (invalidCommitmentOptions.length) {
-            throw new CommitmentOptionsMustBelongToCrowdActionTypeError(data.type, invalidCommitmentOptions);
         }
 
         const location = getCountryByCode(data.country);

@@ -11,7 +11,6 @@ export class CreateCommitmentOptionCommand implements ICommand {
 
     async execute(data: CreateCommitmentOptionDto): Promise<Identifiable> {
         if (data.blocks?.length) {
-            console.dir(data.blocks);
             for (const id of data.blocks) {
                 const [commitmentOption] = await this.commitmentOptionRepository.findAll({ id });
                 if (!commitmentOption) {

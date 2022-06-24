@@ -1,10 +1,8 @@
-import { CommitmentOptionEnum } from '@domain/crowdaction';
-
 export interface IParticipation {
     readonly id: string;
     readonly crowdActionId: string;
     readonly userId: string;
-    readonly commitmentOptions: CommitmentOptionEnum[];
+    readonly commitmentOptions: string[];
     readonly joinDate: Date;
     readonly dailyCheckIns: number;
 }
