@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { ProfileDocument, ProfilePersistence } from '@infrastructure/mongo/persistence';
 import { Identifiable } from '@domain/core';
 import { IPagination } from '@core/repository.interface';
@@ -34,7 +34,7 @@ export class ProfileRepository implements IProfileRepository {
     }
 
     async findAll(query: QueryProfile, options?: IPagination): Promise<Profile[]> {
-        const mongoQuery = toMongoQuery(query) as FilterQuery<ProfileDocument>;
+        const mongoQuery = toMongoQuery(query);
         const documents = await this.documentModel.find(mongoQuery, null, { skip: options?.offset, limit: options?.limit });
 
         return documents.map((doc) => Profile.create(doc.toObject({ getters: true })));

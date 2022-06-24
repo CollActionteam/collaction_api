@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { CrowdAction } from '@domain/crowdaction';
 import { CreateCrowdAction, ICrowdActionRepository, PatchCrowdAction, QueryCrowdAction } from '@domain/crowdaction/interface';
 import { CrowdActionDocument, CrowdActionPersistence } from '@infrastructure/mongo/persistence';
@@ -35,14 +35,14 @@ export class CrowdActionRepository implements ICrowdActionRepository {
     }
 
     async findAll(query: FindCriteria<QueryCrowdAction>, options?: IPagination): Promise<CrowdAction[]> {
-        const mongoQuery = toMongoQuery<FilterQuery<CrowdActionDocument>>(query);
+        const mongoQuery = toMongoQuery(query);
         const documents = await this.documentModel.find(mongoQuery, null, { skip: options?.offset, limit: options?.limit });
 
         return documents.map((doc) => CrowdAction.create(doc.toObject({ getters: true })));
     }
 
     async count(query: FindCriteria<QueryCrowdAction>): Promise<number> {
-        const mongoQuery = toMongoQuery<FilterQuery<CrowdActionDocument>>(query);
+        const mongoQuery = toMongoQuery(query);
         return this.documentModel.count(mongoQuery);
     }
 }
