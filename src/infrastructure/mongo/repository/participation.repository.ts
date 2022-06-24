@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import {
     CreateParticipation,
     IParticipationRepository,
@@ -40,14 +40,14 @@ export class ParticipationRepository implements IParticipationRepository {
     }
 
     async findAll(query: FindCriteria<QueryParticipation>, options?: IPagination): Promise<Participation[]> {
-        const mongoQuery = toMongoQuery(query) as FilterQuery<ParticipationDocument>;
+        const mongoQuery = toMongoQuery(query);
         const documents = await this.documentModel.find(mongoQuery, null, { skip: options?.offset, limit: options?.limit });
 
         return documents.map((doc) => Participation.create(doc.toObject({ getters: true })));
     }
 
     async count(query: FindCriteria<QueryParticipation>): Promise<number> {
-        const mongoQuery = toMongoQuery<FilterQuery<ParticipationDocument>>(query);
+        const mongoQuery = toMongoQuery(query);
         return this.documentModel.count(mongoQuery);
     }
 }
