@@ -1,10 +1,11 @@
 import firebaseAdmin from 'firebase-admin';
+import { getAuth } from 'firebase/auth';
 import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoModule } from '@infrastructure/mongo';
 import { CQRSModule } from '@common/cqrs';
-import { FirebaseAuthAdmin } from './auth/providers/firebase-auth-admin.provider';
+import { FirebaseAuthAdmin, FirebaseAuthClient } from '@infrastructure/auth/providers';
 
 @Global()
 @Module({
@@ -20,10 +21,14 @@ import { FirebaseAuthAdmin } from './auth/providers/firebase-auth-admin.provider
     ],
     providers: [
         {
+            provide: FirebaseAuthClient,
+            useFactory: (): FirebaseAuthClient => getAuth() as FirebaseAuthClient,
+        },
+        {
             provide: FirebaseAuthAdmin,
             useFactory: (): FirebaseAuthAdmin => firebaseAdmin.auth(),
         },
     ],
-    exports: [FirebaseAuthAdmin, MongoModule],
+    exports: [FirebaseAuthAdmin, FirebaseAuthClient, MongoModule],
 })
 export class InfrastructureModule {}
