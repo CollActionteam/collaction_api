@@ -1,8 +1,8 @@
-import { CrowdActionCategoryEnum } from '@domain/crowdaction';
+import { CrowdActionTypeEnum } from '@domain/crowdaction';
 
 export interface ICommitmentOption {
     readonly id: string;
-    readonly category: CrowdActionCategoryEnum;
+    readonly type: CrowdActionTypeEnum;
     readonly label: string;
     readonly description: string;
     readonly points: number;

@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import {
-    CommitmentOptionEnum,
     CrowdActionCategoryEnum,
     CrowdActionJoinStatusEnum,
     CrowdActionStatusEnum,
@@ -23,7 +22,7 @@ export const CrowdActionImagesSchema = SchemaFactory.createForClass(CrowdActionI
 
 export type CrowdActionDocument = CrowdActionPersistence & Document;
 @Schema({ collection: 'crowdactions', autoCreate: true, versionKey: false, timestamps: true })
-export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'createdAt' | 'updatedAt'> {
+export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'createdAt' | 'updatedAt' | 'commitmentOptions'> {
     @Prop({ enum: CrowdActionTypeEnum, required: true })
     readonly type: CrowdActionTypeEnum;
 
@@ -50,9 +49,6 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
 
     @Prop({ type: CrowdActionImagesSchema, required: true })
     readonly images: CrowdActionImages;
-
-    @Prop({ type: [String], required: true })
-    readonly commitmentOptions: CommitmentOptionEnum[];
 
     @Prop({ type: String, enum: CrowdActionStatusEnum, required: true })
     readonly status: CrowdActionStatusEnum;
