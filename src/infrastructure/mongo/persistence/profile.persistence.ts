@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 import { IProfile } from '@domain/profile';
 import { Country, CountrySchema } from './country.persistence';
 
@@ -23,5 +24,8 @@ export class ProfilePersistence implements Omit<IProfile, 'id' | 'createdAt' | '
 
     @Prop({ required: false })
     readonly bio?: string;
+
+    @Prop({ required: false })
+    readonly avatar?: string;
 }
 export const ProfileSchema = SchemaFactory.createForClass(ProfilePersistence);
