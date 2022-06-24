@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": "src",
     "declaration": true,
@@ -9,6 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
     "module": "commonjs",
+    "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
     "noImplicitReturns": false,
@@ -17,12 +19,17 @@
     "outDir": "./dist",
     "removeComments": true,
     "resolveJsonModule": true,
+    "rootDir": ".",
     "skipLibCheck": true,
     "sourceMap": true,
     "strictBindCallApply": false,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
+    "lib": ["es2019"],
     "target": "es2019",
+    "typeRoots": [
+      "node_modules/@types",
+    ],
     "paths": {
         "@api/*": ["api/*"],
         "@common/*": ["common/*"],
@@ -31,5 +38,9 @@
         "@infrastructure/*": ["infrastructure/*"],
         "@modules/*": ["modules/*"]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

@@ -7,5 +7,6 @@ export interface IProfile {
     readonly location: Country;
     readonly firstName: string;
     readonly lastName?: string;
-    readonly bio?: string;
+    readonly bio?: string | undefined;
+    readonly avatar?: string | undefined;
 }

@@ -5,3 +5,9 @@ export class CountryMustBeValidError extends ApiError {
         super({ message: `Country ${country} is not valid` });
     }
 }
+
+export class FileTypeInvalidError extends ApiError {
+    constructor(fileType: string, allowedFileTypes: string[]) {
+        super({ message: `File type ${fileType} is not valid, must be one of ${allowedFileTypes.join(',')}` });
+    }
+}
