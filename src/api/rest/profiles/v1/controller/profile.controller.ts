@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Identifiable } from '@domain/core';
 import { ProfileService } from '@modules/profile';
@@ -11,6 +11,7 @@ import { CurrentUser, FirebaseGuard } from '@modules/auth/decorators';
 import { AuthUser } from '@domain/auth/entity';
 import { Profile } from '@domain/profile';
 import { UserRole } from '@domain/auth/enum';
+import { UploadImageTypeEnum } from '@modules/core/s3/enum';
 
 @Controller('v1/profiles')
 @ApiTags('Profiles')
@@ -72,8 +73,20 @@ export class ProfileController {
 
     @Post('/me/image')
     @FirebaseGuard(UserRole.ADMIN, UserRole.MODERATOR, UserRole.USER)
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                },
+            },
+        },
+    })
     @UseInterceptors(FileInterceptor('file'))
-    async updateImage(@CurrentUser() user: AuthUser, @UploadedFile() file: any): Promise<void> {
-        await this.cqrsHandler.execute(UploadProfileImageCommand, { file, id: user.uid });
+    async updateImage(@CurrentUser() user: AuthUser, @UploadedFile('file') file: any): Promise<void> {
+        await this.cqrsHandler.execute(UploadProfileImageCommand, { file, id: user.uid, type: UploadImageTypeEnum.PROFILE });
     }
 }

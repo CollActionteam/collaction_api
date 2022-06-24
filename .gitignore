@@ -52,6 +52,8 @@ node_modules/
 
 # dotenv
 .env
+.env.dev
+.env.prod
 
 # IDEs and editors
 .idea/
