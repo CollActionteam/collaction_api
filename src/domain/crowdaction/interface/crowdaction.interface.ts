@@ -1,11 +1,6 @@
 import { Country } from '@common/country';
-import {
-    CommitmentOptionEnum,
-    CrowdActionCategoryEnum,
-    CrowdActionJoinStatusEnum,
-    CrowdActionStatusEnum,
-    CrowdActionTypeEnum,
-} from '@domain/crowdaction';
+import { ICommitmentOption } from '@domain/commitmentoption';
+import { CrowdActionCategoryEnum, CrowdActionJoinStatusEnum, CrowdActionStatusEnum, CrowdActionTypeEnum } from '@domain/crowdaction';
 
 export interface ICrowdActionImages {
     readonly card: string;
@@ -23,7 +18,7 @@ export interface ICrowdAction {
     readonly password?: string;
     readonly participantCount: number;
     readonly images: ICrowdActionImages;
-    readonly commitmentOptions: CommitmentOptionEnum[];
+    readonly commitmentOptions: ICommitmentOption[];
     readonly status: CrowdActionStatusEnum;
     readonly joinStatus: CrowdActionJoinStatusEnum;
 

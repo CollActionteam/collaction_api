@@ -4,7 +4,7 @@ import { CommitmentOption, ICommitmentOption } from '@domain/commitmentoption';
 
 export type CreateCommitmentOption = Omit<ICommitmentOption, 'id' | 'createdAt' | 'updatedAt'>;
 export type PatchCommitmentOption = Partial<ICommitmentOption>;
-export type QueryCommitmentOption = Partial<Pick<ICommitmentOption, 'id' | 'category'>> & {
+export type QueryCommitmentOption = Partial<Pick<ICommitmentOption, 'id' | 'type'>> & {
     readonly blocks?: string;
 };
 

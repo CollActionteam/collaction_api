@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { InfrastructureModule } from '@infrastructure/infrastructure.module';
+import { CQRSModule } from '@common/cqrs';
 import { CreateCrowdActionCommand, FindCrowdActionByIdQuery, ListCrowdActionsQuery } from './cqrs';
 import { CrowdActionService } from './service';
 
 @Module({
-    imports: [InfrastructureModule],
+    imports: [InfrastructureModule, CQRSModule],
     providers: [
         CreateCrowdActionCommand,
         ListCrowdActionsQuery,

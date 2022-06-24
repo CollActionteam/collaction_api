@@ -3,7 +3,7 @@ import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from 
 import { Identifiable, IPaginatedList } from '@domain/core';
 import { CrowdActionStatusEnum, ICrowdAction } from '@domain/crowdaction';
 import { ICQRSHandler } from '@common/cqrs';
-import { CrowdActionDto, PaginatedCrowdActionResponse } from '@infrastructure/crowdaction';
+import { CreateCrowdActionDto, GetCrowdActionDto, PaginatedCrowdActionResponse } from '@infrastructure/crowdaction';
 import { FindCrowdActionByIdQuery, CreateCrowdActionCommand, ListCrowdActionsQuery } from '@modules/crowdaction';
 import { PaginationDto } from '@infrastructure/pagination';
 import { IdentifiableResponse } from '@api/rest/core';
@@ -39,7 +39,7 @@ export class CrowdActionController {
     @ApiResponse({
         status: 200,
         description: 'Returns the found CrowdAction if any',
-        type: CrowdActionDto,
+        type: GetCrowdActionDto,
     })
     @ApiOperation({ summary: 'Retrieves a specific CrowdAction by ID' })
     @ApiParam({ name: 'id', required: true })
@@ -55,8 +55,8 @@ export class CrowdActionController {
         description: 'Returns the ID of the new CrowdAction',
         type: IdentifiableResponse,
     })
-    @ApiBody({ type: CrowdActionDto, description: 'Creates a new CrowdAction' })
-    async createCrowdAction(@Body() createCrowdActionBody: CrowdActionDto): Promise<Identifiable> {
+    @ApiBody({ type: CreateCrowdActionDto, description: 'Creates a new CrowdAction' })
+    async createCrowdAction(@Body() createCrowdActionBody: CreateCrowdActionDto): Promise<Identifiable> {
         return await this.cqrsHandler.execute(CreateCrowdActionCommand, createCrowdActionBody);
     }
 }
