@@ -1,7 +1,7 @@
 import { Country } from '@common/country';
+import { ICommitmentOption } from '@domain/commitmentoption';
 import {
     ICrowdAction,
-    CommitmentOptionEnum,
     ICrowdActionImages,
     CrowdActionCategoryEnum,
     CrowdActionTypeEnum,
@@ -20,7 +20,7 @@ export class CrowdAction implements ICrowdAction {
     readonly password?: string;
     readonly participantCount: number;
     readonly images: ICrowdActionImages;
-    readonly commitmentOptions: CommitmentOptionEnum[];
+    readonly commitmentOptions: ICommitmentOption[];
     readonly status: CrowdActionStatusEnum;
     readonly joinStatus: CrowdActionJoinStatusEnum;
 

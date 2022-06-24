@@ -1,9 +1,9 @@
-import { CrowdActionCategoryEnum } from '@domain/crowdaction';
+import { CrowdActionTypeEnum } from '@domain/crowdaction';
 import { ICommitmentOption } from '../interface';
 
 export class CommitmentOption implements ICommitmentOption {
     readonly id: string;
-    readonly category: CrowdActionCategoryEnum;
+    readonly type: CrowdActionTypeEnum;
     readonly label: string;
     readonly description: string;
     readonly points: number;
@@ -14,7 +14,7 @@ export class CommitmentOption implements ICommitmentOption {
 
     constructor(entityLike: ICommitmentOption) {
         this.id = entityLike.id;
-        this.category = entityLike.category;
+        this.type = entityLike.type;
         this.label = entityLike.label;
         this.description = entityLike.description;
         this.points = entityLike.points;
