@@ -5,3 +5,9 @@ export class AuthenticationError extends ApiError {
         super({ message, code: ErrorCodesEnum.UNAUTHENTICATED });
     }
 }
+
+export class BadCredentialsError extends ApiError {
+    constructor() {
+        super({ message: 'Bad creddentials' });
+    }
+}
