@@ -6,10 +6,11 @@ import { CrowdActionService } from '@modules/crowdaction';
 import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 import { ProfileService } from '@modules/profile/service/profile.service';
 import { ParticipationController } from './participations';
+import { CommitmentOptionController } from './commitmentoptions';
 
 @Module({
     imports: [InfrastructureModule, CQRSModule],
-    controllers: [CrowdActionController, ProfileController, ParticipationController],
+    controllers: [CrowdActionController, ProfileController, ParticipationController, CommitmentOptionController],
     providers: [CrowdActionService, ProfileService],
     exports: [CrowdActionService, ProfileService],
 })
