@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 import { CommitmentOptionEnum } from '@domain/crowdaction';
 import { IParticipation } from '@domain/participation';
 
