@@ -1,11 +1,20 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PaginatedParticipationResponse, ToggleParticipationDto, ToggleParticipationResponse } from '@infrastructure/participation';
+import {
+    PaginatedParticipationResponse,
+    ParticipationDto,
+    ToggleParticipationDto,
+    ToggleParticipationResponse,
+} from '@infrastructure/participation';
 import { IPaginatedList } from '@domain/core';
 import { IParticipation } from '@domain/participation';
 import { PaginationDto } from '@infrastructure/pagination';
 import { ICQRSHandler } from '@common/cqrs';
-import { ListParticipationsForCrowdActionQuery, ToggleParticipationCommand } from '@modules/participation';
+import {
+    GetParticipationForCrowdactionQuery,
+    ListParticipationsForCrowdActionQuery,
+    ToggleParticipationCommand,
+} from '@modules/participation';
 import { UserRole } from '@domain/auth/enum';
 import { AuthUser } from '@domain/auth/entity';
 import { CurrentUser, FirebaseGuard } from '@modules/auth/decorators';
@@ -14,6 +23,14 @@ import { CurrentUser, FirebaseGuard } from '@modules/auth/decorators';
 @ApiTags('Participation')
 export class ParticipationController {
     constructor(private readonly cqrsHandler: ICQRSHandler) {}
+
+    @Get(':crowdActionId')
+    @FirebaseGuard(UserRole.ADMIN, UserRole.MODERATOR, UserRole.USER)
+    @ApiOperation({ summary: 'Retrieve participation for a CrowdAction' })
+    @ApiResponse({ status: 200, type: ParticipationDto })
+    async getParticipation(@CurrentUser() user: AuthUser, @Query('crowdActionId') crowdActionId: string): Promise<IParticipation> {
+        return this.cqrsHandler.fetch(GetParticipationForCrowdactionQuery, { userId: user.uid, crowdActionId });
+    }
 
     @Get()
     @ApiOperation({ summary: 'Retrieve a paginated list of Participations' })

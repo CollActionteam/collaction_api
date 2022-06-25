@@ -11,3 +11,15 @@ export class CrowdActionDeosNotExistError extends ApiError {
         super({ message: `Cannot participate in a CrowdAction that does not exist` });
     }
 }
+
+export class UserIsNotParticipatingError extends ApiError {
+    constructor(crowdActionId: string) {
+        super({ message: `User is not participating in CrowdAction ${crowdActionId}` });
+    }
+}
+
+export class ParticipationHasInvalidCommitmentOption extends ApiError {
+    constructor(invalidOptions: string[]) {
+        super({ message: `CommitmentOptions (${invalidOptions.join(',')}) do not exist for this CrowdAction` });
+    }
+}

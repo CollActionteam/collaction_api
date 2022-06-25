@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { InfrastructureModule } from '@infrastructure/infrastructure.module';
-import { ListParticipationsForCrowdActionQuery, ToggleParticipationCommand } from './cqrs';
+import { CQRSModule } from '@common/cqrs';
+import { ListParticipationsForCrowdActionQuery, ToggleParticipationCommand, GetParticipationForCrowdactionQuery } from './cqrs';
 
 @Module({
-    imports: [InfrastructureModule],
-    providers: [ListParticipationsForCrowdActionQuery, ToggleParticipationCommand],
-    exports: [ListParticipationsForCrowdActionQuery, ToggleParticipationCommand],
+    imports: [InfrastructureModule, CQRSModule],
+    providers: [ListParticipationsForCrowdActionQuery, ToggleParticipationCommand, GetParticipationForCrowdactionQuery],
+    exports: [ListParticipationsForCrowdActionQuery, ToggleParticipationCommand, GetParticipationForCrowdactionQuery],
 })
 export class ParticipationModule {}

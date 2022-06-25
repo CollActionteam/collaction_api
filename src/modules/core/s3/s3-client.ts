@@ -1,15 +1,12 @@
 import S3 from 'aws-sdk/clients/s3';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
+import * as mime from 'mime';
 import { IS3Client } from '@core/s3-client.interface';
 import { FileTypeInvalidError } from '../errors';
 import { UploadImageTypeEnum } from './enum';
 
-const MIMETYPE_MAP = {
-    'image/jpeg': '.jpg',
-    'image/png': '.png',
-    'image/gif': '.gif',
-};
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png'];
 
 @Injectable()
 export class S3Client implements IS3Client {
@@ -26,12 +23,11 @@ export class S3Client implements IS3Client {
     async upload(file: any, id: string, type: UploadImageTypeEnum): Promise<string> {
         const directory = this.getDirectory(type);
 
-        const extension: string | undefined = MIMETYPE_MAP[file.mimetype];
-
-        if (!extension) {
-            throw new FileTypeInvalidError(file.mimetype, Object.keys(MIMETYPE_MAP));
+        if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+            throw new FileTypeInvalidError(file.mimetype, ALLOWED_MIME_TYPES);
         }
 
+        const extension = mime.getExtension(file.mimetype);
         const uploadParams = {
             Bucket: this.configService.get('AWS_BUCKET_NAME'),
             Key: directory + id + extension,
