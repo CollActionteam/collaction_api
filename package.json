@@ -32,6 +32,7 @@
     "@nestjs/platform-express": "^8.4.7",
     "@nestjs/swagger": "^5.2.1",
     "@nestjs/typeorm": "^8.1.4",
+    "@types/mime": "^2.0.3",
     "aws-sdk": "^2.1162.0",
     "class-validator": "^0.13.2",
     "firebase": "^9.8.4",
