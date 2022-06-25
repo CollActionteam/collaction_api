@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ICommand } from '@nestjs/cqrs';
 import { IParticipationRepository } from '@domain/participation';
 import { ToggleParticipationDto, ToggleParticipationResponse } from '@infrastructure/participation';
-import { CrowdActionDeosNotExistError, ParticipationRequiresCommitmentError } from '@modules/participation/error';
-import { ICrowdActionRepository } from '@domain/crowdaction';
+import { ParticipationHasInvalidCommitmentOption, ParticipationRequiresCommitmentError } from '@modules/participation/error';
+import { ICQRSHandler } from '@common/cqrs';
+import { FindCrowdActionByIdQuery } from '@modules/crowdaction';
 
 export interface ToggleParticipationCommandArgs {
     readonly userId: string;
@@ -12,10 +13,7 @@ export interface ToggleParticipationCommandArgs {
 
 @Injectable()
 export class ToggleParticipationCommand implements ICommand {
-    constructor(
-        private readonly participationRepository: IParticipationRepository,
-        private readonly crowdActionRepository: ICrowdActionRepository,
-    ) {}
+    constructor(private readonly participationRepository: IParticipationRepository, private readonly cqrsHandler: ICQRSHandler) {}
 
     async execute({ userId, toggleParticipation }: ToggleParticipationCommandArgs): Promise<ToggleParticipationResponse> {
         const [participation] = await this.participationRepository.findAll({ userId, crowdActionId: toggleParticipation.crowdActionId });
@@ -25,23 +23,39 @@ export class ToggleParticipationCommand implements ICommand {
             return { isParticipating: false };
         }
 
-        if (!toggleParticipation.commitmentOptions || !toggleParticipation.commitmentOptions.length) {
+        if (!toggleParticipation.commitmentOptions || !toggleParticipation.commitmentOptions?.length) {
             throw new ParticipationRequiresCommitmentError();
         }
 
-        const [crowdAction] = await this.crowdActionRepository.findAll({ id: toggleParticipation.crowdActionId });
-        if (!crowdAction) {
-            throw new CrowdActionDeosNotExistError();
-        }
+        const crowdAction = await this.cqrsHandler.fetch(FindCrowdActionByIdQuery, toggleParticipation.crowdActionId);
+        const allowedCommitmentOptions = crowdAction.commitmentOptions.map((option) => option.id);
+
+        this.isCommitmentOptionsAllowed(toggleParticipation.commitmentOptions, allowedCommitmentOptions);
 
         const { id } = await this.participationRepository.create({
             userId,
-            crowdActionId: toggleParticipation.crowdActionId,
+            crowdActionId: crowdAction.id,
             commitmentOptions: toggleParticipation.commitmentOptions,
             joinDate: new Date(),
             dailyCheckIns: 0,
         });
 
         return { isParticipating: true, participationId: id };
+    }
+
+    isCommitmentOptionsAllowed(selectedOptions: string[], allowedOptions: string[]): boolean {
+        const invalidOptions: string[] = [];
+
+        for (const option of selectedOptions) {
+            if (!allowedOptions.includes(option)) {
+                invalidOptions.push(option);
+            }
+        }
+
+        if (invalidOptions.length) {
+            throw new ParticipationHasInvalidCommitmentOption(invalidOptions);
+        }
+
+        return true;
     }
 }
