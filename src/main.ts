@@ -5,6 +5,8 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication, LoggerService } from '@nestjs/common';
+import bodyParser from 'body-parser';
+import * as express from 'express';
 import { Logger } from '@common/logger';
 import { ApiErrorFilter } from '@common/filter';
 import { AppModule } from './app.module';
@@ -54,6 +56,16 @@ function bootstrapSwagger(app: INestApplication, hostUrl: string): void {
     SwaggerModule.setup('api', app, swaggerDocument);
 }
 
+export interface Request extends express.Request {
+    rawBody?: Buffer;
+}
+
+function rawBody(req: Request, _res: express.Response, buffer: Buffer): void {
+    if (Buffer.isBuffer(buffer)) {
+        req.rawBody = buffer;
+    }
+}
+
 async function bootstrap() {
     initializeFirebase();
 
@@ -66,7 +78,11 @@ async function bootstrap() {
     const hostUrl = configService.get('HOST_URL');
     const restPath = configService.get('REST_PATH');
 
-    app.enableShutdownHooks().setGlobalPrefix(restPath).useGlobalFilters(new ApiErrorFilter());
+    app.enableShutdownHooks()
+        .setGlobalPrefix(restPath)
+        .use(bodyParser.urlencoded({ extended: true }))
+        .use(bodyParser.json({ verify: rawBody }))
+        .useGlobalFilters(new ApiErrorFilter());
 
     bootstrapSwagger(app, hostUrl);
 

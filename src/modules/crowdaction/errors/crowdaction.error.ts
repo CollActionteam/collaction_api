@@ -29,3 +29,9 @@ export class CrowdActionDoesNotExist extends ApiError {
         super({ message: `Could not find any CrowdAction that fit the criteria` });
     }
 }
+
+export class CardAndOrBannerMissingError extends ApiError {
+    constructor() {
+        super({ message: `Card and/or Banner must be provided` });
+    }
+}
