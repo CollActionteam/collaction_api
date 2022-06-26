@@ -1,10 +1,16 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Identifiable, IPaginatedList } from '@domain/core';
 import { CrowdActionStatusEnum, ICrowdAction } from '@domain/crowdaction';
 import { ICQRSHandler } from '@common/cqrs';
 import { CreateCrowdActionDto, GetCrowdActionDto, PaginatedCrowdActionResponse } from '@infrastructure/crowdaction';
-import { FindCrowdActionByIdQuery, CreateCrowdActionCommand, ListCrowdActionsQuery } from '@modules/crowdaction';
+import {
+    FindCrowdActionByIdQuery,
+    CreateCrowdActionCommand,
+    ListCrowdActionsQuery,
+    UpdateCrowdActionImagesCommand,
+} from '@modules/crowdaction';
 import { PaginationDto } from '@infrastructure/pagination';
 import { IdentifiableResponse } from '@api/rest/core';
 import { FirebaseGuard } from '@modules/auth/decorators';
@@ -58,5 +64,34 @@ export class CrowdActionController {
     @ApiBody({ type: CreateCrowdActionDto, description: 'Creates a new CrowdAction' })
     async createCrowdAction(@Body() createCrowdActionBody: CreateCrowdActionDto): Promise<Identifiable> {
         return await this.cqrsHandler.execute(CreateCrowdActionCommand, createCrowdActionBody);
+    }
+
+    @Post(':id/images')
+    @FirebaseGuard(UserRole.ADMIN)
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                card: {
+                    type: 'string',
+                    format: 'binary',
+                },
+                banner: {
+                    type: 'string',
+                    format: 'binary',
+                },
+            },
+        },
+    })
+    @UseInterceptors(
+        FileFieldsInterceptor([
+            { name: 'banner', maxCount: 1 },
+            { name: 'card', maxCount: 1 },
+        ]),
+    )
+    async updateImage(@Param('id') id: string, @UploadedFiles() { banner, card }): Promise<Identifiable> {
+        await this.cqrsHandler.execute(UpdateCrowdActionImagesCommand, { id, banner, card });
+        return { id };
     }
 }

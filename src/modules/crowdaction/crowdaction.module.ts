@@ -1,20 +1,22 @@
 import { Module } from '@nestjs/common';
 import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 import { CQRSModule } from '@common/cqrs';
-import { CreateCrowdActionCommand, FindCrowdActionByIdQuery, ListCrowdActionsQuery } from './cqrs';
+import { S3Module } from '@modules/core/s3';
+import { CreateCrowdActionCommand, FindCrowdActionByIdQuery, ListCrowdActionsQuery, UpdateCrowdActionImagesCommand } from './cqrs';
 import { CrowdActionService } from './service';
 
 @Module({
-    imports: [InfrastructureModule, CQRSModule],
+    imports: [InfrastructureModule, CQRSModule, S3Module],
     providers: [
         CreateCrowdActionCommand,
         ListCrowdActionsQuery,
         FindCrowdActionByIdQuery,
+        UpdateCrowdActionImagesCommand,
         {
             provide: 'PCrowdActionService',
             useClass: CrowdActionService,
         },
     ],
-    exports: [CreateCrowdActionCommand, ListCrowdActionsQuery, FindCrowdActionByIdQuery],
+    exports: [CreateCrowdActionCommand, ListCrowdActionsQuery, FindCrowdActionByIdQuery, UpdateCrowdActionImagesCommand],
 })
 export class CrowdActionModule {}
