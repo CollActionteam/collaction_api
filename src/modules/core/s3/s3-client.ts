@@ -30,7 +30,7 @@ export class S3Client implements IS3Client {
         const extension = mime.getExtension(file.mimetype);
         const uploadParams = {
             Bucket: this.configService.get('AWS_BUCKET_NAME'),
-            Key: directory + id + extension,
+            Key: directory + id + '.' + extension,
             ContentType: file.mimetype,
             Body: file.buffer,
             ACL: 'public-read',
@@ -44,7 +44,7 @@ export class S3Client implements IS3Client {
         switch (type) {
             case UploadImageTypeEnum.CROWDACTION_BANNER:
                 return 'crowdaction-banners/';
-            case UploadImageTypeEnum.CROWDACTOIN_CARD:
+            case UploadImageTypeEnum.CROWDACTION_CARD:
                 return 'crowdaction-cards/';
             case UploadImageTypeEnum.PROFILE:
                 return 'profiles/';
