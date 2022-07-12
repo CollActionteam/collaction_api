@@ -9,6 +9,8 @@ import {
     ICrowdActionImages,
 } from '@domain/crowdaction';
 import { Country, CountrySchema } from '@infrastructure/mongo/persistence/country.persistence';
+import { ICommitmentOption } from '@domain/commitmentoption';
+import { CrowdActionCommitmentOptionSchema } from './commitmentoption.persistence';
 
 @Schema({ _id: false, versionKey: false })
 class CrowdActionImages implements ICrowdActionImages {
@@ -22,7 +24,7 @@ export const CrowdActionImagesSchema = SchemaFactory.createForClass(CrowdActionI
 
 export type CrowdActionDocument = CrowdActionPersistence & Document;
 @Schema({ collection: 'crowdactions', autoCreate: true, versionKey: false, timestamps: true })
-export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'createdAt' | 'updatedAt' | 'commitmentOptions'> {
+export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'createdAt' | 'updatedAt'> {
     @Prop({ enum: CrowdActionTypeEnum, required: true })
     readonly type: CrowdActionTypeEnum;
 
@@ -64,5 +66,8 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
 
     @Prop({ type: Date, required: true })
     readonly joinEndAt: Date;
+
+    @Prop({ type: [CrowdActionCommitmentOptionSchema], required: true, array: true })
+    readonly commitmentOptions: ICommitmentOption[];
 }
 export const CrowdActionSchema = SchemaFactory.createForClass(CrowdActionPersistence);
