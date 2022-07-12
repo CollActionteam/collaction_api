@@ -23,3 +23,10 @@ export class CommitmentOptionPersistence implements Omit<ICommitmentOption, 'id'
     readonly blocks?: string[];
 }
 export const CommitmentOptionSchema = SchemaFactory.createForClass(CommitmentOptionPersistence);
+
+@Schema({ _id: false, versionKey: false })
+class CrowdActionCommitmentOptionPersistence extends CommitmentOptionPersistence {
+    @Prop({ required: true })
+    readonly id: string;
+}
+export const CrowdActionCommitmentOptionSchema = SchemaFactory.createForClass(CrowdActionCommitmentOptionPersistence);
