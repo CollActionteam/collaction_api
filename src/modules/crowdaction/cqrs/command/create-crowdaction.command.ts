@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ICommand } from '@common/cqrs';
+import { ICQRSHandler, ICommand } from '@common/cqrs';
 import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
 import {
     CategoryAndSubcategoryMustBeDisimilarError,
@@ -11,10 +11,12 @@ import { getCountryByCode } from '@domain/country/country.utils';
 import { CountryMustBeValidError } from '@modules/core';
 import { Identifiable } from '@domain/core';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
+import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
+import { CommitmentOption } from '@domain/commitmentoption';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
-    constructor(private readonly crowdActionRepository: ICrowdActionRepository) {}
+    constructor(private readonly crowdActionRepository: ICrowdActionRepository, private readonly cqrsHandler: ICQRSHandler) {}
 
     async execute(data: CreateCrowdActionDto): Promise<Identifiable> {
         if (new Date() < data.startAt) {
@@ -43,9 +45,12 @@ export class CreateCrowdActionCommand implements ICommand {
             throw new CountryMustBeValidError(data.country);
         }
 
+        const commitmentOptions: CommitmentOption[] = await this.cqrsHandler.fetch(GetCommitmentOptionsByType, data.type);
+
         const now = new Date();
         return await this.crowdActionRepository.create({
             ...data,
+            commitmentOptions,
             participantCount: 0,
             joinEndAt,
             location,
