@@ -56,14 +56,12 @@ export class ProfileController {
         return { id };
     }
 
-    // TODO: Consider returning the new Profile
-    // TODO: Remove Phonenumber from Patch
     @Put()
     @FirebaseGuard(UserRole.ADMIN, UserRole.MODERATOR, UserRole.USER)
     @ApiResponse({
         status: 201,
         description: 'Returns the ID of the Profile',
-        type: IdentifiableResponse,
+        type: ProfileResponseDto,
     })
     @ApiOperation({ summary: 'Updates a users profile' })
     async updateProfile(@CurrentUser() user: AuthUser, @Body() updateProfileBody: UpdateProfileDto): Promise<Identifiable> {
