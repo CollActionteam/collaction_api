@@ -8,6 +8,7 @@ const pinoOptions = {
             return { level: label };
         },
     },
+    timestamp: () => `,"timestamp": "${new Date().toLocaleString('en-GB')}"`,
     transport: {
         target: 'pino-pretty',
         options: {
