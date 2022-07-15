@@ -3,7 +3,7 @@ import { Identifiable } from '@domain/core';
 import { Profile } from '../entity';
 import { IProfile } from './profile.interface';
 
-export type CreateProfile = Omit<Profile, 'id'>;
+export type CreateProfile = Omit<Profile, 'id' | 'phone'>;
 export type PatchProfile = Partial<IProfile>;
 export type QueryProfile = Partial<Pick<IProfile, 'id' | 'userId' | 'phone'>>;
 
