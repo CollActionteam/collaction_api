@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ICountry } from '@common/country';
 
 export class ProfileDto {
     @ApiProperty({ name: 'phone', example: '+31612345678', required: true })
@@ -15,6 +16,29 @@ export class ProfileDto {
 
     @ApiProperty({ name: 'bio', example: 'I am a cool guy', required: false })
     readonly bio?: string;
+}
+
+export class ProfileResponseDto {
+    @ApiProperty({ name: 'id', example: '628cdea92e19fd912f0d520e', required: true })
+    readonly id: string;
+
+    @ApiProperty({ name: 'userId', example: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2', required: true })
+    readonly userId: string;
+
+    @ApiProperty({ name: 'phone', example: '+4530249838', required: true })
+    readonly phone: string;
+
+    @ApiProperty({ name: 'location', example: { name: 'Netherlands', code: 'NL' }, required: true })
+    readonly location: ICountry;
+
+    @ApiProperty({ name: 'firstName', example: 'Mathias', required: true })
+    readonly firstName: string;
+
+    @ApiProperty({ name: 'lastName', example: 'M', required: true })
+    readonly lastName: string;
+
+    @ApiProperty({ name: 'bio', example: 'I am a cool guy aye', required: true })
+    readonly bio: string;
 }
 
 export class UpdateProfileDto extends ProfileDto {

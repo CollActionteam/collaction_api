@@ -3,7 +3,7 @@ import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } fr
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Identifiable } from '@domain/core';
 import { ProfileService } from '@modules/profile';
-import { CreateProfileDto, ProfileDto, UpdateProfileDto } from '@infrastructure/profile';
+import { CreateProfileDto, ProfileResponseDto, UpdateProfileDto } from '@infrastructure/profile';
 import { ICQRSHandler } from '@common/cqrs';
 import { CreateProfileCommand, UpdateProfileCommand, UploadProfileImageCommand } from '@modules/profile/cqrs/command';
 import { IdentifiableResponse } from '@api/rest/core';
@@ -24,7 +24,7 @@ export class ProfileController {
     @ApiResponse({
         status: 200,
         description: 'Returns the found Profile if any',
-        type: ProfileDto, // TODO: Fix Response Type
+        type: ProfileResponseDto,
     })
     async getAuthedProfile(@CurrentUser() user: AuthUser): Promise<Profile> {
         return await this.profileService.findByUserIdOrFail(user.uid);
@@ -36,7 +36,7 @@ export class ProfileController {
     @ApiResponse({
         status: 200,
         description: 'Returns the found Profile if any',
-        type: ProfileDto, // TODO: Fix Response Type
+        type: ProfileResponseDto,
     })
     async getProfile(@Param('userId') id: string): Promise<Profile> {
         return await this.profileService.findByUserIdOrFail(id);
