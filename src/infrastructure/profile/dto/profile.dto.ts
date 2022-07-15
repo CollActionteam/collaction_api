@@ -2,9 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ICountry } from '@common/country';
 
 export class ProfileDto {
-    @ApiProperty({ name: 'phone', example: '+31612345678', required: true })
-    readonly phone: string;
-
     @ApiProperty({ name: 'country', required: true })
     readonly country: string;
 
