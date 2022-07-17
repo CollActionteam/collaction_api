@@ -1,4 +1,5 @@
 import { Country } from '@common/country';
+import { Badge } from '@domain/badge/entity';
 import { ICommitmentOption } from '@domain/commitmentoption';
 import { CrowdActionCategoryEnum, CrowdActionJoinStatusEnum, CrowdActionStatusEnum, CrowdActionTypeEnum } from '@domain/crowdaction';
 
@@ -28,4 +29,6 @@ export interface ICrowdAction {
 
     readonly createdAt: Date;
     readonly updatedAt: Date;
+
+    readonly badges?: Badge[];
 }
