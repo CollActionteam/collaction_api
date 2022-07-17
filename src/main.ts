@@ -4,7 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { INestApplication, LoggerService } from '@nestjs/common';
+import { INestApplication, LoggerService, ValidationPipe } from '@nestjs/common';
 import bodyParser from 'body-parser';
 import * as express from 'express';
 import { Logger } from '@common/logger';
@@ -82,7 +82,8 @@ async function bootstrap() {
         .setGlobalPrefix(restPath)
         .use(bodyParser.urlencoded({ extended: true }))
         .use(bodyParser.json({ verify: rawBody }))
-        .useGlobalFilters(new ApiErrorFilter());
+        .useGlobalFilters(new ApiErrorFilter())
+        .useGlobalPipes(new ValidationPipe({ transform: true }));
 
     bootstrapSwagger(app, hostUrl);
 

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { CrowdActionCategoryEnum, CrowdActionTypeEnum, ICrowdActionImages } from '@domain/crowdaction';
 import { CommitmentOption } from '@domain/commitmentoption';
 import { CreateCommitmentOptionDto } from '@infrastructure/commitmentoption';
@@ -36,12 +37,15 @@ export class CreateCrowdActionDto {
     @ApiProperty({ name: 'images', type: CrowdActionImagesDto, required: true })
     readonly images: ICrowdActionImages;
 
+    @Type(() => Date)
     @ApiProperty({ name: 'startAt', type: Date, example: '2022-12-22T15:00:00.000Z', required: true })
     readonly startAt: Date;
 
+    @Type(() => Date)
     @ApiProperty({ name: 'endAt', type: Date, example: '2024-12-22T15:00:00.000Z', required: true })
     readonly endAt: Date;
 
+    @Type(() => Date)
     @ApiProperty({ name: 'joinEndAt', type: Date, example: '2023-12-22T15:00:00.000Z', required: false })
     readonly joinEndAt?: Date;
 }
