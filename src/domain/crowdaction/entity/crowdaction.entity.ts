@@ -21,8 +21,8 @@ export class CrowdAction implements ICrowdAction {
     readonly participantCount: number;
     readonly images: ICrowdActionImages;
     readonly commitmentOptions: ICommitmentOption[];
-    readonly status: CrowdActionStatusEnum;
-    readonly joinStatus: CrowdActionJoinStatusEnum;
+    status: CrowdActionStatusEnum;
+    joinStatus: CrowdActionJoinStatusEnum;
 
     readonly startAt: Date;
     readonly endAt: Date;
@@ -60,5 +60,17 @@ export class CrowdAction implements ICrowdAction {
 
     static create(entityLike: ICrowdAction): CrowdAction {
         return new CrowdAction(entityLike);
+    }
+
+    updateStatuses(): CrowdAction {
+        const now = new Date();
+        this.status =
+            this.endAt < now
+                ? CrowdActionStatusEnum.ENDED
+                : this.startAt > now
+                ? CrowdActionStatusEnum.WAITING
+                : CrowdActionStatusEnum.STARTED;
+        this.joinStatus = this.joinEndAt < now ? CrowdActionJoinStatusEnum.CLOSED : CrowdActionJoinStatusEnum.OPEN;
+        return this;
     }
 }
