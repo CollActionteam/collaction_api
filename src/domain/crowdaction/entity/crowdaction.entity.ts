@@ -1,4 +1,5 @@
 import { Country } from '@common/country';
+import { Badge } from '@domain/badge/entity';
 import { ICommitmentOption } from '@domain/commitmentoption';
 import {
     ICrowdAction,
@@ -34,6 +35,8 @@ export class CrowdAction implements ICrowdAction {
     readonly createdAt: Date;
     readonly updatedAt: Date;
 
+    readonly badges?: Badge[];
+
     constructor(entityLike: ICrowdAction) {
         this.id = entityLike.id;
         this.type = entityLike.type;
@@ -56,6 +59,8 @@ export class CrowdAction implements ICrowdAction {
         this.joinEndAt = entityLike.joinEndAt;
         this.createdAt = entityLike.createdAt;
         this.updatedAt = entityLike.updatedAt;
+
+        this.badges = entityLike.badges;
     }
 
     static create(entityLike: ICrowdAction): CrowdAction {
