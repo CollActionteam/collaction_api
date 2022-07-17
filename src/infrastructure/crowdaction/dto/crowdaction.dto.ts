@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import { CrowdActionCategoryEnum, CrowdActionTypeEnum, ICrowdActionImages } from '@domain/crowdaction';
 import { CommitmentOption } from '@domain/commitmentoption';
 import { CreateCommitmentOptionDto } from '@infrastructure/commitmentoption';
+import { Badge } from '@domain/badge/entity';
 
 export class CrowdActionImagesDto implements ICrowdActionImages {
     @ApiProperty({ example: 'https://www.example.com/image.png' })
@@ -48,6 +49,9 @@ export class CreateCrowdActionDto {
     @Type(() => Date)
     @ApiProperty({ name: 'joinEndAt', type: Date, example: '2023-12-22T15:00:00.000Z', required: false })
     readonly joinEndAt?: Date;
+
+    @ApiProperty({ name: 'badges', type: [Badge], isArray: true, required: false })
+    readonly badges?: Badge[];
 }
 
 export class GetCrowdActionDto {
@@ -86,6 +90,9 @@ export class GetCrowdActionDto {
 
     @ApiProperty({ name: 'joinEndAt', type: Date, example: '2023-12-22T15:00:00.000Z', required: false })
     readonly joinEndAt?: Date;
+
+    @ApiProperty({ name: 'badges', type: [Badge], isArray: true, required: false })
+    readonly badges?: Badge[];
 }
 
 export class PaginatedCrowdActionResponse {
