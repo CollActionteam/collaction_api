@@ -35,7 +35,7 @@ export class CrowdAction implements ICrowdAction {
     readonly createdAt: Date;
     readonly updatedAt: Date;
 
-    readonly badges: Badge[];
+    readonly badges?: Badge[];
 
     constructor(entityLike: ICrowdAction) {
         this.id = entityLike.id;

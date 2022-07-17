@@ -86,6 +86,9 @@ export class GetCrowdActionDto {
 
     @ApiProperty({ name: 'joinEndAt', type: Date, example: '2023-12-22T15:00:00.000Z', required: false })
     readonly joinEndAt?: Date;
+
+    @ApiProperty({ name: 'badges', type: [Badge], isArray: true, required: false })
+    readonly badges?: Badge[];
 }
 
 export class PaginatedCrowdActionResponse {

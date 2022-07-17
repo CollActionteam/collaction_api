@@ -10,7 +10,9 @@ import {
 } from '@domain/crowdaction';
 import { Country, CountrySchema } from '@infrastructure/mongo/persistence/country.persistence';
 import { ICommitmentOption } from '@domain/commitmentoption';
+import { IBadge } from '@domain/badge';
 import { CrowdActionCommitmentOptionSchema } from './commitmentoption.persistence';
+import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
 
 @Schema({ _id: false, versionKey: false })
 class CrowdActionImages implements ICrowdActionImages {
@@ -69,5 +71,8 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
 
     @Prop({ type: [CrowdActionCommitmentOptionSchema], required: true, array: true })
     readonly commitmentOptions: ICommitmentOption[];
+
+    @Prop({ type: [CrowdActionBadgePersistenceSchema], required: false, array: true })
+    readonly badges: IBadge[];
 }
 export const CrowdActionSchema = SchemaFactory.createForClass(CrowdActionPersistence);
