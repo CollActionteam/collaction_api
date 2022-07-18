@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
     PaginatedParticipationResponse,
     ParticipationDto,
@@ -28,7 +28,8 @@ export class ParticipationController {
     @FirebaseGuard(UserRole.ADMIN, UserRole.MODERATOR, UserRole.USER)
     @ApiOperation({ summary: 'Retrieve participation for a CrowdAction' })
     @ApiResponse({ status: 200, type: ParticipationDto })
-    async getParticipation(@CurrentUser() user: AuthUser, @Query('crowdActionId') crowdActionId: string): Promise<IParticipation> {
+    @ApiParam({ name: 'crowdActionId', type: String, required: true })
+    async getParticipation(@CurrentUser() user: AuthUser, @Param('crowdActionId') crowdActionId: string): Promise<IParticipation> {
         return this.cqrsHandler.fetch(GetParticipationForCrowdactionQuery, { userId: user.uid, crowdActionId });
     }
 
