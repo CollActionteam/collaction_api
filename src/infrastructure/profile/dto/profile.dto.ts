@@ -38,8 +38,21 @@ export class ProfileResponseDto {
     readonly bio: string;
 }
 
-export class UpdateProfileDto extends ProfileDto {
+export class UpdateProfileDto {
+    @ApiProperty({ name: 'userId', example: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2', required: true })
     readonly userId: string;
+
+    @ApiProperty({ name: 'country', required: false })
+    readonly country?: string;
+
+    @ApiProperty({ name: 'firstName', example: 'John', required: false })
+    readonly firstName?: string;
+
+    @ApiProperty({ name: 'lastName', example: 'Doe', required: false })
+    readonly lastName?: string;
+
+    @ApiProperty({ name: 'bio', example: 'I am a cool guy', required: false })
+    readonly bio?: string;
 }
 
 export class CreateProfileDto extends ProfileDto {
