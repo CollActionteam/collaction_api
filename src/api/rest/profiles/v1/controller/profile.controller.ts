@@ -65,8 +65,7 @@ export class ProfileController {
     })
     @ApiOperation({ summary: 'Updates a users profile' })
     async updateProfile(@CurrentUser() user: AuthUser, @Body() updateProfileBody: UpdateProfileDto): Promise<Identifiable> {
-        const { id } = await this.cqrsHandler.execute(UpdateProfileCommand, { ...updateProfileBody, userId: user.uid });
-        return { id };
+        return await this.cqrsHandler.execute(UpdateProfileCommand, { ...updateProfileBody, userId: user.uid });
     }
 
     @Post('/me/image')
