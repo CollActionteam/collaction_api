@@ -59,3 +59,12 @@ You will now be able to run the image in a container using the following command
 -   `docker run -p 3000:3000 --name collaction-api collaction-api`
 
 _Note: When accessing another running container, eg. Mongo, you will have to change the ENV variable accordingly._
+
+### AWS Required Endpoints
+
+We use AWS S3 buckets to store images used in profiles and crowdactions. The two endpoints that currently require this are:
+
+`/api/v1/crowdactions/{id}/images`
+`/api/v1/profiles/me/image`
+
+To get these credentials contact other developers for the S3 secrets.
