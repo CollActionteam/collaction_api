@@ -23,4 +23,8 @@ export class Profile implements IProfile {
     static create(entityLike: IProfile): Profile {
         return new Profile(entityLike);
     }
+
+    static mock(): Profile {
+        return new Profile();
+    }
 }
