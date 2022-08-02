@@ -1,0 +1,115 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { CrowdActionService } from '../service';
+import {
+    CrowdAction,
+    ICrowdActionRepository,
+    CrowdActionTypeEnum,
+    CrowdActionCategoryEnum,
+    CrowdActionStatusEnum,
+    CrowdActionJoinStatusEnum,
+} from '@domain/crowdaction';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { Connection, connect, Model } from 'mongoose';
+import { CrowdActionPersistence, CrowdActionRepository, CrowdActionSchema } from '@infrastructure/mongo';
+import { getModelToken } from '@nestjs/mongoose';
+import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
+import { CrowdActionDoesNotExist } from '../errors';
+
+describe('CrowdActionService', () => {
+    let crowdActionService: CrowdActionService;
+    let mongod: MongoMemoryServer;
+    let mongoConnection: Connection;
+    let crowdActionModel: Model<CrowdActionPersistence>;
+
+    beforeAll(async () => {
+        mongod = await MongoMemoryServer.create();
+        const uri = mongod.getUri();
+        mongoConnection = (await connect(uri)).connection;
+        crowdActionModel = mongoConnection.model(CrowdActionPersistence.name, CrowdActionSchema);
+
+        const moduleRef: TestingModule = await Test.createTestingModule({
+            providers: [
+                CrowdActionService,
+                { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdActionModel },
+                { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
+            ],
+        }).compile();
+
+        crowdActionService = moduleRef.get<CrowdActionService>(CrowdActionService);
+    });
+
+    afterAll(async () => {
+        await mongoConnection.dropDatabase();
+        await mongoConnection.close();
+        await mongod.stop();
+    });
+
+    afterEach(async () => {
+        const collections = mongoConnection.collections;
+        for (const key in collections) {
+            const collection = collections[key];
+            await collection.deleteMany({});
+        }
+    });
+
+    describe('findByIdOrFail', () => {
+        it('should find a crowdAction using an id or fail', async () => {
+            console.log(await new crowdActionModel(CrowdActionStub()).save());
+            const crowdAction: CrowdAction = await crowdActionService.findByIdOrFail(CrowdActionStub().id);
+            expect(crowdAction?.id).toBe(CrowdActionStub().id);
+        });
+        it('should return CrowdActionDoesNotExist', async () => {
+            await new crowdActionModel(CrowdActionStub()).save();
+            await expect(crowdActionService.findByIdOrFail('O9pbPDY3s5e5XwzgwKZtZTDPvLS1')).rejects.toThrow(CrowdActionDoesNotExist);
+        });
+    });
+});
+
+const CrowdActionStub = (): CrowdAction => {
+    const crowdActionStubData = {
+        id: '628cdea92e19fd912f0d520e',
+        type: CrowdActionTypeEnum.FOOD,
+        title: 'Crowdaction title',
+        description: 'Crowdaction description',
+        category: CrowdActionCategoryEnum.FOOD,
+        subcategory: CrowdActionCategoryEnum.FOOD,
+        location: {
+            name: 'Togo',
+            code: 'TG',
+        },
+        password: 'pa$$w0rd',
+        participantCount: 15,
+        images: {
+            card: 'TheCard',
+            banner: 'TheBanner',
+        },
+        commitmentOptions: [
+            {
+                id: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',
+                type: CrowdActionTypeEnum.FOOD,
+                label: 'TheLabel',
+                description: 'TheDescription',
+                points: 14,
+                blocks: ['O9pbPDY3s5e5XwzgwKZtZTDPvLS2'],
+                createdAt: new Date(1 - 1 - 2020),
+                updatedAt: new Date(1 - 1 - 2020),
+            },
+        ],
+        status: CrowdActionStatusEnum.STARTED,
+        joinStatus: CrowdActionJoinStatusEnum.OPEN,
+        startAt: new Date(1 - 1 - 2020),
+        endAt: new Date(1 - 1 - 2020),
+        joinEndAt: new Date(1 - 1 - 2020),
+        createdAt: new Date(1 - 1 - 2020),
+        updatedAt: new Date(1 - 1 - 2020),
+        badges: [
+            {
+                tier: BadgeTierEnum.BRONZE,
+                awardType: AwardTypeEnum.ALL,
+                minimumCheckIns: 12,
+            },
+        ],
+    };
+
+    return CrowdAction.create(crowdActionStubData);
+};
