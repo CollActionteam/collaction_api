@@ -4,18 +4,12 @@ export class Country implements ICountry {
     readonly name: string;
     readonly code: string;
 
-    constructor();
-    constructor(entityLike: ICountry);
-    constructor(entityLike?: ICountry) {
-        this.name = entityLike?.name ?? 'Netherlands';
-        this.code = entityLike?.code ?? 'NL';
+    constructor(entityLike: ICountry) {
+        this.name = entityLike.name;
+        this.code = entityLike.code;
     }
 
     static create(entityLike: ICountry): Country {
         return new Country(entityLike);
-    }
-
-    static mock(): Country {
-        return new Country();
     }
 }
