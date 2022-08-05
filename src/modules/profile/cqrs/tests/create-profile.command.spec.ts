@@ -6,6 +6,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import { connect, Connection, Model } from "mongoose";
 import { getModelToken } from "@nestjs/mongoose";
 import { CreateProfileCommand } from "@modules/profile/cqrs";
+import { CountryMustBeValidError } from "@modules/core";
 
 describe('CreateProfileCommand', () => {
     let createProfileCommand: CreateProfileCommand;
@@ -45,9 +46,14 @@ describe('CreateProfileCommand', () => {
     });
 
     describe('createProfile', () => {
-        it('should creat a new profile', async () => {
+        it('should create a new profile', async () => {
             const profileId = await createProfileCommand.execute(CreateProfileStub());
             expect(profileId).not.toBeUndefined();
+        });
+        it('should throw the CountryMustBeValidError', async () => {
+            await expect(createProfileCommand.execute(CreateProfileStubWithError())).rejects.toThrow(
+                CountryMustBeValidError,
+            );
         });
     });
 });
@@ -55,9 +61,19 @@ describe('CreateProfileCommand', () => {
 export const CreateProfileStub = (): CreateProfileDto => {
     return {
         userId: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',
-        country: 'string',
+        country: 'NL',
         firstName: 'John',
         lastName: 'Doe',
         bio: 'I am a cool guy'
     }
+};
+
+export const CreateProfileStubWithError = (): CreateProfileDto => {
+    return {
+        userId: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',
+        country: 'string',
+        firstName: 'John',
+        lastName: 'Doe',
+        bio: 'I am a cool guy',
+    };
 };
