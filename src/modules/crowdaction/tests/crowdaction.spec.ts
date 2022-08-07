@@ -54,7 +54,7 @@ describe('CrowdActionService', () => {
 
     describe('findByIdOrFail', () => {
         it('should find a crowdAction using an id or fail', async () => {
-            console.log(await new crowdActionModel(CrowdActionStub()).save());
+            await new crowdActionModel(CrowdActionStub()).save();
             const crowdAction: CrowdAction = await crowdActionService.findByIdOrFail(CrowdActionStub().id);
             expect(crowdAction?.id).toBe(CrowdActionStub().id);
         });
@@ -110,6 +110,5 @@ const CrowdActionStub = (): CrowdAction => {
             },
         ],
     };
-
     return CrowdAction.create(crowdActionStubData);
 };
