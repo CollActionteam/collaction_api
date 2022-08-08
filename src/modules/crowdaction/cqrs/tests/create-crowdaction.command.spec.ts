@@ -5,9 +5,10 @@ import { getModelToken } from '@nestjs/mongoose';
 import { ICrowdActionRepository, CrowdActionTypeEnum, CrowdActionCategoryEnum } from '@domain/crowdaction';
 import { CreateCrowdActionCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
-import { CrowdActionPersistence, CrowdActionSchema, CrowdActionRepository, MongoModule } from '@infrastructure/mongo';
+import { CrowdActionPersistence, CrowdActionSchema, CrowdActionRepository, CommitmentOptionRepository, CommitmentOptionPersistence, CommitmentOptionSchema } from '@infrastructure/mongo';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
+import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 
 describe('CreateCrowdActionCommand', () => {
@@ -15,20 +16,24 @@ describe('CreateCrowdActionCommand', () => {
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
     let crowdactionModel: Model<CrowdActionPersistence>;
+    let commitmentOptionModel: Model<CommitmentOptionPersistence>;
 
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
         const uri = mongod.getUri();
         mongoConnection = (await connect(uri)).connection;
         crowdactionModel = mongoConnection.model(CrowdActionPersistence.name, CrowdActionSchema);
+        commitmentOptionModel = mongoConnection.model(CommitmentOptionPersistence.name, CommitmentOptionSchema);
 
         const moduleRef = await Test.createTestingModule({
-            imports: [CQRSModule, MongoModule],
+            imports: [CQRSModule],
             providers: [
                 CreateCrowdActionCommand,
                 GetCommitmentOptionsByType,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
+                { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdactionModel },
+                { provide: getModelToken(CommitmentOptionPersistence.name), useValue: commitmentOptionModel },
             ],
         }).compile();
 
