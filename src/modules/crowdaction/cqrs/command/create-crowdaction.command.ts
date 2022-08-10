@@ -26,7 +26,7 @@ export class CreateCrowdActionCommand implements ICommand {
     ) {}
 
     async execute(data: CreateCrowdActionDto): Promise<Identifiable> {
-        if (new Date() < data.startAt) {
+        if (new Date() > data.startAt) {
             throw new CrowdActionMustBeInTheFutureError();
         }
 
