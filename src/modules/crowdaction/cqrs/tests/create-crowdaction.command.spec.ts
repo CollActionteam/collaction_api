@@ -5,11 +5,24 @@ import { getModelToken } from '@nestjs/mongoose';
 import { ICrowdActionRepository, CrowdActionTypeEnum, CrowdActionCategoryEnum } from '@domain/crowdaction';
 import { CreateCrowdActionCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
-import { CrowdActionPersistence, CrowdActionSchema, CrowdActionRepository, CommitmentOptionRepository, CommitmentOptionPersistence, CommitmentOptionSchema } from '@infrastructure/mongo';
-import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
+import {
+    CrowdActionPersistence,
+    CrowdActionSchema,
+    CrowdActionRepository,
+    CommitmentOptionRepository,
+    CommitmentOptionPersistence,
+    CommitmentOptionSchema,
+} from '@infrastructure/mongo';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
+import {
+    CrowdActionMustBeInTheFutureError,
+    MustEndAfterStartError,
+    MustJoinBeforeEndError,
+    CategoryAndSubcategoryMustBeDisimilarError,
+} from '@modules/crowdaction/errors';
+import { CountryMustBeValidError } from '@modules/core';
 
 describe('CreateCrowdActionCommand', () => {
     let createCrowdActionCommand: CreateCrowdActionCommand;
@@ -59,10 +72,36 @@ describe('CreateCrowdActionCommand', () => {
             const crowdActionId = await createCrowdActionCommand.execute(CreateCrowdActionStub());
             expect(crowdActionId).not.toBeUndefined();
         });
+        it('should throw the CrowdActionMustBeInTheFutureError', async () => {
+            const stub = CreateCrowdActionStub();
+            stub.startAt = new Date('01/01/2022');
+            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(CrowdActionMustBeInTheFutureError);
+        });
+        it('should throw the MustEndAfterStartError', async () => {
+            const stub = CreateCrowdActionStub();
+            stub.startAt = new Date('11/01/2025');
+            stub.endAt = new Date('10/01/2025');
+            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(MustEndAfterStartError);
+        });
+        it('should throw the MustJoinBeforeEndError', async () => {
+            const stub = CreateCrowdActionStub();
+            stub.joinEndAt = new Date('09/01/2025');
+            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(MustJoinBeforeEndError);
+        });
+        it('should throw the CategoryAndSubcategoryMustBeDisimilarError', async () => {
+            const stub = CreateCrowdActionStub();
+            stub.subcategory = CrowdActionCategoryEnum.FOOD;
+            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(CategoryAndSubcategoryMustBeDisimilarError);
+        });
+        it('should throw the CountryMustBeValidError', async () => {
+            const stub = CreateCrowdActionStub();
+            stub.country = 'AZERT';
+            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(CountryMustBeValidError);
+        });
     });
 });
 
-const CreateCrowdActionStub = (): CreateCrowdActionDto => {
+const CreateCrowdActionStub = (): any => {
     return {
         type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
@@ -75,9 +114,9 @@ const CreateCrowdActionStub = (): CreateCrowdActionDto => {
             card: 'TheCard',
             banner: 'TheBanner',
         },
-        startAt: new Date(1 - 1 - 2020),
-        endAt: new Date(1 - 1 - 2020),
-        joinEndAt: new Date(1 - 1 - 2020),
+        startAt: new Date('01/01/2025'),
+        endAt: new Date('08/01/2025'),
+        joinEndAt: new Date('07/01/2025'),
         badges: [
             {
                 tier: BadgeTierEnum.BRONZE,
