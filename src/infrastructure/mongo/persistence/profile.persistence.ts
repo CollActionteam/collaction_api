@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { IProfile } from '@domain/profile';
+import { Badge } from '@domain/badge';
 import { Country, CountrySchema } from './country.persistence';
+import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
 
 export type ProfileDocument = ProfilePersistence & Document;
 
@@ -24,5 +26,8 @@ export class ProfilePersistence implements Omit<IProfile, 'id' | 'createdAt' | '
 
     @Prop({ required: false })
     readonly avatar?: string;
+
+    @Prop({ type: [CrowdActionBadgePersistenceSchema], array: true, required: false })
+    readonly badges?: Badge[];
 }
 export const ProfileSchema = SchemaFactory.createForClass(ProfilePersistence);

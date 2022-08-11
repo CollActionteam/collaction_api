@@ -1,4 +1,5 @@
 import { Country } from '@common/country';
+import { Badge } from '@domain/badge';
 
 export interface IProfile {
     readonly id: string;
@@ -8,4 +9,5 @@ export interface IProfile {
     readonly lastName?: string;
     readonly bio?: string | undefined;
     readonly avatar?: string | undefined;
+    readonly badges?: Badge[] | undefined;
 }
