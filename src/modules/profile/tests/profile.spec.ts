@@ -64,18 +64,6 @@ describe('ProfileService', () => {
             await expect(profileService.findByUserIdOrFail('O9pbPDY3s5e5XwzgwKZtZTDPvLS1')).rejects.toThrow(ProfileDoesNotExistError);
         });
     });
-
-    describe('findByUserIdOrFail', () => {
-        it('should find a profile using a userId or fail', async () => {
-            await new profileModel(ProfileStub()).save();
-            const profile: Profile = await profileService.findByUserIdOrFail(ProfileStub().userId);
-            expect(profile.userId).toBe(ProfileStub().userId);
-        });
-        it('should return ProfileDoesNotExistError', async () => {
-            await new profileModel(ProfileStub()).save();
-            await expect(profileService.findByUserIdOrFail('O9pbPDY3s5e5XwzgwKZtZTDPvLS1')).rejects.toThrow(ProfileDoesNotExistError);
-        });
-    });
 });
 
 export const ProfileStub = (): Profile => {
