@@ -1,24 +1,16 @@
-import S3 from 'aws-sdk/clients/s3';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import * as mime from 'mime';
-import { IS3Client } from '@core/s3-client.interface';
+import { IS3ClientRepository } from '@core/s3-client.interface';
 import { FileTypeInvalidError } from '../errors';
 import { UploadImageTypeEnum } from './enum';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png'];
 
 @Injectable()
-export class S3Client implements IS3Client {
-    private readonly s3Client: S3;
+export class S3ClientService {
 
-    constructor(private readonly configService: ConfigService) {
-        this.s3Client = new S3({
-            region: this.configService.get('AWS_BUCKET_REGION'),
-            accessKeyId: this.configService.get('AWS_S3_ACCESS_KEY_ID'),
-            secretAccessKey: this.configService.get('AWS_S3_SECRET_ACCESS_KEY'),
-        });
-    }
+    constructor(private readonly s3Client: IS3ClientRepository, private readonly configService: ConfigService) {}
 
     async upload(file: any, id: string, type: UploadImageTypeEnum): Promise<string> {
         const directory = this.getDirectory(type);
@@ -37,7 +29,7 @@ export class S3Client implements IS3Client {
             ETag: id,
         };
 
-        return (await this.s3Client.upload(uploadParams).promise()).Key;
+        return await this.s3Client.upload(uploadParams);
     }
 
     private getDirectory(type: UploadImageTypeEnum) {
