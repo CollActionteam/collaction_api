@@ -8,12 +8,14 @@ import {
     ListCrowdActionsQuery,
     UpdateCrowdActionImagesCommand,
     UpdateCrowdActionStatusesCommand,
+    IncrementParticipantCountCommand,
 } from './cqrs';
 import { CrowdActionService } from './service';
 
 @Module({
     imports: [InfrastructureModule, CQRSModule, S3Module],
     providers: [
+        IncrementParticipantCountCommand,
         CreateCrowdActionCommand,
         ListCrowdActionsQuery,
         FindCrowdActionByIdQuery,
@@ -25,6 +27,7 @@ import { CrowdActionService } from './service';
         },
     ],
     exports: [
+        IncrementParticipantCountCommand,
         CreateCrowdActionCommand,
         ListCrowdActionsQuery,
         FindCrowdActionByIdQuery,
