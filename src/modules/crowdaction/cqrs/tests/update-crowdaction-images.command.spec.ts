@@ -81,10 +81,14 @@ describe('UpdateCrowdActionImagesCommand', () => {
             const crowdActionId = await createCrowdActionCommand.execute(CreateCrowdActionStub());
             expect(crowdActionId).not.toBeUndefined();
 
-            await updateCrowdActionImagesCommand.execute({ id: crowdActionId.id, card: '', banner: '' });
+            await updateCrowdActionImagesCommand.execute({
+                id: crowdActionId.id,
+                card: [{ mimetype: 'image/jpeg', buffer: '', length: 5 }],
+                banner: [{ mimetype: 'image/jpeg', buffer: '', length: 5 }],
+            });
             const documents = await crowdactionModel.find({ id: crowdActionId });
             const crowdAction = documents.map((doc) => CrowdAction.create(doc.toObject({ getters: true })))[0];
-            expect(crowdAction.images).toBe('Upload Successful');
+            expect(crowdAction.images).toStrictEqual({ banner: 'Upload Successful', card: 'Upload Successful' });
         });
     });
 });
@@ -99,8 +103,8 @@ const CreateCrowdActionStub = (): any => {
         country: 'TG',
         password: 'pa$$w0rd',
         images: {
-            card: 'TheCard',
-            banner: 'TheBanner',
+            card: 'https://www.example.com/image.png',
+            banner: 'https://www.example.com/image.png',
         },
         startAt: new Date('01/01/2025'),
         endAt: new Date('08/01/2025'),
