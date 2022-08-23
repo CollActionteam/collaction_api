@@ -21,7 +21,7 @@ import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 import { S3ClientService } from '@modules/core/s3';
 import { IS3ClientRepository } from '@core/s3-client.interface';
 
-describe('CreateCrowdActionCommand', () => {
+describe('UpdateCrowdActionImagesCommand', () => {
     let updateCrowdActionImagesCommand: UpdateCrowdActionImagesCommand;
     let createCrowdActionCommand: CreateCrowdActionCommand;
     let mongod: MongoMemoryServer;
@@ -76,7 +76,7 @@ describe('CreateCrowdActionCommand', () => {
         }
     });
 
-    describe('createCrowdAction', () => {
+    describe('updateCrowdActionImages', () => {
         it('should create a new crowdAction and update images', async () => {
             const crowdActionId = await createCrowdActionCommand.execute(CreateCrowdActionStub());
             expect(crowdActionId).not.toBeUndefined();
