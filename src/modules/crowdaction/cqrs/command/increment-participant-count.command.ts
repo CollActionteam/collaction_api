@@ -7,22 +7,22 @@ export enum ParticipantChangeEnum {
     DECREMENT,
 }
 
-interface ChangeCrowdActionParticipantCountCommandData {
+interface IncrementData {
     id: string;
     participantChange: ParticipantChangeEnum;
 }
 
 @Injectable()
-export class ChangeCrowdActionParticipantCountCommand implements ICommand {
+export class IncrementParticipantCountCommand implements ICommand {
     constructor(private readonly crowdActionRepository: ICrowdActionRepository) {}
 
-    async execute(data: ChangeCrowdActionParticipantCountCommandData): Promise<void> {
+    async execute(data: IncrementData): Promise<void> {
         if (data.participantChange === ParticipantChangeEnum.INCREMENT) {
-            await this.crowdActionRepository.increment({ id: data.id }, 'participantCount', 1);
+            await this.crowdActionRepository.increment({ id: data.id }, 'participantCount');
             return;
         }
 
-        await this.crowdActionRepository.decrement({ id: data.id }, 'participantCount', 1);
+        await this.crowdActionRepository.increment({ id: data.id }, 'participantCount', -1);
         return;
     }
 }
