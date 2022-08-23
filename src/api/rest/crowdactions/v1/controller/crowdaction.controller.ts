@@ -28,14 +28,14 @@ export class CrowdActionController {
         description: 'Returns the found CrowdActions and Pagination Information',
         type: PaginatedCrowdActionResponse,
     })
-    @ApiQuery({ name: 'status', enum: CrowdActionStatusEnum, type: String, required: false })
+    @ApiQuery({ name: 'status', enum: CrowdActionStatusEnum, type: [String], isArray: true, required: false })
     async getAllCrowdActions(
         @Query() { page, pageSize }: PaginationDto,
-        @Query('status') status: CrowdActionStatusEnum,
+        @Query('status') status: CrowdActionStatusEnum[],
     ): Promise<IPaginatedList<ICrowdAction>> {
         let filter: any;
         if (status) {
-            filter = { status };
+            filter = { status: { in: status } };
         }
 
         return this.cqrsHandler.fetch(ListCrowdActionsQuery, { page, pageSize, filter });
