@@ -12,5 +12,7 @@ export abstract class ICrowdActionRepository implements IRepository<CrowdAction,
     abstract delete(id: string): Promise<void>;
     abstract findOne(query: FindCriteria<QueryCrowdAction>): Promise<CrowdAction>;
     abstract findAll(query: FindCriteria<QueryCrowdAction>): Promise<CrowdAction[]>;
+    abstract increment(query: FindCriteria<QueryCrowdAction>, field: string, value: number): Promise<void>;
+    abstract decrement(query: FindCriteria<QueryCrowdAction>, field: string, value: number): Promise<void>;
     abstract count(query: FindCriteria<QueryCrowdAction>): Promise<number>;
 }
