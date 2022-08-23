@@ -6,9 +6,9 @@ import { ParticipationHasInvalidCommitmentOption, ParticipationRequiresCommitmen
 import { ICQRSHandler } from '@common/cqrs';
 import { FindCrowdActionByIdQuery } from '@modules/crowdaction';
 import {
-    ChangeCrowdActionParticipantCountCommand,
+    IncrementParticipantCountCommand,
     ParticipantChangeEnum,
-} from '@modules/crowdaction/cqrs/command/change-crowdaction-participant-count.command';
+} from '@modules/crowdaction/cqrs/command/increment-participant-count.command';
 
 export interface ToggleParticipationCommandArgs {
     readonly userId: string;
@@ -24,7 +24,7 @@ export class ToggleParticipationCommand implements ICommand {
 
         if (participation) {
             await this.participationRepository.delete(participation.id);
-            this.cqrsHandler.execute(ChangeCrowdActionParticipantCountCommand, {
+            this.cqrsHandler.execute(IncrementParticipantCountCommand, {
                 id: participation.crowdActionId,
                 participantChange: ParticipantChangeEnum.DECREMENT,
             });
@@ -49,7 +49,7 @@ export class ToggleParticipationCommand implements ICommand {
             dailyCheckIns: 0,
         });
 
-        this.cqrsHandler.execute(ChangeCrowdActionParticipantCountCommand, {
+        this.cqrsHandler.execute(IncrementParticipantCountCommand, {
             id: crowdAction.id,
             participantChange: ParticipantChangeEnum.INCREMENT,
         });
