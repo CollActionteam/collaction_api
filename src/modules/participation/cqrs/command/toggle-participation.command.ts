@@ -5,6 +5,10 @@ import { ToggleParticipationDto, ToggleParticipationResponse } from '@infrastruc
 import { ParticipationHasInvalidCommitmentOption, ParticipationRequiresCommitmentError } from '@modules/participation/error';
 import { ICQRSHandler } from '@common/cqrs';
 import { FindCrowdActionByIdQuery } from '@modules/crowdaction';
+import {
+    IncrementParticipantCountCommand,
+    ParticipantChangeEnum,
+} from '@modules/crowdaction/cqrs/command/increment-participant-count.command';
 
 export interface ToggleParticipationCommandArgs {
     readonly userId: string;
@@ -20,6 +24,11 @@ export class ToggleParticipationCommand implements ICommand {
 
         if (participation) {
             await this.participationRepository.delete(participation.id);
+            this.cqrsHandler.execute(IncrementParticipantCountCommand, {
+                id: participation.crowdActionId,
+                participantChange: ParticipantChangeEnum.DECREMENT,
+            });
+
             return { isParticipating: false };
         }
 
@@ -40,6 +49,10 @@ export class ToggleParticipationCommand implements ICommand {
             dailyCheckIns: 0,
         });
 
+        this.cqrsHandler.execute(IncrementParticipantCountCommand, {
+            id: crowdAction.id,
+            participantChange: ParticipantChangeEnum.INCREMENT,
+        });
         return { isParticipating: true, participationId: id };
     }
 
