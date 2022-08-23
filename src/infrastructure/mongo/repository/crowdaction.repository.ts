@@ -41,14 +41,9 @@ export class CrowdActionRepository implements ICrowdActionRepository {
         return documents.map((doc) => CrowdAction.create(doc.toObject({ getters: true })));
     }
 
-    async increment(query: FindCriteria<QueryCrowdAction>, field: string, value: number): Promise<void> {
+    async increment(query: FindCriteria<QueryCrowdAction>, field: string, value: number = 1): Promise<void> {
         const mongoQuery = toMongoQuery(query);
         await this.documentModel.updateMany(mongoQuery, { $inc: { [field]: value } });
-    }
-
-    async decrement(query: FindCriteria<QueryCrowdAction>, field: string, value: number): Promise<void> {
-        const mongoQuery = toMongoQuery(query);
-        await this.documentModel.updateMany(mongoQuery, { $inc: { [field]: -value } });
     }
 
     async count(query: FindCriteria<QueryCrowdAction>): Promise<number> {
