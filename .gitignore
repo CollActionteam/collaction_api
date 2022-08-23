@@ -63,3 +63,4 @@ node_modules/
 # Project related
 dist/
 test-coverage/
+serviceAccountKey.json
