@@ -10,9 +10,6 @@ export class ProfilePersistence implements Omit<IProfile, 'id' | 'createdAt' | '
     @Prop({ required: true, unique: true })
     readonly userId: string;
 
-    @Prop({ required: true })
-    readonly phone: string;
-
     @Prop({ type: CountrySchema, required: true })
     readonly location: Country;
 

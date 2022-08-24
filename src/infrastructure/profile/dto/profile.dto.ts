@@ -22,9 +22,6 @@ export class ProfileResponseDto {
     @ApiProperty({ name: 'userId', example: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2', required: true })
     readonly userId: string;
 
-    @ApiProperty({ name: 'phone', example: '+4530249838', required: true })
-    readonly phone: string;
-
     @ApiProperty({ name: 'location', example: { name: 'Netherlands', code: 'NL' }, required: true })
     readonly location: ICountry;
 
