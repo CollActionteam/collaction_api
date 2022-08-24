@@ -15,7 +15,12 @@ export class CreateProfileCommand implements ICommand {
             throw new CountryMustBeValidError(data.country);
         }
 
-        const { id } = await this.profileRepository.create({ ...data, location, userId: data.userId });
+        const { id } = await this.profileRepository.create({
+            ...data,
+            location,
+            userId: data.userId,
+            avatar: `profiles/${data.userId}.png`,
+        });
         return id;
     }
 }
