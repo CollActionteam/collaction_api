@@ -3,9 +3,9 @@ import { Identifiable } from '@domain/core';
 import { Profile } from '../entity';
 import { IProfile } from './profile.interface';
 
-export type CreateProfile = Omit<Profile, 'id' | 'phone'>;
+export type CreateProfile = Omit<Profile, 'id'>;
 export type PatchProfile = Partial<IProfile>;
-export type QueryProfile = Partial<Pick<IProfile, 'id' | 'userId' | 'phone'>>;
+export type QueryProfile = Partial<Pick<IProfile, 'id' | 'userId'>>;
 
 export abstract class IProfileRepository implements IRepository<Profile, CreateProfile, PatchProfile, QueryProfile> {
     abstract create(entityLike: CreateProfile): Promise<Identifiable>;

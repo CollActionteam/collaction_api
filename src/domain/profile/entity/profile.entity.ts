@@ -4,7 +4,6 @@ import { IProfile } from '@domain/profile';
 export class Profile implements IProfile {
     readonly id: string;
     readonly userId: string;
-    readonly phone: string;
     readonly location: Country;
     readonly firstName: string;
     readonly lastName?: string | undefined;
@@ -14,7 +13,6 @@ export class Profile implements IProfile {
     constructor(entityLike: IProfile) {
         this.id = entityLike.id;
         this.userId = entityLike.userId;
-        this.phone = entityLike.phone;
         this.location = entityLike.location;
         this.firstName = entityLike.firstName;
         this.lastName = entityLike.lastName;
