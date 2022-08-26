@@ -25,11 +25,13 @@ jobs:
 
             - name: Build, tag, and push image to Amazon ECR
               env:
+                  SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
                   PROD_ENV_FILE: ${{ secrets.PROD_ENV }}
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-                  ECR_REPOSITORY: collaction-api
-                  IMAGE_TAG: development
+                  ECR_REPOSITORY: collaction-api-prod
+                  IMAGE_TAG: production
               run: |
+                  echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
                   echo $PROD_ENV_FILE | base64 --decode > .env
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile.prod .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -41,3 +43,4 @@ jobs:
                   service: collaction-api-production
                   cluster: production
                   wait-for-service-stability: true
+                  force-new-deployment: true
