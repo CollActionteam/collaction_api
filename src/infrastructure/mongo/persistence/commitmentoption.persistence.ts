@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { ICommitmentOption } from '@domain/commitmentoption';
 import { CrowdActionTypeEnum } from '@domain/crowdaction';
+import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
 
 export type CommitmentOptionDocument = CommitmentOptionPersistence & Document;
 
@@ -21,6 +22,9 @@ export class CommitmentOptionPersistence implements Omit<ICommitmentOption, 'id'
 
     @Prop({ array: true, required: false })
     readonly blocks?: string[];
+
+    @Prop({ required: true })
+    readonly icon: CommitmentOptionIconEnum;
 }
 export const CommitmentOptionSchema = SchemaFactory.createForClass(CommitmentOptionPersistence);
 
