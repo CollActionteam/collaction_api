@@ -3,7 +3,7 @@
     "containerDefinitions": [
         {
             "essential": true,
-            "image": "156764677614.dkr.ecr.eu-central-1.amazonaws.com/collaction-api:production",
+            "image": "156764677614.dkr.ecr.eu-central-1.amazonaws.com/collaction-api-prod:production",
             "name": "collaction-api-production-container",
             "portMappings": [
                 {
