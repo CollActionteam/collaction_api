@@ -1,4 +1,5 @@
 import { CrowdActionTypeEnum } from '@domain/crowdaction';
+import { CommitmentOptionIconEnum } from '../enum/commitmentoption.enum';
 import { ICommitmentOption } from '../interface';
 
 export class CommitmentOption implements ICommitmentOption {
@@ -8,6 +9,7 @@ export class CommitmentOption implements ICommitmentOption {
     readonly description: string;
     readonly points: number;
     readonly blocks?: string[]; // IDs of other CommitmentOptions to be blocked
+    readonly icon: CommitmentOptionIconEnum;
 
     readonly createdAt: Date;
     readonly updatedAt: Date;
@@ -19,6 +21,7 @@ export class CommitmentOption implements ICommitmentOption {
         this.description = entityLike.description;
         this.points = entityLike.points;
         this.blocks = entityLike.blocks;
+        this.icon = entityLike.icon;
         this.createdAt = entityLike.createdAt;
         this.updatedAt = entityLike.updatedAt;
     }
