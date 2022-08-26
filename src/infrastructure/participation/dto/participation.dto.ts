@@ -8,6 +8,12 @@ export class ParticipationDto implements Omit<IParticipation, 'id' | 'joinDate' 
     @ApiProperty({ name: 'userId', example: '3fa85f64-5717-4562-b3fc-2c963f66afa6', required: true })
     readonly userId: string;
 
+    @ApiProperty({ name: 'fullName', required: true })
+    readonly fullName: string;
+
+    @ApiProperty({ name: 'avatar', required: false })
+    readonly avatar?: string | undefined;
+
     @ApiProperty({
         name: 'commitmentOptions',
         type: [String],

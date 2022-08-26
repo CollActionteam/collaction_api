@@ -11,6 +11,12 @@ export class ParticipationPersistence implements Omit<IParticipation, 'id'> {
     @Prop({ required: true })
     readonly userId: string;
 
+    @Prop({ required: true })
+    readonly fullName: string;
+
+    @Prop({ required: false })
+    readonly avatar?: string;
+
     @Prop({ type: [String], required: true })
     readonly commitmentOptions: string[];
 
