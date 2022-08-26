@@ -4,6 +4,8 @@ export class Participation implements IParticipation {
     readonly id: string;
     readonly crowdActionId: string;
     readonly userId: string;
+    readonly fullName: string;
+    readonly avatar?: string | undefined;
     readonly commitmentOptions: string[];
     readonly joinDate: Date;
     readonly dailyCheckIns: number;
@@ -12,6 +14,8 @@ export class Participation implements IParticipation {
         this.id = entityLike.id;
         this.crowdActionId = entityLike.crowdActionId;
         this.userId = entityLike.userId;
+        this.fullName = entityLike.fullName;
+        this.avatar = entityLike.avatar;
         this.commitmentOptions = entityLike.commitmentOptions;
         this.joinDate = entityLike.joinDate;
         this.dailyCheckIns = entityLike.dailyCheckIns;
