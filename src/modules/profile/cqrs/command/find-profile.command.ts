@@ -1,8 +1,8 @@
-import { IQuery } from "@common/cqrs";
-import { Profile } from "@domain/profile";
-import { ProfileDoesNotExistError } from "@modules/profile/errors";
-import { ProfileService } from "@modules/profile/service";
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
+import { IQuery } from '@common/cqrs';
+import { Profile } from '@domain/profile';
+import { ProfileDoesNotExistError } from '@modules/profile/errors';
+import { ProfileService } from '@modules/profile/service';
 
 @Injectable()
 export class FindProfileByUserIdQuery implements IQuery {
