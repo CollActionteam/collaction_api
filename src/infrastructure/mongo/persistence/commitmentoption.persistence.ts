@@ -14,8 +14,8 @@ export class CommitmentOptionPersistence implements Omit<ICommitmentOption, 'id'
     @Prop({ required: true })
     readonly label: string;
 
-    @Prop({ required: true })
-    readonly description: string;
+    @Prop({ required: false })
+    readonly description?: string;
 
     @Prop({ required: true })
     readonly points: number;
