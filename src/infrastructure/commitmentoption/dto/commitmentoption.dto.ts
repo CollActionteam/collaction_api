@@ -9,8 +9,8 @@ export class CreateCommitmentOptionDto {
     @ApiProperty({ name: 'label', required: true })
     readonly label: string;
 
-    @ApiProperty({ name: 'description', required: true })
-    readonly description: string;
+    @ApiProperty({ name: 'description', type: String, required: false })
+    readonly description?: string | undefined;
 
     @ApiProperty({ name: 'points', type: Number, required: true })
     readonly points: number;
@@ -35,7 +35,7 @@ export class UpdateCommitmentOptionDto {
     @ApiProperty({ name: 'label', required: false })
     readonly label?: string;
 
-    @ApiProperty({ name: 'description', required: false })
+    @ApiProperty({ name: 'description', type: String, required: false })
     readonly description?: string;
 
     @ApiProperty({ name: 'points', type: Number, required: false })
