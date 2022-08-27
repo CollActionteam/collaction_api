@@ -9,6 +9,7 @@ import {
     UpdateCrowdActionImagesCommand,
     UpdateCrowdActionStatusesCommand,
     IncrementParticipantCountCommand,
+    ListCrowdActionsForUserQuery,
 } from './cqrs';
 import { CrowdActionService } from './service';
 
@@ -25,6 +26,7 @@ import { CrowdActionService } from './service';
             provide: 'PCrowdActionService',
             useClass: CrowdActionService,
         },
+        ListCrowdActionsForUserQuery,
     ],
     exports: [
         IncrementParticipantCountCommand,
@@ -33,6 +35,7 @@ import { CrowdActionService } from './service';
         FindCrowdActionByIdQuery,
         UpdateCrowdActionImagesCommand,
         UpdateCrowdActionStatusesCommand,
+        ListCrowdActionsForUserQuery,
     ],
 })
 export class CrowdActionModule {}
