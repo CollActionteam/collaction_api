@@ -23,3 +23,9 @@ export class ParticipationHasInvalidCommitmentOption extends ApiError {
         super({ message: `CommitmentOptions (${invalidOptions.join(',')}) do not exist for this CrowdAction` });
     }
 }
+
+export class UserHasNoParticipations extends ApiError {
+    constructor() {
+        super({ message: `User has no participations` });
+    }
+}
