@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ApiError, ErrorCodesEnum } from '@common/types';
 
-export const toHttpException = ({ code, data, message, name, stack }: ApiError): HttpException => {
+export const toHttpException = ({ code, data, message, name, stack, statusCode }: ApiError): HttpException => {
     const extentions = { data, type: name };
     const errorMap = new Map([
         [ErrorCodesEnum.UNAUTHENTICATED, new UnauthorizedException(message)],
@@ -19,7 +19,7 @@ export const toHttpException = ({ code, data, message, name, stack }: ApiError):
     return (
         errorMap.get(code) ??
         new InternalServerErrorException({
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+            statusCode: statusCode,
             message,
             ...extentions,
             stacktrace: stack,
