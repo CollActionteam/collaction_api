@@ -6,7 +6,7 @@ export class CommitmentOption implements ICommitmentOption {
     readonly id: string;
     readonly type: CrowdActionTypeEnum;
     readonly label: string;
-    readonly description: string;
+    readonly description?: string | undefined;
     readonly points: number;
     readonly blocks?: string[]; // IDs of other CommitmentOptions to be blocked
     readonly icon: CommitmentOptionIconEnum;
