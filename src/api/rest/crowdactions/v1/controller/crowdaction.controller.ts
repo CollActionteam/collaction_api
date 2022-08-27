@@ -10,11 +10,13 @@ import {
     CreateCrowdActionCommand,
     ListCrowdActionsQuery,
     UpdateCrowdActionImagesCommand,
+    ListCrowdActionsForUserQuery,
 } from '@modules/crowdaction';
 import { PaginationDto } from '@infrastructure/pagination';
 import { IdentifiableResponse } from '@api/rest/core';
-import { FirebaseGuard } from '@modules/auth/decorators';
+import { CurrentUser, FirebaseGuard } from '@modules/auth/decorators';
 import { UserRole } from '@domain/auth/enum';
+import { AuthUser } from '@domain/auth/entity';
 
 @Controller('v1/crowdactions')
 @ApiTags('CrowdAction')
@@ -39,6 +41,28 @@ export class CrowdActionController {
         }
 
         return this.cqrsHandler.fetch(ListCrowdActionsQuery, { page, pageSize, filter });
+    }
+
+    @Get('/me')
+    @FirebaseGuard(UserRole.USER, UserRole.MODERATOR, UserRole.ADMIN)
+    @ApiOperation({ summary: 'Retrieve a paginated list of CrowdActions which a user is or has participated in' })
+    @ApiResponse({
+        status: 200,
+        description: 'Returns the found CrowdActions and Pagination Information',
+        type: PaginatedCrowdActionResponse,
+    })
+    @ApiQuery({ name: 'status', enum: CrowdActionStatusEnum, type: [String], isArray: true, required: false })
+    async getAllCrowdActionsForUser(
+        @CurrentUser() user: AuthUser,
+        @Query() { page, pageSize }: PaginationDto,
+        @Query('status') status: CrowdActionStatusEnum[],
+    ): Promise<IPaginatedList<ICrowdAction>> {
+        let filter: any;
+        if (status) {
+            filter = { status: { in: status } };
+        }
+
+        return this.cqrsHandler.fetch(ListCrowdActionsForUserQuery, { userId: user.uid, filter: { page, pageSize, filter } });
     }
 
     @Get(':id')

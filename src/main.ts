@@ -35,7 +35,7 @@ function bootstrapLogger(): LoggerService {
     return Logger.create();
 }
 
-function bootstrapSwagger(app: INestApplication, hostUrl: string): void {
+function bootstrapSwagger(app: INestApplication, hostUrl: string, restPath: string): void {
     const apiDesc: string = fs.readFileSync('assets/api-desc.html', 'utf8');
 
     const swaggerConfig = new DocumentBuilder()
@@ -53,7 +53,7 @@ function bootstrapSwagger(app: INestApplication, hostUrl: string): void {
         .build();
 
     const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
-    SwaggerModule.setup('api', app, swaggerDocument);
+    SwaggerModule.setup(restPath, app, swaggerDocument);
 }
 
 export interface Request extends express.Request {
@@ -85,7 +85,7 @@ async function bootstrap() {
         .useGlobalFilters(new ApiErrorFilter())
         .useGlobalPipes(new ValidationPipe({ transform: true }));
 
-    bootstrapSwagger(app, hostUrl);
+    bootstrapSwagger(app, hostUrl, restPath);
 
     await app.listen(port);
 
