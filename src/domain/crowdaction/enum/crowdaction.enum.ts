@@ -2,11 +2,17 @@ export enum CrowdActionTypeEnum {
     FOOD = 'FOOD',
     WASTE = 'WASTE',
     ENERGY = 'ENERGY',
+    BIKE = 'BIKE',
 }
 
 export enum CrowdActionCategoryEnum {
     SUSTAINABILITY = 'SUSTAINABILITY',
     FOOD = 'FOOD',
+    ENERGY = 'ENERGY',
+    WASTE = 'WASTE',
+    ELECTIRICITY = 'ELECTIRICITY',
+    TRANSPORT = 'TRANSPORT',
+    HEALTH = 'HEALTH',
 }
 
 export enum CrowdActionStatusEnum {
