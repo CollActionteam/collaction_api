@@ -1,7 +1,7 @@
 import firebaseAdmin from 'firebase-admin';
 import { getAuth } from 'firebase/auth';
 import { Global, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoModule } from '@infrastructure/mongo';
 import { CQRSModule } from '@common/cqrs';
@@ -13,6 +13,7 @@ import { FirebaseAuthAdmin, FirebaseAuthClient } from '@infrastructure/auth/prov
         CQRSModule,
         MongoModule,
         MongooseModule.forRootAsync({
+            imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
                 uri: configService.get('MONGO_URL'),
             }),

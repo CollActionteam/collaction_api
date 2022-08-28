@@ -12,7 +12,7 @@ const mongo: MongoConnectionOptions = {
     synchronize: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    logging: false,
+    logging: true,
     migrations: [`${migrationsDir}/!(*.draft).{ts,js}`],
     migrationsTableName: 'migrations',
     migrationsRun: false,
