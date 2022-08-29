@@ -15,11 +15,14 @@ import {
     CrowdActionRepository,
     ParticipationRepository,
     ProfileRepository,
+    ContactRepository,
 } from '@infrastructure/mongo/repository';
 import { ICrowdActionRepository } from '@domain/crowdaction';
 import { IProfileRepository } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
 import { ICommitmentOptionRepository } from '@domain/commitmentoption';
+import { IContactRepository } from '@domain/contact';
+import { ContactPersistence, ContactSchema } from './persistence/contact.persistence';
 
 @Module({
     imports: [
@@ -28,6 +31,7 @@ import { ICommitmentOptionRepository } from '@domain/commitmentoption';
             { name: ProfilePersistence.name, schema: ProfileSchema },
             { name: ParticipationPersistence.name, schema: ParticipationSchema },
             { name: CommitmentOptionPersistence.name, schema: CommitmentOptionSchema },
+            { name: ContactPersistence.name, schema: ContactSchema },
         ]),
     ],
     providers: [
@@ -47,7 +51,11 @@ import { ICommitmentOptionRepository } from '@domain/commitmentoption';
             provide: ICommitmentOptionRepository,
             useClass: CommitmentOptionRepository,
         },
+        {
+            provide: IContactRepository,
+            useClass: ContactRepository,
+        },
     ],
-    exports: [ICrowdActionRepository, IProfileRepository, IParticipationRepository, ICommitmentOptionRepository],
+    exports: [ICrowdActionRepository, IProfileRepository, IParticipationRepository, ICommitmentOptionRepository, IContactRepository],
 })
 export class MongoModule {}
