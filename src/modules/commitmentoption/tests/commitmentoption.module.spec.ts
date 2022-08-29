@@ -6,6 +6,7 @@ import { Connection, connect, Model } from 'mongoose';
 import { CommitmentOptionPersistence, CommitmentOptionRepository, CommitmentOptionSchema } from '@infrastructure/mongo';
 import { getModelToken } from '@nestjs/mongoose';
 import { CommitmentOptionDoesNotExistError } from '../errors/commitmentoption.error';
+import { CrowdActionTypeEnum } from '@domain/crowdaction';
 
 describe('CommitmentOptionService', () => {
     let commitmentOptionService: CommitmentOptionService;
@@ -18,7 +19,7 @@ describe('CommitmentOptionService', () => {
         const uri = mongod.getUri();
         mongoConnection = (await connect(uri)).connection;
         commitmentOptionModel = mongoConnection.model(CommitmentOptionPersistence.name, CommitmentOptionSchema);
-        
+
         const moduleRef: TestingModule = await Test.createTestingModule({
             providers: [
                 CommitmentOptionService,
@@ -26,6 +27,7 @@ describe('CommitmentOptionService', () => {
                 { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
             ],
         }).compile();
+
         commitmentOptionService = moduleRef.get<CommitmentOptionService>(CommitmentOptionService);
     });
 
@@ -42,26 +44,31 @@ describe('CommitmentOptionService', () => {
             await collection.deleteMany({});
         }
     });
-});
 
-describe('findByIdOrFail', () => {
-    it('should find a commitmentoption using an id or fail', async () => {
-        await new commitmentOptionModel(CommitmentOptionStub().save());
-        const commitmentOption: CommitmentOption = await commitmentOptionService.findByIdOrFail(CommitmentOptionStub().id);
-        expect(commitmentOption.userId).toBe(CommitmentOptionStub().userId);
+    describe('findByIdOrFail', () => {
+        it('should find a commitmentoption using an id or fail', async () => {
+            await new commitmentOptionModel(CommitmentOptionStub()).save();
+            const commitmentOption: CommitmentOption = await commitmentOptionService.findByIdOrFail(CommitmentOptionStub().id);
+            expect(commitmentOption?.id).toBe(CommitmentOptionStub().id);
+        });
+        it('should return CommitmentOptionDoesNotExistError', async () => {
+            await new commitmentOptionModel(CommitmentOptionStub()).save();
+            await expect(commitmentOptionService.findByIdOrFail('O9pbPDY3s5e5XwzgwKZtZTDPvLS1')).rejects.toThrow(
+                CommitmentOptionDoesNotExistError,
+            );
+        });
     });
-    it('should return CommitmentOptionDoesNotExistError', async () => {
-        await new commitmentOptionModel(CommitmentOptionStub()).save();
-        await expect(CommitmentOptionService.findByIdOrFail('O9pbPDY3s5e5XwzgwKZtZTDPvLS1')).rejects.toThrow(CommitmentOptionDoesNotExistError);
-    })
-})
+});
 
 export const CommitmentOptionStub = (): CommitmentOption => {
     return {
-        id: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS1',
-        name: 'CommitmentOption',
-        description: 'CommitmentOption',
+        id: '628cdea92e19fd912f0d520e',
+        type: CrowdActionTypeEnum.FOOD,
+        label: 'Food',
+        description: 'I want to help people with food',
+        points: 10,
+        blocks: [],
         createdAt: new Date(),
         updatedAt: new Date(),
     };
-}
+};
