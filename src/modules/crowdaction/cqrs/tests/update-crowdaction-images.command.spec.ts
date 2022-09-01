@@ -1,3 +1,5 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { Test } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
@@ -83,10 +85,10 @@ describe('UpdateCrowdActionImagesCommand', () => {
 
             await updateCrowdActionImagesCommand.execute({
                 id: crowdActionId.id,
-                card: [{ mimetype: 'image/jpeg', buffer: '', length: 5 }],
-                banner: [{ mimetype: 'image/jpeg', buffer: '', length: 5 }],
+                card: retrieveImage(),
+                banner: retrieveImage(),
             });
-            const documents = await crowdactionModel.find({ id: crowdActionId });
+            const documents = await crowdactionModel.find({ id: crowdActionId.id });
             const crowdAction = documents.map((doc) => CrowdAction.create(doc.toObject({ getters: true })))[0];
             expect(crowdAction.images).toStrictEqual({ banner: 'Upload Successful', card: 'Upload Successful' });
         });
@@ -130,3 +132,17 @@ class MockS3ClientRepository implements IS3ClientRepository {
         });
     }
 }
+
+const retrieveImage = () => {
+    return [
+        {
+            fieldname: 'demo_image',
+            originalname: 'cal.png',
+            mimetype: 'image/png',
+            destination: 'uploads',
+            filename: 'cal',
+            path: path.resolve('./src/modules/crowdaction/cqrs/tests/cal.png'),
+            buffer: fs.readFileSync(path.resolve('./src/modules/crowdaction/cqrs/tests/cal.png')),
+        },
+    ];
+};
