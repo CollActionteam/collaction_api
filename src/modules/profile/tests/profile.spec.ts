@@ -73,7 +73,6 @@ export const ProfileStub = (): Profile => {
     return {
         id: '628cdea92e19fd912f0d520e',
         userId: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',
-        phone: '+4530249838',
         location: {
             name: 'Netherlands',
             code: 'NL',
