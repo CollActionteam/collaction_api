@@ -7,6 +7,7 @@ import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { CrowdActionTypeEnum } from '@domain/crowdaction';
 import { CreateCommitmentOptionCommand } from '@modules/commitmentoption/cqrs/command/create-commitmentoption.command';
 import { CommitmentOptionPersistence, CommitmentOptionRepository, CommitmentOptionSchema } from '@infrastructure/mongo';
+import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
 
 describe('CreateCommitmentOptionCommand', () => {
     let createCommitmentOptionCommand: CreateCommitmentOptionCommand;
@@ -60,5 +61,6 @@ export const CreateCommitmentOptionStub = (): CreateCommitmentOptionDto => {
         label: 'commitment option label',
         description: 'commitment option description',
         points: 10,
+        icon: CommitmentOptionIconEnum.no_beef,
     };
 };
