@@ -5,6 +5,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { ICommitmentOptionRepository, CommitmentOption } from '@domain/commitmentoption';
 import { CommitmentOptionPersistence, CommitmentOptionRepository, CommitmentOptionSchema } from '@infrastructure/mongo';
 import { CrowdActionTypeEnum } from '@domain/crowdaction';
+import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
 import { CommitmentOptionDoesNotExistError } from '../errors/commitmentoption.error';
 import { CommitmentOptionService } from '../service';
 
@@ -68,6 +69,7 @@ export const CommitmentOptionStub = (): CommitmentOption => {
         description: 'I want to help people with food',
         points: 10,
         blocks: [],
+        icon: CommitmentOptionIconEnum.no_beef,
         createdAt: new Date(),
         updatedAt: new Date(),
     };
