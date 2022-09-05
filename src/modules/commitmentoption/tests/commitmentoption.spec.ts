@@ -47,13 +47,13 @@ describe('CommitmentOptionService', () => {
 
     describe('findByIdOrFail', () => {
         it('should find a commitmentoption using an id or fail', async () => {
-            await new commitmentOptionModel(CommitmentOptionStub()).save();
-            const commitmentOption: CommitmentOption = await commitmentOptionService.findByIdOrFail(CommitmentOptionStub().id);
-            expect(commitmentOption?.id).toBe(CommitmentOptionStub().id);
+            const newCommitmentOption = await new commitmentOptionModel(CommitmentOptionStub()).save();
+            const foundCommitmentOption: CommitmentOption = await commitmentOptionService.findByIdOrFail(newCommitmentOption.id);
+            expect(newCommitmentOption.id).toBe(foundCommitmentOption.id);
         });
         it('should return CommitmentOptionDoesNotExistError', async () => {
             await new commitmentOptionModel(CommitmentOptionStub()).save();
-            await expect(commitmentOptionService.findByIdOrFail('O9pbPDY3s5e5XwzgwKZtZTDPvLS1')).rejects.toThrow(
+            await expect(commitmentOptionService.findByIdOrFail('628cdea92e19fd912f0d520e')).rejects.toThrow(
                 CommitmentOptionDoesNotExistError,
             );
         });
