@@ -1,12 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CommitmentOptionService } from '../service';
-import { ICommitmentOptionRepository, CommitmentOption } from '@domain/commitmentoption';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { Connection, connect, Model } from 'mongoose';
-import { CommitmentOptionPersistence, CommitmentOptionRepository, CommitmentOptionSchema } from '@infrastructure/mongo';
 import { getModelToken } from '@nestjs/mongoose';
-import { CommitmentOptionDoesNotExistError } from '../errors/commitmentoption.error';
+import { Test, TestingModule } from '@nestjs/testing';
+import { Connection, connect, Model } from 'mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { ICommitmentOptionRepository, CommitmentOption } from '@domain/commitmentoption';
+import { CommitmentOptionPersistence, CommitmentOptionRepository, CommitmentOptionSchema } from '@infrastructure/mongo';
 import { CrowdActionTypeEnum } from '@domain/crowdaction';
+import { CommitmentOptionDoesNotExistError } from '../errors/commitmentoption.error';
+import { CommitmentOptionService } from '../service';
 
 describe('CommitmentOptionService', () => {
     let commitmentOptionService: CommitmentOptionService;

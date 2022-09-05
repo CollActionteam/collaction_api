@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
-import { CreateCommitmentOptionDto } from '@infrastructure/commitmentoption';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
+import { CreateCommitmentOptionDto } from '@infrastructure/commitmentoption';
 import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { CrowdActionTypeEnum } from '@domain/crowdaction';
 import { CreateCommitmentOptionCommand } from '@modules/commitmentoption/cqrs/command/create-commitmentoption.command';

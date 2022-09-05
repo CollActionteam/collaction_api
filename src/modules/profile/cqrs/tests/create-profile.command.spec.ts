@@ -1,12 +1,12 @@
-import { Test } from "@nestjs/testing";
+import { Test } from '@nestjs/testing';
+import { connect, Connection, Model } from 'mongoose';
+import { getModelToken } from '@nestjs/mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import { CreateProfileDto } from '@infrastructure/profile';
-import { IProfileRepository } from "@domain/profile";
-import { ProfilePersistence, ProfileRepository, ProfileSchema } from "@infrastructure/mongo";
-import { MongoMemoryServer } from "mongodb-memory-server";
-import { connect, Connection, Model } from "mongoose";
-import { getModelToken } from "@nestjs/mongoose";
-import { CreateProfileCommand } from "@modules/profile/cqrs";
-import { CountryMustBeValidError } from "@modules/core";
+import { IProfileRepository } from '@domain/profile';
+import { ProfilePersistence, ProfileRepository, ProfileSchema } from '@infrastructure/mongo';
+import { CreateProfileCommand } from '@modules/profile/cqrs';
+import { CountryMustBeValidError } from '@modules/core';
 
 describe('CreateProfileCommand', () => {
     let createProfileCommand: CreateProfileCommand;
@@ -51,9 +51,7 @@ describe('CreateProfileCommand', () => {
             expect(profileId).not.toBeUndefined();
         });
         it('should throw the CountryMustBeValidError', async () => {
-            await expect(createProfileCommand.execute(CreateProfileStubWithError())).rejects.toThrow(
-                CountryMustBeValidError,
-            );
+            await expect(createProfileCommand.execute(CreateProfileStubWithError())).rejects.toThrow(CountryMustBeValidError);
         });
     });
 });
@@ -64,8 +62,8 @@ export const CreateProfileStub = (): CreateProfileDto => {
         country: 'NL',
         firstName: 'John',
         lastName: 'Doe',
-        bio: 'I am a cool guy'
-    }
+        bio: 'I am a cool guy',
+    };
 };
 
 export const CreateProfileStubWithError = (): CreateProfileDto => {
