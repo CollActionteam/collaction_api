@@ -44,14 +44,17 @@ describe('ProfileService', () => {
         }
     });
 
-    // id is changed by mongo so we can't find it with the stub id
-    // describe('findByIdOrFail', () => {
-    //     it('should find a profile using an id or fail', async () => {
-    //         await (new profileModel(ProfileStub()).save());
-    //         const profile = await profileService.findByIdOrFail(ProfileStub().id);
-    //         expect(profile.userId).toBe(ProfileStub().userId);
-    //     });
-    // });
+    describe('findByIdOrFail', () => {
+        it('should find a profile using an id or fail', async () => {
+            const newProfile = await new profileModel(ProfileStub()).save();
+            const foundProfile = await profileService.findByIdOrFail(newProfile.id);
+            expect(newProfile.userId).toBe(foundProfile.userId);
+        });
+        it('should return ProfileDoesNotExistError', async () => {
+            await new profileModel(ProfileStub()).save();
+            await expect(profileService.findByIdOrFail('628cdea92e19fd912f0d520e')).rejects.toThrow(ProfileDoesNotExistError);
+        });
+    });
 
     describe('findByUserIdOrFail', () => {
         it('should find a profile using a userId or fail', async () => {
