@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProfileService } from '../service';
-import { IProfileRepository, Profile } from '@domain/profile';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Connection, connect, Model } from 'mongoose';
-import { ProfilePersistence, ProfileRepository, ProfileSchema } from '@infrastructure/mongo';
 import { getModelToken } from '@nestjs/mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { IProfileRepository, Profile } from '@domain/profile';
+import { ProfilePersistence, ProfileRepository, ProfileSchema } from '@infrastructure/mongo';
+import { ProfileService } from '../service';
 import { ProfileDoesNotExistError } from '../errors/profile.error';
 
 describe('ProfileService', () => {

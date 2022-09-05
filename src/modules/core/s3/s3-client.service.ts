@@ -9,7 +9,6 @@ const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png'];
 
 @Injectable()
 export class S3ClientService {
-
     constructor(private readonly s3Client: IS3ClientRepository, private readonly configService: ConfigService) {}
 
     async upload(file: any, id: string, type: UploadImageTypeEnum): Promise<string> {

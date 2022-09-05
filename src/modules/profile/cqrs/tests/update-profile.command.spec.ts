@@ -1,18 +1,18 @@
 import { Test } from '@nestjs/testing';
+import { connect, Connection, Model } from 'mongoose';
+import { getModelToken } from '@nestjs/mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import { UpdateProfileDto } from '@infrastructure/profile';
 import { IProfileRepository } from '@domain/profile';
 import { ProfilePersistence, ProfileRepository, ProfileSchema } from '@infrastructure/mongo';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { connect, Connection, Model } from 'mongoose';
-import { getModelToken } from '@nestjs/mongoose';
 import { CreateProfileCommand, UpdateProfileCommand } from '@modules/profile/cqrs';
-import { CreateProfileStub } from './create-profile.command.spec';
 import { CountryMustBeValidError } from '@modules/core';
+import { CreateProfileStub } from './create-profile.command.spec';
 
 describe('CreateProfileCommand', () => {
     let updateProfileCommand: UpdateProfileCommand;
     let createProfileCommand: CreateProfileCommand;
-    
+
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
     let profileModel: Model<ProfilePersistence>;
@@ -54,7 +54,7 @@ describe('CreateProfileCommand', () => {
         it('should create a new profile and then update it', async () => {
             const profileId = await createProfileCommand.execute(CreateProfileStub());
             expect(profileId).not.toBeUndefined();
-            
+
             const updatedProfileId = await updateProfileCommand.execute(UpdateProfileCommandStub());
             expect(updatedProfileId).not.toBeUndefined();
         });
@@ -62,9 +62,7 @@ describe('CreateProfileCommand', () => {
             const profileId = await createProfileCommand.execute(CreateProfileStub());
             expect(profileId).not.toBeUndefined();
 
-            await expect(updateProfileCommand.execute(UpdateProfileCommandStubWithError())).rejects.toThrow(
-                CountryMustBeValidError,
-            );
+            await expect(updateProfileCommand.execute(UpdateProfileCommandStubWithError())).rejects.toThrow(CountryMustBeValidError);
         });
     });
 });
