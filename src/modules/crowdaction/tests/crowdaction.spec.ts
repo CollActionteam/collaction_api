@@ -54,13 +54,13 @@ describe('CrowdActionService', () => {
 
     describe('findByIdOrFail', () => {
         it('should find a crowdAction using an id or fail', async () => {
-            await new crowdActionModel(CrowdActionStub()).save();
-            const crowdAction: CrowdAction = await crowdActionService.findByIdOrFail(CrowdActionStub().id);
-            expect(crowdAction?.id).toBe(CrowdActionStub().id);
+            const newCrowdAction = await new crowdActionModel(CrowdActionStub()).save();
+            const foundCrowdAction: CrowdAction = await crowdActionService.findByIdOrFail(newCrowdAction.id);
+            expect(newCrowdAction.id).toBe(foundCrowdAction.id);
         });
         it('should return CrowdActionDoesNotExist', async () => {
             await new crowdActionModel(CrowdActionStub()).save();
-            await expect(crowdActionService.findByIdOrFail('O9pbPDY3s5e5XwzgwKZtZTDPvLS1')).rejects.toThrow(CrowdActionDoesNotExist);
+            await expect(crowdActionService.findByIdOrFail('628cdea92e19fd912f0d520e')).rejects.toThrow(CrowdActionDoesNotExist);
         });
     });
 });
