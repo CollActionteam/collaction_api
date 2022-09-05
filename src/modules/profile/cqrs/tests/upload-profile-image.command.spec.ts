@@ -1,17 +1,17 @@
 import { Test } from '@nestjs/testing';
-import { IProfileRepository, Profile } from '@domain/profile';
-import { ProfilePersistence, ProfileRepository, ProfileSchema } from '@infrastructure/mongo';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { ProfilePersistence, ProfileRepository, ProfileSchema } from '@infrastructure/mongo';
+import { IProfileRepository, Profile } from '@domain/profile';
 import { CreateProfileCommand, UploadProfileImageCommand, UploadProfileImageCommandArgs } from '@modules/profile/cqrs';
-import { CreateProfileStub } from './create-profile.command.spec';
-import { UploadImageTypeEnum } from '@modules/core/s3/enum';
-import { S3ClientService } from '@modules/core/s3';
-import { ConfigService } from '@nestjs/config';
-import { Injectable } from '@nestjs/common';
-import { IS3ClientRepository } from '@core/s3-client.interface';
 import { FileTypeInvalidError } from '@modules/core';
+import { S3ClientService } from '@modules/core/s3';
+import { UploadImageTypeEnum } from '@modules/core/s3/enum';
+import { IS3ClientRepository } from '@core/s3-client.interface';
+import { CreateProfileStub } from './create-profile.command.spec';
 
 describe('CreateProfileCommand', () => {
     let uploadProfileImageCommand: UploadProfileImageCommand;
@@ -38,7 +38,6 @@ describe('CreateProfileCommand', () => {
                     provide: S3ClientService,
                     inject: [ConfigService],
                     useFactory: (configService: ConfigService): S3ClientService => {
-
                         const mockS3Client = new MockS3ClientRepository();
 
                         return new S3ClientService(mockS3Client, configService);
@@ -105,7 +104,7 @@ export const UploadProfileImageCommandArgsStubWithError = (): UploadProfileImage
 @Injectable()
 class MockS3ClientRepository implements IS3ClientRepository {
     async upload(params: any): Promise<string> {
-        return new Promise<string>(function(resolve) {
+        return new Promise<string>(function (resolve) {
             console.log(params);
             setTimeout(function () {
                 resolve('Upload Successful');

@@ -1,5 +1,7 @@
+import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CrowdActionService } from '../service';
+import { Connection, connect, Model } from 'mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import {
     CrowdAction,
     ICrowdActionRepository,
@@ -8,11 +10,9 @@ import {
     CrowdActionStatusEnum,
     CrowdActionJoinStatusEnum,
 } from '@domain/crowdaction';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { Connection, connect, Model } from 'mongoose';
 import { CrowdActionPersistence, CrowdActionRepository, CrowdActionSchema } from '@infrastructure/mongo';
-import { getModelToken } from '@nestjs/mongoose';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
+import { CrowdActionService } from '../service';
 import { CrowdActionDoesNotExist } from '../errors';
 
 describe('CrowdActionService', () => {
