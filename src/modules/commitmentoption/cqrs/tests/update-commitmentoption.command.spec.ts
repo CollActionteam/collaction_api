@@ -55,7 +55,7 @@ describe('CreateCommitmentOptionCommand', () => {
             const commitmentOptionId = await createCommitmentOptionCommand.execute(CreateCommitmentOptionStub());
             expect(commitmentOptionId).not.toBeUndefined();
 
-            const updatedCommitmentOptionId = await updateCommitmentOptionCommand.execute(UpdateCommitmentOptionCommandStub()); 
+            const updatedCommitmentOptionId = await updateCommitmentOptionCommand.execute(UpdateCommitmentOptionCommandStub());
             expect(updatedCommitmentOptionId).not.toBeUndefined();
         });
     });
@@ -66,7 +66,7 @@ export const UpdateCommitmentOptionCommandStub = (): UpdateCommitmentOptionDto =
         type: CrowdActionTypeEnum.WASTE,
         icon: CommitmentOptionIconEnum.no_beef,
         label: 'label',
-        description: "test",
+        description: 'test',
         points: 10,
     };
 };
