@@ -10,5 +10,8 @@ export class ContactPersistence implements Omit<IContact, 'id'> {
 
     @Prop({ required: true })
     body: string;
+
+    @Prop({ required: true })
+    email: string;
 }
 export const ContactSchema = SchemaFactory.createForClass(ContactPersistence);
