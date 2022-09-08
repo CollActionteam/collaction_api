@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { SchedulerRegistry } from '@nestjs/schedule';
+import { CronJob } from 'cron';
 import { Logger } from '@common/logger';
 import { ICQRSHandler } from '@common/cqrs';
 import { ListCrowdActionsQuery, UpdateCrowdActionStatusesCommand } from '@modules/crowdaction';
@@ -7,28 +8,32 @@ import { CrowdAction, CrowdActionStatusEnum } from '@domain/crowdaction';
 
 const FILTER = { status: { in: [CrowdActionStatusEnum.STARTED, CrowdActionStatusEnum.WAITING] } };
 @Injectable()
-export class UpdateCrowdactionStatusTask {
-    constructor(private readonly CQRSHandler: ICQRSHandler) {}
+export class SchedulerService {
+    constructor(private readonly CQRSHandler: ICQRSHandler, private readonly schedulerRegistry: SchedulerRegistry) {}
 
-    @Cron(CronExpression.EVERY_HOUR)
-    async handleCron() {
+    async scheduleTasks() {
         const crowdActionsList = await this.CQRSHandler.fetch(ListCrowdActionsQuery, { filter: FILTER });
 
         let pageInfo = crowdActionsList.pageInfo;
         let items = crowdActionsList.items;
         let changedCrowdActions = 0;
         for (let page = 1; page <= pageInfo.totalPages; page++) {
-            for (const crowdAction of items) {
-                const { id, status, joinStatus }: CrowdAction = CrowdAction.create(crowdAction).updateStatuses();
-                if (status !== crowdAction.status || joinStatus !== crowdAction.joinStatus) {
-                    if (status === CrowdActionStatusEnum.ENDED) {
-                        // TODO: Award Badges
-                        // this.CQRSHandler.execute(AwardBadgesForCrowdActionCommand, { crowdAction });
+            for (const crowdActionInterface of items) {
+                const crowdAction: CrowdAction = CrowdAction.create(crowdActionInterface).updateStatuses();
+                const job = new CronJob(crowdAction.endAt, () => {
+                    if (crowdAction.status !== crowdActionInterface.status || crowdAction.joinStatus !== crowdActionInterface.joinStatus) {
+                        if (crowdAction.status === CrowdActionStatusEnum.ENDED) {
+                            // TODO: Award Badges
+                            // this.cqrsHandler.execute(AwardBadgesForCrowdActionCommand, { crowdAction });
+                        }
                     }
 
                     changedCrowdActions++;
-                    this.CQRSHandler.execute(UpdateCrowdActionStatusesCommand, { id, status, joinStatus });
-                }
+                    this.CQRSHandler.execute(UpdateCrowdActionStatusesCommand, crowdAction);
+                });
+
+                this.schedulerRegistry.addCronJob(crowdActionInterface.id, job);
+                job.start();
             }
 
             if (pageInfo.totalPages > pageInfo.page) {
