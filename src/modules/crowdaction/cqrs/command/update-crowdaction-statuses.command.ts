@@ -1,7 +1,9 @@
+import { SchedulerRegistry } from '@nestjs/schedule';
 import { Injectable } from '@nestjs/common';
+import { CronTime } from 'cron';
 import { ICommand } from '@common/cqrs';
 import { Identifiable } from '@domain/core';
-import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
+import { CrowdAction, CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
 
 export interface UpdateStatusesArgs {
     readonly id: string;
@@ -11,10 +13,18 @@ export interface UpdateStatusesArgs {
 
 @Injectable()
 export class UpdateCrowdActionStatusesCommand implements ICommand {
-    constructor(private readonly crowdActionRepository: ICrowdActionRepository) {}
+    constructor(private readonly crowdActionRepository: ICrowdActionRepository, private readonly schedulerRegistry: SchedulerRegistry) {}
 
-    async execute({ id, status, joinStatus }: UpdateStatusesArgs): Promise<Identifiable> {
-        await this.crowdActionRepository.patch(id, { status, joinStatus });
+    async execute(crowdAction: CrowdAction): Promise<Identifiable> {
+        const id = crowdAction.id;
+        const status = crowdAction.status;
+        const joinStatus = crowdAction.joinStatus;
+
+        await this.crowdActionRepository.patch(crowdAction.id, { status, joinStatus });
+
+        const job = this.schedulerRegistry.getCronJob(crowdAction.id);
+        job.setTime(new CronTime(crowdAction.endAt));
+
         return { id };
     }
 }
