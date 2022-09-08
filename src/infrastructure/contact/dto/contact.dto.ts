@@ -6,4 +6,7 @@ export class ContactDto {
 
     @ApiProperty({ name: 'body', required: true })
     readonly body: string;
+
+    @ApiProperty({ name: 'email', required: true })
+    readonly email: string;
 }
