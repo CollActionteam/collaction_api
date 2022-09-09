@@ -9,10 +9,18 @@ import { AuthService } from '@modules/auth/service';
 import { ParticipationController } from './participations';
 import { CommitmentOptionController } from './commitmentoptions';
 import { AuthenticationController } from './auth';
+import { ContactController } from './contact';
 
 @Module({
     imports: [InfrastructureModule, CQRSModule],
-    controllers: [AuthenticationController, CrowdActionController, ProfileController, ParticipationController, CommitmentOptionController],
+    controllers: [
+        AuthenticationController,
+        CrowdActionController,
+        ProfileController,
+        ParticipationController,
+        CommitmentOptionController,
+        ContactController,
+    ],
     providers: [CrowdActionService, ProfileService, AuthService],
     exports: [CrowdActionService, ProfileService, AuthService],
 })
