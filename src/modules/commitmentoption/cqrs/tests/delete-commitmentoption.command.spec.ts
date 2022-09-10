@@ -51,10 +51,10 @@ describe('DeleteCommitmentOptionCommand', () => {
         it('should delete a commitmentoption then throw the CommitmentOptionDoesNotExistError', async () => {
             await deleteCommitmentOptionCommand.execute(DeleteCommitmentOptionStub());
             await expect(deleteCommitmentOptionCommand.execute(DeleteCommitmentOptionStub())).rejects.toThrow();
-        })
+        });
     });
 });
 
 export const DeleteCommitmentOptionStub = (): any => {
     return '5f9f1c1b9b9b9b9b9b9b9b9b';
-}
+};

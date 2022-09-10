@@ -2,14 +2,13 @@ import { Test } from '@nestjs/testing';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { CommitmentOptionPersistence, CommitmentOptionRepository, CommitmentOptionSchema } from '@infrastructure/mongo';
 import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
+import { CrowdActionTypeEnum } from '@domain/crowdaction';
+import { UpdateCommitmentOptionDto } from '@infrastructure/commitmentoption';
+import { ICommitmentOptionRepository } from '@domain/commitmentoption';
+import { CommitmentOptionPersistence, CommitmentOptionRepository, CommitmentOptionSchema } from '@infrastructure/mongo';
 import { CreateCommitmentOptionCommand, UpdateCommitmentOptionCommand } from '../command';
 import { CreateCommitmentOptionStub } from './create-commitmentoption.command.spec';
-import { ICommitmentOptionRepository } from '@domain/commitmentoption';
-import { UpdateCommitmentOptionDto } from '@infrastructure/commitmentoption';
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
-
 
 describe('CreateCommitmentOptionCommand', () => {
     let updateCommitmentOptionCommand: UpdateCommitmentOptionCommand;
