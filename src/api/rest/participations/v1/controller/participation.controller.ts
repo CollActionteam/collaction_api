@@ -41,10 +41,10 @@ export class ParticipationController {
         type: PaginatedParticipationResponse,
     })
     async getAllParticipations(
-        @Query() { page, pageSize }: PaginationDto,
+        @Query() pagination: PaginationDto,
         @Query('crowdActionId') crowdActionId: string,
     ): Promise<IPaginatedList<IParticipation>> {
-        return this.cqrsHandler.fetch(ListParticipationsForCrowdActionQuery, { page, pageSize, filter: { crowdActionId } });
+        return this.cqrsHandler.fetch(ListParticipationsForCrowdActionQuery, { ...pagination, filter: { crowdActionId } });
     }
 
     @Post()
