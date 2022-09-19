@@ -2,12 +2,16 @@ import { Test } from '@nestjs/testing';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { DeleteCommitmentOptionCommand } from '@modules/commitmentoption/cqrs';
-import { ICommitmentOptionRepository } from '@domain/commitmentoption';
+import { CreateCommitmentOptionDto } from '@infrastructure/commitmentoption';
+import { CrowdActionTypeEnum } from '@domain/crowdaction';
+import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
+import { CreateCommitmentOptionCommand, DeleteCommitmentOptionCommand } from '@modules/commitmentoption/cqrs';
+import { CommitmentOption, ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { CommitmentOptionPersistence, CommitmentOptionRepository, CommitmentOptionSchema } from '@infrastructure/mongo';
 
 describe('DeleteCommitmentOptionCommand', () => {
     let deleteCommitmentOptionCommand: DeleteCommitmentOptionCommand;
+    let createCommitmentOptionCommand: CreateCommitmentOptionCommand;
 
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
@@ -22,11 +26,12 @@ describe('DeleteCommitmentOptionCommand', () => {
         const moduleRef = await Test.createTestingModule({
             providers: [
                 DeleteCommitmentOptionCommand,
+                CreateCommitmentOptionCommand,
                 { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
                 { provide: getModelToken(CommitmentOptionPersistence.name), useValue: commitmentOptionModel },
             ],
         }).compile();
-
+        createCommitmentOptionCommand = moduleRef.get<CreateCommitmentOptionCommand>(CreateCommitmentOptionCommand);
         deleteCommitmentOptionCommand = moduleRef.get<DeleteCommitmentOptionCommand>(DeleteCommitmentOptionCommand);
     });
 
@@ -45,16 +50,28 @@ describe('DeleteCommitmentOptionCommand', () => {
     });
     describe('deleteCommitmentOption', () => {
         it('should delete a commitmentoption', async () => {
-            const commitmentOptionId = await deleteCommitmentOptionCommand.execute(DeleteCommitmentOptionStub());
+            const commitmentOptionId = await createCommitmentOptionCommand.execute(CreateCommitmentOptionStub());
             expect(commitmentOptionId).not.toBeUndefined();
-        });
-        it('should delete a commitmentoption then throw the CommitmentOptionDoesNotExistError', async () => {
-            await deleteCommitmentOptionCommand.execute(DeleteCommitmentOptionStub());
-            await expect(deleteCommitmentOptionCommand.execute(DeleteCommitmentOptionStub())).rejects.toThrow();
+
+            const createdDocuments = await commitmentOptionModel.find({ commitmentOptionId });
+            const commitmentOptions = createdDocuments.map((doc) => CommitmentOption.create(doc.toObject({ getters: true })));
+            expect(commitmentOptions.length === 1);
+
+            await deleteCommitmentOptionCommand.execute(commitmentOptionId.id);
+
+            const deletedDocuments = await commitmentOptionModel.find({ commitmentOptionId });
+            const noCommitmentOptions = deletedDocuments.map((doc) => CommitmentOption.create(doc.toObject({ getters: true })));
+            expect(noCommitmentOptions.length === 0);
         });
     });
 });
 
-export const DeleteCommitmentOptionStub = (): any => {
-    return '5f9f1c1b9b9b9b9b9b9b9b9b';
+export const CreateCommitmentOptionStub = (): CreateCommitmentOptionDto => {
+    return {
+        type: CrowdActionTypeEnum.FOOD,
+        label: 'commitment option label',
+        description: 'commitment option description',
+        points: 10,
+        icon: CommitmentOptionIconEnum.no_beef,
+    };
 };
