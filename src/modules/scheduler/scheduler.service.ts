@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { CronJob } from 'cron';
+import { CronJob, CronTime } from 'cron';
 import { Logger } from '@common/logger';
 import { ICQRSHandler } from '@common/cqrs';
 import { ListCrowdActionsQuery, UpdateCrowdActionStatusesCommand } from '@modules/crowdaction';
-import { CrowdAction, CrowdActionStatusEnum } from '@domain/crowdaction';
+import { CrowdAction, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
 
 const FILTER = { status: { in: [CrowdActionStatusEnum.STARTED, CrowdActionStatusEnum.WAITING] } };
 @Injectable()
@@ -18,22 +18,31 @@ export class SchedulerService {
         let items = crowdActionsList.items;
         let changedCrowdActions = 0;
         for (let page = 1; page <= pageInfo.totalPages; page++) {
-            for (const crowdActionInterface of items) {
-                const crowdAction: CrowdAction = CrowdAction.create(crowdActionInterface).updateStatuses();
-                const job = new CronJob(crowdAction.endAt, () => {
-                    if (crowdAction.status !== crowdActionInterface.status || crowdAction.joinStatus !== crowdActionInterface.joinStatus) {
-                        if (crowdAction.status === CrowdActionStatusEnum.ENDED) {
+            for (const crowdAction of items) {
+                const { id, endAt, joinEndAt }: CrowdAction = CrowdAction.create(crowdAction).updateStatuses();
+                // Check if we have passed the joinEndAt on server start
+                const date = joinEndAt < new Date() ? joinEndAt : endAt;
+                const crowdActionJob = new CronJob(date, () => {
+                    const { status, joinStatus }: CrowdAction = CrowdAction.create(crowdAction).updateStatuses();
+
+                    if (joinStatus !== crowdAction.joinStatus) {
+                        if (joinStatus === CrowdActionJoinStatusEnum.CLOSED) {
+                            // After joinEndAt restart the same Cron with the endAt date instead
+                            crowdActionJob.setTime(new CronTime(endAt));
+                        }
+                    } else if (status !== crowdAction.status) {
+                        if (status === CrowdActionStatusEnum.ENDED) {
                             // TODO: Award Badges
                             // this.cqrsHandler.execute(AwardBadgesForCrowdActionCommand, { crowdAction });
                         }
                     }
 
                     changedCrowdActions++;
-                    this.CQRSHandler.execute(UpdateCrowdActionStatusesCommand, crowdAction);
+                    this.CQRSHandler.execute(UpdateCrowdActionStatusesCommand, { id, status, joinStatus });
                 });
 
-                this.schedulerRegistry.addCronJob(crowdActionInterface.id, job);
-                job.start();
+                this.schedulerRegistry.addCronJob(id, crowdActionJob);
+                crowdActionJob.start();
             }
 
             if (pageInfo.totalPages > pageInfo.page) {
