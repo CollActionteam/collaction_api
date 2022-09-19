@@ -2,12 +2,11 @@ import { Test } from '@nestjs/testing';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
 import { CrowdActionTypeEnum } from '@domain/crowdaction';
-import { UpdateCommitmentOptionDto } from '@infrastructure/commitmentoption';
 import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { CommitmentOptionPersistence, CommitmentOptionRepository, CommitmentOptionSchema } from '@infrastructure/mongo';
-import { CreateCommitmentOptionCommand, UpdateCommitmentOptionCommand } from '../command';
+import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
+import { CreateCommitmentOptionCommand, IUpdateCommitmentOptionArgs, UpdateCommitmentOptionCommand } from '../command';
 import { CreateCommitmentOptionStub } from './create-commitmentoption.command.spec';
 
 describe('CreateCommitmentOptionCommand', () => {
@@ -61,12 +60,12 @@ describe('CreateCommitmentOptionCommand', () => {
     });
 });
 
-export const UpdateCommitmentOptionCommandStub = (): UpdateCommitmentOptionDto => {
+export const UpdateCommitmentOptionCommandStub = (): IUpdateCommitmentOptionArgs => {
     return {
-        type: CrowdActionTypeEnum.WASTE,
-        icon: CommitmentOptionIconEnum.no_beef,
-        label: 'label',
-        description: 'test',
-        points: 10,
+        id: '5f9f1b9f9b9b9b9b9b9b9b9b',
+        updateDto: {
+            type: CrowdActionTypeEnum.FOOD,
+            icon: CommitmentOptionIconEnum.no_beef,
+        },
     };
 };
