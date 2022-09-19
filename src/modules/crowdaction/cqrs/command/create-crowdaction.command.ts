@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { CronJob } from 'cron';
+import { CronJob, CronTime } from 'cron';
 import { ICQRSHandler, ICommand } from '@common/cqrs';
 import { CrowdAction, CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
 import {
@@ -66,20 +66,25 @@ export class CreateCrowdActionCommand implements ICommand {
         });
 
         if (crowdAction) {
-            const job = new CronJob(crowdAction.endAt, () => {
-                const { status, joinStatus }: CrowdAction = crowdAction.updateStatuses();
-                if (status !== crowdAction.status || joinStatus !== crowdAction.joinStatus) {
-                    if (crowdAction.status === CrowdActionStatusEnum.ENDED) {
+            const crowdActionJob = new CronJob(crowdAction.joinEndAt, () => {
+                const { id, status, joinStatus, endAt }: CrowdAction = crowdAction.updateStatuses();
+                if (joinStatus !== crowdAction.joinStatus) {
+                    if (joinStatus === CrowdActionJoinStatusEnum.CLOSED) {
+                        // After joinEndAt restart the same Cron with the endAt date instead
+                        crowdActionJob.setTime(new CronTime(endAt));
+                    }
+                } else if (status !== crowdAction.status) {
+                    if (status === CrowdActionStatusEnum.ENDED) {
                         // TODO: Award Badges
                         // this.cqrsHandler.execute(AwardBadgesForCrowdActionCommand, { crowdAction });
                     }
                 }
 
-                this.CQRSHandler.execute(UpdateCrowdActionStatusesCommand, crowdAction);
+                this.CQRSHandler.execute(UpdateCrowdActionStatusesCommand, { id, status, joinStatus });
             });
 
-            this.schedulerRegistry.addCronJob(crowdAction.id, job);
-            job.start();
+            this.schedulerRegistry.addCronJob(crowdAction.id, crowdActionJob);
+            crowdActionJob.start();
         }
 
         return crowdAction;
