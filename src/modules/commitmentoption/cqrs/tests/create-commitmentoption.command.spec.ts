@@ -19,7 +19,6 @@ describe('CreateCommitmentOptionCommand', () => {
         mongod = await MongoMemoryServer.create();
         const uri = mongod.getUri();
         mongoConnection = (await connect(uri)).connection;
-        mongoConnection = (await connect(uri)).connection;
         commitmentOptionModel = mongoConnection.model(CommitmentOptionPersistence.name, CommitmentOptionSchema);
 
         const moduleRef = await Test.createTestingModule({
