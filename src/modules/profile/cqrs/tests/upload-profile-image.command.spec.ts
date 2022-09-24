@@ -66,17 +66,17 @@ describe('CreateProfileCommand', () => {
 
     describe('uploadProfileImage', () => {
         it('should create a new profile and then upload a string to be the new image', async () => {
-            const profileId = await createProfileCommand.execute(CreateProfileStub());
-            expect(profileId).not.toBeUndefined();
+            const profile = await createProfileCommand.execute(CreateProfileStub());
+            expect(profile).toBeDefined();
 
             await uploadProfileImageCommand.execute(UploadProfileImageCommandArgsStub());
             const documents = await profileModel.find({ userId: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2' }, null, { skip: 0, limit: 1 });
-            const profile = documents.map((doc) => Profile.create(doc.toObject({ getters: true })))[0];
-            expect(profile.avatar).toBe('Upload Successful');
+            const createdProfile = documents.map((doc) => Profile.create(doc.toObject({ getters: true })))[0];
+            expect(createdProfile.avatar).toBe('Upload Successful');
         });
         it('should create a new profile and then fail to upload due to file type', async () => {
-            const profileId = await createProfileCommand.execute(CreateProfileStub());
-            expect(profileId).not.toBeUndefined();
+            const profile = await createProfileCommand.execute(CreateProfileStub());
+            expect(profile).toBeDefined();
 
             await expect(uploadProfileImageCommand.execute(UploadProfileImageCommandArgsStubWithError())).rejects.toThrow(
                 FileTypeInvalidError,
@@ -103,9 +103,8 @@ export const UploadProfileImageCommandArgsStubWithError = (): UploadProfileImage
 
 @Injectable()
 class MockS3ClientRepository implements IS3ClientRepository {
-    async upload(params: any): Promise<string> {
+    async upload(): Promise<string> {
         return new Promise<string>(function (resolve) {
-            console.log(params);
             setTimeout(function () {
                 resolve('Upload Successful');
             }, 1000);

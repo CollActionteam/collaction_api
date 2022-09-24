@@ -47,8 +47,8 @@ describe('CreateProfileCommand', () => {
 
     describe('createProfile', () => {
         it('should create a new profile', async () => {
-            const profileId = await createProfileCommand.execute(CreateProfileStub());
-            expect(profileId).not.toBeUndefined();
+            const profile = await createProfileCommand.execute(CreateProfileStub());
+            expect(profile).toBeDefined();
         });
         it('should throw the CountryMustBeValidError', async () => {
             await expect(createProfileCommand.execute(CreateProfileStubWithError())).rejects.toThrow(CountryMustBeValidError);
