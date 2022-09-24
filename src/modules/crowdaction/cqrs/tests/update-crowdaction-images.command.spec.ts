@@ -123,9 +123,8 @@ const CreateCrowdActionStub = (): any => {
 
 @Injectable()
 class MockS3ClientRepository implements IS3ClientRepository {
-    async upload(params: any): Promise<string> {
+    async upload(): Promise<string> {
         return new Promise<string>(function (resolve) {
-            console.log(params);
             setTimeout(function () {
                 resolve('Upload Successful');
             }, 1000);
