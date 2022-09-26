@@ -66,8 +66,10 @@ export class CreateCrowdActionCommand implements ICommand {
         });
 
         if (crowdAction) {
-            const crowdActionJob = new CronJob(crowdAction.joinEndAt, () => {
-                const { id, status, joinStatus, endAt }: CrowdAction = crowdAction.updateStatuses();
+            const date =
+                crowdAction.startAt > now ? crowdAction.startAt : crowdAction.joinEndAt > now ? crowdAction.joinEndAt : crowdAction.endAt;
+            const crowdActionJob = new CronJob(date, () => {
+                const { id, status, joinStatus, joinEndAt, endAt }: CrowdAction = crowdAction.updateStatuses();
                 if (joinStatus !== crowdAction.joinStatus) {
                     if (joinStatus === CrowdActionJoinStatusEnum.CLOSED) {
                         // After joinEndAt restart the same Cron with the endAt date instead
@@ -77,6 +79,8 @@ export class CreateCrowdActionCommand implements ICommand {
                     if (status === CrowdActionStatusEnum.ENDED) {
                         // TODO: Award Badges
                         // this.cqrsHandler.execute(AwardBadgesForCrowdActionCommand, { crowdAction });
+                    } else if (status === CrowdActionStatusEnum.STARTED) {
+                        crowdActionJob.setTime(new CronTime(joinEndAt));
                     }
                 }
 
