@@ -20,7 +20,7 @@ export class SchedulerService {
         for (let page = 1; page <= pageInfo.totalPages; page++) {
             for (const crowdAction of items) {
                 const { id, endAt, joinEndAt, startAt }: CrowdAction = CrowdAction.create(crowdAction).updateStatuses();
-                // Go through the different dates until we find one that is after now. 
+                // Go through the different dates until we find one that is after now.
                 const now = new Date();
                 const date = startAt > now ? startAt : joinEndAt > now ? joinEndAt : endAt;
                 const crowdActionJob = new CronJob(date, () => {
