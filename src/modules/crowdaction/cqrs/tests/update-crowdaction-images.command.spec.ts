@@ -80,17 +80,17 @@ describe('UpdateCrowdActionImagesCommand', () => {
 
     describe('updateCrowdActionImages', () => {
         it('should create a new crowdAction and update images', async () => {
-            const crowdActionId = await createCrowdActionCommand.execute(CreateCrowdActionStub());
-            expect(crowdActionId).not.toBeUndefined();
+            const crowdAction = await createCrowdActionCommand.execute(CreateCrowdActionStub());
+            expect(crowdAction).toBeDefined();
 
             await updateCrowdActionImagesCommand.execute({
-                id: crowdActionId.id,
+                id: crowdAction.id,
                 card: retrieveImage(),
                 banner: retrieveImage(),
             });
-            const documents = await crowdactionModel.find({ id: crowdActionId.id });
-            const crowdAction = documents.map((doc) => CrowdAction.create(doc.toObject({ getters: true })))[0];
-            expect(crowdAction.images).toStrictEqual({ banner: 'Upload Successful', card: 'Upload Successful' });
+            const documents = await crowdactionModel.find({ id: crowdAction.id });
+            const createdCrowdAction = documents.map((doc) => CrowdAction.create(doc.toObject({ getters: true })))[0];
+            expect(createdCrowdAction.images).toStrictEqual({ banner: 'Upload Successful', card: 'Upload Successful' });
         });
     });
 });

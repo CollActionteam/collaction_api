@@ -14,6 +14,5 @@ export class CrowdActionService {
         }
 
         return crowdAction;
-        return this.crowdActionRepository.findOne({ id });
     }
 }
