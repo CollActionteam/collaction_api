@@ -19,9 +19,10 @@ export class SchedulerService {
         let changedCrowdActions = 0;
         for (let page = 1; page <= pageInfo.totalPages; page++) {
             for (const crowdAction of items) {
-                const { id, endAt, joinEndAt }: CrowdAction = CrowdAction.create(crowdAction).updateStatuses();
-                // Check if we have passed the joinEndAt on server start
-                const date = joinEndAt < new Date() ? joinEndAt : endAt;
+                const { id, endAt, joinEndAt, startAt }: CrowdAction = CrowdAction.create(crowdAction).updateStatuses();
+                // Go through the different dates until we find one that is after now. 
+                const now = new Date();
+                const date = startAt > now ? startAt : joinEndAt > now ? joinEndAt : endAt;
                 const crowdActionJob = new CronJob(date, () => {
                     const { status, joinStatus }: CrowdAction = CrowdAction.create(crowdAction).updateStatuses();
 
@@ -34,6 +35,8 @@ export class SchedulerService {
                         if (status === CrowdActionStatusEnum.ENDED) {
                             // TODO: Award Badges
                             // this.cqrsHandler.execute(AwardBadgesForCrowdActionCommand, { crowdAction });
+                        } else if (status === CrowdActionStatusEnum.STARTED) {
+                            crowdActionJob.setTime(new CronTime(joinEndAt));
                         }
                     }
 
