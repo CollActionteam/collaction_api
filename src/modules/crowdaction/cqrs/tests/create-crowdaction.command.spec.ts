@@ -69,8 +69,8 @@ describe('CreateCrowdActionCommand', () => {
 
     describe('createCrowdAction', () => {
         it('should create a new crowdAction', async () => {
-            const crowdActionId = await createCrowdActionCommand.execute(CreateCrowdActionStub());
-            expect(crowdActionId).not.toBeUndefined();
+            const crowdAction = await createCrowdActionCommand.execute(CreateCrowdActionStub());
+            expect(crowdAction).toBeDefined();
         });
         it('should throw the CrowdActionMustBeInTheFutureError', async () => {
             const stub = CreateCrowdActionStub();

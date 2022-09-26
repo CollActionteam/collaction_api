@@ -71,15 +71,15 @@ describe('UpdateCrowdActionStatusesCommand', () => {
 
     describe('updateCrowdActionStatuses', () => {
         it('should create a new crowdAction and then update its statuses', async () => {
-            const createdCrowdActionId = await createCrowdActionCommand.execute(CreateCrowdActionStub());
-            expect(createdCrowdActionId).not.toBeUndefined();
+            const createdCrowdAction = await createCrowdActionCommand.execute(CreateCrowdActionStub());
+            expect(createdCrowdAction).toBeDefined();
 
-            const updatedCrowdActionId = await updateCrowdActionStatusesCommand.execute({
-                id: createdCrowdActionId.id,
+            const updatedCrowdAction = await updateCrowdActionStatusesCommand.execute({
+                id: createdCrowdAction.id,
                 status: CrowdActionStatusEnum.WAITING,
                 joinStatus: CrowdActionJoinStatusEnum.CLOSED,
             });
-            expect(updatedCrowdActionId).not.toBeUndefined();
+            expect(updatedCrowdAction).toBeDefined();
         });
     });
 });
