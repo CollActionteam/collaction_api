@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import { CrowdAction, ICrowdActionRepository, CrowdActionTypeEnum, CrowdActionCategoryEnum } from '@domain/crowdaction';
 import { CreateCrowdActionCommand, UpdateCrowdActionImagesCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
@@ -45,6 +46,7 @@ describe('UpdateCrowdActionImagesCommand', () => {
                 CreateCrowdActionCommand,
                 GetCommitmentOptionsByType,
                 ConfigService,
+                SchedulerRegistry,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdactionModel },
