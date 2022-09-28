@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { getModelToken } from '@nestjs/mongoose';
 import { Connection, Model, connect } from 'mongoose';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import {
     CrowdActionPersistence,
     CrowdActionSchema,
@@ -44,6 +45,7 @@ describe('UpdateCrowdActionStatusesCommand', () => {
                 UpdateCrowdActionStatusesCommand,
                 CreateCrowdActionCommand,
                 GetCommitmentOptionsByType,
+                SchedulerRegistry,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdactionModel },
