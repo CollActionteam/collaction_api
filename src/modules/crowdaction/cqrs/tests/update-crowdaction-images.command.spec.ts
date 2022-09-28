@@ -23,6 +23,7 @@ import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 import { S3ClientService } from '@modules/core/s3';
 import { IS3ClientRepository } from '@core/s3-client.interface';
+import { SchedulerService } from '@modules/scheduler';
 
 describe('UpdateCrowdActionImagesCommand', () => {
     let updateCrowdActionImagesCommand: UpdateCrowdActionImagesCommand;
@@ -46,6 +47,7 @@ describe('UpdateCrowdActionImagesCommand', () => {
                 CreateCrowdActionCommand,
                 GetCommitmentOptionsByType,
                 ConfigService,
+                SchedulerService,
                 SchedulerRegistry,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
@@ -67,6 +69,7 @@ describe('UpdateCrowdActionImagesCommand', () => {
     });
 
     afterAll(async () => {
+        createCrowdActionCommand.stopAllCrons();
         await mongoConnection.dropDatabase();
         await mongoConnection.close();
         await mongod.stop();

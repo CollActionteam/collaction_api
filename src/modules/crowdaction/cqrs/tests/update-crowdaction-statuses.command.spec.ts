@@ -23,6 +23,7 @@ import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { UpdateCrowdActionStatusesCommand, CreateCrowdActionCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
+import { SchedulerService } from '@modules/scheduler';
 
 describe('UpdateCrowdActionStatusesCommand', () => {
     let updateCrowdActionStatusesCommand: UpdateCrowdActionStatusesCommand;
@@ -45,6 +46,7 @@ describe('UpdateCrowdActionStatusesCommand', () => {
                 UpdateCrowdActionStatusesCommand,
                 CreateCrowdActionCommand,
                 GetCommitmentOptionsByType,
+                SchedulerService,
                 SchedulerRegistry,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
@@ -58,6 +60,7 @@ describe('UpdateCrowdActionStatusesCommand', () => {
     });
 
     afterAll(async () => {
+        createCrowdActionCommand.stopAllCrons();
         await mongoConnection.dropDatabase();
         await mongoConnection.close();
         await mongod.stop();
