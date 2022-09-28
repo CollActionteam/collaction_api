@@ -24,6 +24,7 @@ import {
     CategoryAndSubcategoryMustBeDisimilarError,
 } from '@modules/crowdaction/errors';
 import { CountryMustBeValidError } from '@modules/core';
+import { SchedulerService } from '@modules/scheduler';
 
 describe('CreateCrowdActionCommand', () => {
     let createCrowdActionCommand: CreateCrowdActionCommand;
@@ -44,6 +45,7 @@ describe('CreateCrowdActionCommand', () => {
             providers: [
                 CreateCrowdActionCommand,
                 GetCommitmentOptionsByType,
+                SchedulerService,
                 SchedulerRegistry,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
@@ -56,6 +58,7 @@ describe('CreateCrowdActionCommand', () => {
     });
 
     afterAll(async () => {
+        createCrowdActionCommand.stopAllCrons();
         await mongoConnection.dropDatabase();
         await mongoConnection.close();
         await mongod.stop();
