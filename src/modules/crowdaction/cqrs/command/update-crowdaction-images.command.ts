@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ICommand } from '@common/cqrs';
 import { ICrowdActionRepository } from '@domain/crowdaction';
-import { IS3Client } from '@core/s3-client.interface';
-import { S3Client } from '@modules/core/s3';
+import { S3ClientService } from '@modules/core/s3';
 import { CardAndOrBannerMissingError, CrowdActionDoesNotExist } from '@modules/crowdaction/errors';
 import { UploadImageTypeEnum } from '@modules/core/s3/enum';
 
@@ -14,7 +13,10 @@ interface UpdateCrowdActionImagesArgs {
 
 @Injectable()
 export class UpdateCrowdActionImagesCommand implements ICommand {
-    constructor(@Inject(S3Client) private readonly s3Client: IS3Client, private readonly crowdActionRepository: ICrowdActionRepository) {}
+    constructor(
+        @Inject(S3ClientService) private readonly s3ClientService: S3ClientService,
+        private readonly crowdActionRepository: ICrowdActionRepository,
+    ) {}
 
     async execute({ id, card, banner }: UpdateCrowdActionImagesArgs): Promise<void> {
         if (card === undefined && banner === undefined) {
@@ -28,12 +30,12 @@ export class UpdateCrowdActionImagesCommand implements ICommand {
 
         const images = { card: crowdAction.images.card, banner: crowdAction.images.banner };
         if (card && card.length) {
-            const cardPath = await this.s3Client.upload(card[0], id, UploadImageTypeEnum.CROWDACTION_CARD);
+            const cardPath = await this.s3ClientService.upload(card[0], id, UploadImageTypeEnum.CROWDACTION_CARD);
             images.card = cardPath;
         }
 
         if (banner && banner.length) {
-            const bannerPath = await this.s3Client.upload(banner[0], id, UploadImageTypeEnum.CROWDACTION_BANNER);
+            const bannerPath = await this.s3ClientService.upload(banner[0], id, UploadImageTypeEnum.CROWDACTION_BANNER);
             images.banner = bannerPath;
         }
 
