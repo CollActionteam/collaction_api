@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { CrowdAction } from '@domain/crowdaction';
 import { CreateCrowdAction, ICrowdActionRepository, PatchCrowdAction, QueryCrowdAction } from '@domain/crowdaction/interface';
 import { CrowdActionDocument, CrowdActionPersistence } from '@infrastructure/mongo/persistence';
-import { Identifiable } from '@domain/core';
 import { FindCriteria, IPagination } from '@core/repository.interface';
 import { toMongoQuery } from '../utils/mongo.utils';
 
@@ -12,11 +11,13 @@ import { toMongoQuery } from '../utils/mongo.utils';
 export class CrowdActionRepository implements ICrowdActionRepository {
     constructor(@InjectModel(CrowdActionPersistence.name) private readonly documentModel: Model<CrowdActionDocument>) {}
 
-    async create(entityLike: CreateCrowdAction): Promise<Identifiable> {
+    async create(entityLike: CreateCrowdAction): Promise<CrowdAction> {
         const document = new this.documentModel(entityLike);
         await document.save();
 
-        return { id: document.id };
+        const crowdAction = CrowdAction.create(document.toObject({ getters: true }));
+
+        return crowdAction;
     }
 
     async patch(id: string, entityLike: PatchCrowdAction): Promise<void> {

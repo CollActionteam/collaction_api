@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { CQRSModule } from '@common/cqrs';
-import { UpdateCrowdactionStatusTask } from './crowdaction';
+import { SchedulerService } from '@modules/scheduler';
 
 @Module({
     imports: [CQRSModule],
-    providers: [UpdateCrowdactionStatusTask],
+    providers: [SchedulerService],
 })
 export class TasksModule {}
