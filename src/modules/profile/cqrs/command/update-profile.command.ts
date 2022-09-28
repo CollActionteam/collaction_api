@@ -16,7 +16,7 @@ export class UpdateProfileCommand implements ICommand {
         let newLocation = location;
         if (data.country) {
             newLocation = getCountryByCode(data.country);
-            if (!location.name) {
+            if (!newLocation.name) {
                 throw new CountryMustBeValidError(data.country);
             }
         }

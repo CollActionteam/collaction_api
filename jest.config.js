@@ -1,6 +1,6 @@
 module.exports = {
     moduleFileExtensions: ['js', 'json', 'ts'],
-    roots: ['<rootDir>/test'],
+    roots: ['<rootDir>/src'],
     testRegex: ['.spec.ts$'],
     collectCoverageFrom: ['<rootDir>/src/**/*.(t|j)s'],
     setupFiles: ['<rootDir>/test/jest.env.js'],
