@@ -6,6 +6,14 @@ module.exports = {
     setupFiles: ['<rootDir>/test/jest.env.js'],
     coverageDirectory: './coverage',
     coverageReporters: ['html', ['text', { skipFull: true }]],
+    coverageThreshold: {
+        global: {
+            statements: 50,
+            branches: 40,
+            functions: 35,
+            lines: 50,
+        },
+    },
     testEnvironment: 'node',
     moduleNameMapper: {
         '^@api(.*)$': '<rootDir>/src/api/$1',
