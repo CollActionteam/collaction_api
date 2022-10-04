@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 import { CQRSModule } from '@common/cqrs';
 import { S3Module } from '@modules/core/s3';
+import { SchedulerService } from '@modules/scheduler';
 import {
     CreateCrowdActionCommand,
     FindCrowdActionByIdQuery,
@@ -27,6 +28,7 @@ import { CrowdActionService } from './service';
             useClass: CrowdActionService,
         },
         ListCrowdActionsForUserQuery,
+        SchedulerService,
     ],
     exports: [
         IncrementParticipantCountCommand,
