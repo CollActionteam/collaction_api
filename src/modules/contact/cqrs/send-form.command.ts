@@ -8,9 +8,8 @@ export class SendFormCommand implements ICommand {
     constructor(private readonly contactRepository: IContactRepository) {}
 
     async execute(data: ContactDto): Promise<any> {
-        const { id } = await this.contactRepository.create({
+        return await this.contactRepository.create({
             ...data,
         });
-        return id;
     }
 }
