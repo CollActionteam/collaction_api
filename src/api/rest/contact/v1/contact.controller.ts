@@ -19,7 +19,6 @@ export class ContactController {
     })
     @ApiOperation({ summary: 'Send user feedback' })
     async sendFormData(@Body() contactBody: ContactDto): Promise<Identifiable> {
-        const id = await this.cqrsHandler.execute(SendFormCommand, { ...contactBody });
-        return id;
+        return await this.cqrsHandler.execute(SendFormCommand, { ...contactBody });
     }
 }
