@@ -4,20 +4,20 @@ import { IProfileRepository } from '@domain/profile';
 import { Badge } from '@domain/badge';
 import { Identifiable } from '@domain/core';
 
-interface AwardBadgeData {
+interface AwardBadgesData {
     userId: string;
-    badge: Badge;
+    badges: Badge[];
 }
 
 @Injectable()
-export class AwardBadgeCommand implements ICommand {
+export class AwardBadgesCommand implements ICommand {
     constructor(private readonly profileRepository: IProfileRepository) {}
 
-    async execute(data: AwardBadgeData): Promise<Identifiable> {
+    async execute(data: AwardBadgesData): Promise<Identifiable> {
         const [profile] = await this.profileRepository.findAll({ userId: data.userId });
 
         const badges = profile.badges ?? [];
-        badges.push(data.badge);
+        badges.push(...data.badges);
 
         await this.profileRepository.patch(profile.id, { badges });
 
