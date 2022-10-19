@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 import {
-    AwardBadgeCommand,
+    AwardBadgesCommand,
     CreateProfileCommand,
     FindProfileByUserIdQuery,
     UpdateProfileCommand,
@@ -17,9 +17,9 @@ import { ProfileService } from './service';
         UpdateProfileCommand,
         UploadProfileImageCommand,
         FindProfileByUserIdQuery,
-        AwardBadgeCommand,
+        AwardBadgesCommand,
         ProfileService,
     ],
-    exports: [CreateProfileCommand, UpdateProfileCommand, UploadProfileImageCommand, FindProfileByUserIdQuery, AwardBadgeCommand],
+    exports: [CreateProfileCommand, UpdateProfileCommand, UploadProfileImageCommand, FindProfileByUserIdQuery, AwardBadgesCommand],
 })
 export class ProfileModule {}

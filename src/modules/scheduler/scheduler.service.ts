@@ -39,7 +39,7 @@ export class SchedulerService {
             }
         }
 
-        Logger.log(`[TaskScheduler] UpdateCrowdactionStatusTask:Successfully - Executed on ${changedCrowdActions} CrowdActions`);
+        Logger.log(`[SchedulerService] ScheduleTasks:Successfully - Executed on ${changedCrowdActions} CrowdActions`);
     }
 
     createCron(crowdAction: CrowdAction) {
@@ -66,6 +66,7 @@ export class SchedulerService {
         });
 
         this.schedulerRegistry.addCronJob(crowdAction.id, crowdActionJob);
+        Logger.log(`[SchedulerService] CreateCron:Successfully - Executed on ${crowdAction.id}`);
         crowdActionJob.start();
     }
 

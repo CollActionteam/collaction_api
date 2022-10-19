@@ -9,7 +9,7 @@ export class MustEndAfterStartError extends ApiError {
 
 export class MustJoinBeforeEndError extends ApiError {
     constructor() {
-        super({ message: `CrowdAction joinEndAt must be later than its endAt`, statusCode: HttpStatus.BAD_REQUEST });
+        super({ message: `CrowdAction joinEndAt must be earlier than its endAt`, statusCode: HttpStatus.BAD_REQUEST });
     }
 }
 

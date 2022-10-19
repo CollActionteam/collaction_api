@@ -5,7 +5,6 @@ import { ApiModule } from '@api/api.module';
 import { ModulesModule } from '@modules/modules.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { InfrastructureModule } from '@infrastructure/infrastructure.module';
-import { TasksModule } from '@infrastructure/tasks';
 
 @Module({
     imports: [
@@ -17,7 +16,6 @@ import { TasksModule } from '@infrastructure/tasks';
         InfrastructureModule,
         ModulesModule,
         ScheduleModule.forRoot(),
-        TasksModule,
     ],
     exports: [AuthModule],
 })
