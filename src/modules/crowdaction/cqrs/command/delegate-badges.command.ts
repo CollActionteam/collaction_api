@@ -4,7 +4,7 @@ import { ICrowdAction } from '@domain/crowdaction';
 import { AwardTypeEnum, Badge, BadgeTierEnum } from '@domain/badge';
 import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
 import { CommitmentOption } from '@domain/commitmentoption';
-import { AwardBadgeCommand } from '@modules/profile/cqrs';
+import { AwardBadgesCommand } from '@modules/profile/cqrs';
 
 interface AwardThreshold {
     readonly diamondThreshold: number;
@@ -38,7 +38,6 @@ export class DelegateBadgesCommand implements ICommand {
                     for (const badge of crowdAction.badges) {
                         if (participant.dailyCheckIns >= badge.minimumCheckIns) {
                             if (badge.awardType === AwardTypeEnum.ALL) {
-                                this.cqrsHandler.execute(AwardBadgeCommand, { userId: participant.userId, badge });
                                 awardedBadges.push(badge);
                                 continue;
                             }
@@ -52,33 +51,33 @@ export class DelegateBadgesCommand implements ICommand {
                             const points = commitments.reduce((acc, cur) => acc + cur.points, 0);
 
                             if (badge.tier === BadgeTierEnum.DIAMOND && points >= thresholds.diamondThreshold) {
-                                this.cqrsHandler.execute(AwardBadgeCommand, { userId: participant.userId, badge });
                                 awardedBadges.push(badge);
                             } else if (badge.tier === BadgeTierEnum.GOLD && points >= thresholds.goldThreshold) {
-                                this.cqrsHandler.execute(AwardBadgeCommand, { userId: participant.userId, badge });
                                 awardedBadges.push(badge);
                             } else if (badge.tier === BadgeTierEnum.SILVER && points >= thresholds.silverThreshold) {
-                                this.cqrsHandler.execute(AwardBadgeCommand, { userId: participant.userId, badge });
                                 awardedBadges.push(badge);
                             } else if (badge.tier === BadgeTierEnum.BRONZE && points >= thresholds.bronzeThreshold) {
-                                this.cqrsHandler.execute(AwardBadgeCommand, { userId: participant.userId, badge });
                                 awardedBadges.push(badge);
                             }
                         }
                     }
 
-                    // If there is a next page, fetch it
-                    if (pageInfo.totalPages > pageInfo.page) {
-                        const result = await this.cqrsHandler.fetch(ListParticipationsForCrowdActionQuery, {
-                            filter: { crowdActionId: crowdAction.id },
-                            page: pageInfo.page + 1,
-                        });
-
-                        pageInfo = result.pageInfo;
-                        participants = result.items;
-                    } else {
-                        participants = [];
+                    if (awardedBadges.length) {
+                        this.cqrsHandler.execute(AwardBadgesCommand, { userId: participant.userId, badges: awardedBadges });
                     }
+                }
+
+                // If there is a next page, fetch it
+                if (pageInfo.totalPages > pageInfo.page) {
+                    const result = await this.cqrsHandler.fetch(ListParticipationsForCrowdActionQuery, {
+                        filter: { crowdActionId: crowdAction.id },
+                        page: pageInfo.page + 1,
+                    });
+
+                    pageInfo = result.pageInfo;
+                    participants = result.items;
+                } else {
+                    participants = [];
                 }
             }
         }
