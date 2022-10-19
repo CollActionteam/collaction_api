@@ -5,6 +5,7 @@ import { Logger } from '@common/logger';
 import { ICQRSHandler } from '@common/cqrs';
 import { ListCrowdActionsQuery, UpdateCrowdActionStatusesCommand } from '@modules/crowdaction';
 import { CrowdAction, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
+import { DelegateBadgesCommand } from '@modules/crowdaction/cqrs/command/delegate-badges.command';
 
 const FILTER = { status: { in: [CrowdActionStatusEnum.STARTED, CrowdActionStatusEnum.WAITING] } };
 @Injectable()
@@ -55,8 +56,7 @@ export class SchedulerService {
                 }
             } else if (status !== crowdAction.status) {
                 if (status === CrowdActionStatusEnum.ENDED) {
-                    // TODO: Award Badges
-                    // this.cqrsHandler.execute(AwardBadgesForCrowdActionCommand, { crowdAction });
+                    this.CQRSHandler.execute(DelegateBadgesCommand, crowdAction);
                 } else if (status === CrowdActionStatusEnum.STARTED) {
                     crowdActionJob.setTime(new CronTime(joinEndAt));
                 }
