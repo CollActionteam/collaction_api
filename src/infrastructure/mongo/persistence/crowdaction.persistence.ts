@@ -6,7 +6,6 @@ import {
     CrowdActionStatusEnum,
     CrowdActionTypeEnum,
     ICrowdAction,
-    ICrowdActionImages,
 } from '@domain/crowdaction';
 import { Country, CountrySchema } from '@infrastructure/mongo/persistence/country.persistence';
 import { ICommitmentOption } from '@domain/commitmentoption';
@@ -14,19 +13,9 @@ import { IBadge } from '@domain/badge';
 import { CrowdActionCommitmentOptionSchema } from './commitmentoption.persistence';
 import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
 
-@Schema({ _id: false, versionKey: false })
-class CrowdActionImages implements ICrowdActionImages {
-    @Prop({ required: true })
-    readonly card: string;
-
-    @Prop({ required: true })
-    readonly banner: string;
-}
-export const CrowdActionImagesSchema = SchemaFactory.createForClass(CrowdActionImages);
-
 export type CrowdActionDocument = CrowdActionPersistence & Document;
 @Schema({ collection: 'crowdactions', autoCreate: true, versionKey: false, timestamps: true })
-export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'createdAt' | 'updatedAt'> {
+export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'createdAt' | 'updatedAt' | 'images'> {
     @Prop({ enum: CrowdActionTypeEnum, required: true })
     readonly type: CrowdActionTypeEnum;
 
@@ -50,9 +39,6 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
 
     @Prop({ required: true })
     readonly participantCount: number;
-
-    @Prop({ type: CrowdActionImagesSchema, required: true })
-    readonly images: CrowdActionImages;
 
     @Prop({ type: String, enum: CrowdActionStatusEnum, required: true })
     readonly status: CrowdActionStatusEnum;
