@@ -115,10 +115,6 @@ const CreateCrowdActionStub = (): any => {
         subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
         country: 'TG',
         password: 'pa$$w0rd',
-        images: {
-            card: 'TheCard',
-            banner: 'TheBanner',
-        },
         startAt: new Date('01/01/2025'),
         endAt: new Date('08/01/2025'),
         joinEndAt: new Date('07/01/2025'),
