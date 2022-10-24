@@ -61,6 +61,10 @@ export class CreateCrowdActionCommand implements ICommand {
             location,
             joinStatus: joinEndAt < now ? CrowdActionJoinStatusEnum.CLOSED : CrowdActionJoinStatusEnum.OPEN,
             status: data.startAt < now ? CrowdActionStatusEnum.STARTED : CrowdActionStatusEnum.WAITING,
+            images: {
+                card: 'crowdaction-cards/placeholder.png',
+                banner: 'crowdaction-banners/placeholder.png',
+            },
         });
 
         if (crowdAction) {

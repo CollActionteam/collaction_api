@@ -1,4 +1,5 @@
 import { Country } from '@common/country';
+import { Badge } from '@domain/badge';
 import { IProfile } from '@domain/profile';
 
 export class Profile implements IProfile {
@@ -9,6 +10,7 @@ export class Profile implements IProfile {
     readonly lastName?: string | undefined;
     readonly bio?: string | undefined;
     readonly avatar?: string | undefined;
+    readonly badges?: Badge[] | undefined;
 
     constructor(entityLike: IProfile) {
         this.id = entityLike.id;
@@ -18,6 +20,7 @@ export class Profile implements IProfile {
         this.lastName = entityLike.lastName;
         this.bio = entityLike.bio;
         this.avatar = entityLike.avatar;
+        this.badges = entityLike.badges;
     }
 
     static create(entityLike: IProfile): Profile {

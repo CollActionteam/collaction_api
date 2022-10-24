@@ -31,8 +31,11 @@ export class ProfileResponseDto {
     @ApiProperty({ name: 'lastName', example: 'M', required: true })
     readonly lastName: string;
 
-    @ApiProperty({ name: 'bio', example: 'I am a cool guy aye', required: true })
-    readonly bio: string;
+    @ApiProperty({ name: 'bio', example: 'I am a cool guy', required: false })
+    readonly bio?: string;
+
+    @ApiProperty({ name: 'avatar', example: 'https://example.com/avatar.png', required: false })
+    readonly avatar?: string;
 }
 
 export class UpdateProfileDto {
