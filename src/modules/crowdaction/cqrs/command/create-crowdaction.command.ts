@@ -13,13 +13,18 @@ import { Identifiable } from '@domain/core';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 import { CommitmentOption } from '@domain/commitmentoption';
+import { SchedulerService } from '@modules/scheduler';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
-    constructor(private readonly crowdActionRepository: ICrowdActionRepository, private readonly cqrsHandler: ICQRSHandler) {}
+    constructor(
+        private readonly crowdActionRepository: ICrowdActionRepository,
+        private readonly CQRSHandler: ICQRSHandler,
+        private readonly schedulerService: SchedulerService,
+    ) {}
 
     async execute(data: CreateCrowdActionDto): Promise<Identifiable> {
-        if (new Date() < data.startAt) {
+        if (new Date() > data.startAt) {
             throw new CrowdActionMustBeInTheFutureError();
         }
 
@@ -45,10 +50,10 @@ export class CreateCrowdActionCommand implements ICommand {
             throw new CountryMustBeValidError(data.country);
         }
 
-        const commitmentOptions: CommitmentOption[] = await this.cqrsHandler.fetch(GetCommitmentOptionsByType, data.type);
+        const commitmentOptions: CommitmentOption[] = await this.CQRSHandler.fetch(GetCommitmentOptionsByType, data.type);
 
         const now = new Date();
-        return await this.crowdActionRepository.create({
+        const crowdAction = await this.crowdActionRepository.create({
             ...data,
             commitmentOptions,
             participantCount: 0,
@@ -56,6 +61,20 @@ export class CreateCrowdActionCommand implements ICommand {
             location,
             joinStatus: joinEndAt < now ? CrowdActionJoinStatusEnum.CLOSED : CrowdActionJoinStatusEnum.OPEN,
             status: data.startAt < now ? CrowdActionStatusEnum.STARTED : CrowdActionStatusEnum.WAITING,
+            images: {
+                card: 'crowdaction-cards/placeholder.png',
+                banner: 'crowdaction-banners/placeholder.png',
+            },
         });
+
+        if (crowdAction) {
+            this.schedulerService.createCron(crowdAction);
+        }
+
+        return crowdAction;
+    }
+
+    stopAllCrons() {
+        this.schedulerService.stopAllCrons();
     }
 }

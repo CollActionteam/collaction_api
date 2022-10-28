@@ -3,7 +3,8 @@ import { Type } from 'class-transformer';
 import { CrowdActionCategoryEnum, CrowdActionTypeEnum, ICrowdActionImages } from '@domain/crowdaction';
 import { CommitmentOption } from '@domain/commitmentoption';
 import { CreateCommitmentOptionDto } from '@infrastructure/commitmentoption';
-import { Badge } from '@domain/badge/entity';
+import { IBadge, Badge } from '@domain/badge';
+import { BadgeDto } from './badge.dto';
 
 export class CrowdActionImagesDto implements ICrowdActionImages {
     @ApiProperty({ example: 'https://www.example.com/image.png' })
@@ -35,9 +36,6 @@ export class CreateCrowdActionDto {
     @ApiProperty({ name: 'password', example: 'veganuary-2022', required: false })
     readonly password?: string;
 
-    @ApiProperty({ name: 'images', type: CrowdActionImagesDto, required: true })
-    readonly images: ICrowdActionImages;
-
     @Type(() => Date)
     @ApiProperty({ name: 'startAt', type: Date, example: '2022-12-22T15:00:00.000Z', required: true })
     readonly startAt: Date;
@@ -50,8 +48,8 @@ export class CreateCrowdActionDto {
     @ApiProperty({ name: 'joinEndAt', type: Date, example: '2023-12-22T15:00:00.000Z', required: false })
     readonly joinEndAt?: Date;
 
-    @ApiProperty({ name: 'badges', type: [Badge], isArray: true, required: false })
-    readonly badges?: Badge[];
+    @ApiProperty({ name: 'badges', type: BadgeDto, isArray: true, required: false })
+    readonly badges?: IBadge[];
 }
 
 export class GetCrowdActionDto {
