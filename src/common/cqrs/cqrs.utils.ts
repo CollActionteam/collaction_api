@@ -5,10 +5,10 @@ import { IPaginationQueryArgs } from './cqrs.interface';
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PAGE_SIZE = 15;
 
-export const paginate = async <F, U, C, K>(
-    { filter = {}, page = DEFAULT_PAGE, pageSize = DEFAULT_PAGE_SIZE, sort = {} }: IPaginationQueryArgs<FindCriteria<K>>,
-    repository: IRepository<F, U, C, K>,
-): Promise<IPaginatedList<F>> => {
+export const paginate = async <P, A, G, E>(
+    { filter = {}, page = DEFAULT_PAGE, pageSize = DEFAULT_PAGE_SIZE, sort = {} }: IPaginationQueryArgs<FindCriteria<E>>,
+    repository: IRepository<P, A, G, E>,
+): Promise<IPaginatedList<P>> => {
     const [items, totalItems = 0] = await Promise.all([
         repository.findAll(filter, {
             limit: pageSize,
