@@ -1,15 +1,19 @@
 import { ConfigService } from '@nestjs/config';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as mime from 'mime';
 import { IS3ClientRepository } from '@core/s3-client.interface';
 import { FileTypeInvalidError } from '../errors';
 import { UploadImageTypeEnum } from './enum';
+import { S3ClientRepository } from './s3-client.repository';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png'];
 
 @Injectable()
 export class S3ClientService {
-    constructor(private readonly s3Client: IS3ClientRepository, private readonly configService: ConfigService) {}
+    constructor(
+        @Inject(IS3ClientRepository) private readonly s3Client: S3ClientRepository,
+        private readonly configService: ConfigService,
+    ) {}
 
     async upload(file: any, id: string, type: UploadImageTypeEnum): Promise<string> {
         const directory = this.getDirectory(type);
