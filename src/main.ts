@@ -83,7 +83,8 @@ async function bootstrap() {
         .use(bodyParser.urlencoded({ extended: true }))
         .use(bodyParser.json({ verify: rawBody }))
         .useGlobalFilters(new ApiErrorFilter())
-        .useGlobalPipes(new ValidationPipe({ transform: true }));
+        .useGlobalPipes(new ValidationPipe({ transform: true }))
+        .enableCors();
 
     bootstrapSwagger(app, hostUrl, restPath);
 
