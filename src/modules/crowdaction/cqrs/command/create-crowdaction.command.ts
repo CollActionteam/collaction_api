@@ -14,6 +14,7 @@ import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 import { CommitmentOption } from '@domain/commitmentoption';
 import { SchedulerService } from '@modules/scheduler';
+import slugify from 'slugify';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
@@ -52,6 +53,8 @@ export class CreateCrowdActionCommand implements ICommand {
 
         const commitmentOptions: CommitmentOption[] = await this.CQRSHandler.fetch(GetCommitmentOptionsByType, data.type);
 
+        const slug = slugify(data.title, { lower: true, strict: true });
+
         const now = new Date();
         const crowdAction = await this.crowdActionRepository.create({
             ...data,
@@ -59,6 +62,7 @@ export class CreateCrowdActionCommand implements ICommand {
             participantCount: 0,
             joinEndAt,
             location,
+            slug,
             joinStatus: joinEndAt < now ? CrowdActionJoinStatusEnum.CLOSED : CrowdActionJoinStatusEnum.OPEN,
             status: data.startAt < now ? CrowdActionStatusEnum.STARTED : CrowdActionStatusEnum.WAITING,
             images: {
