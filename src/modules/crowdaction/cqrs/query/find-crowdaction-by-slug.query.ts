@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ICQRSHandler, IQuery } from '@common/cqrs';
-import { CrowdAction } from '@domain/crowdaction';
+import { CrowdAction, ICrowdActionRepository } from '@domain/crowdaction';
 import { CrowdActionDoesNotExist } from '@modules/crowdaction';
 import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
-import { CrowdActionRepository } from '@infrastructure/mongo';
 
 @Injectable()
 export class FindCrowdActionBySlugQuery implements IQuery<string> {
     constructor(
-        private readonly crowdActionRepository: CrowdActionRepository,
+        private readonly crowdActionRepository: ICrowdActionRepository,
         private readonly cqrsHandler: ICQRSHandler,
     ) {}
 
