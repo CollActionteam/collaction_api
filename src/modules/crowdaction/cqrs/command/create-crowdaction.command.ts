@@ -54,6 +54,7 @@ export class CreateCrowdActionCommand implements ICommand {
         const commitmentOptions: CommitmentOption[] = await this.CQRSHandler.fetch(GetCommitmentOptionsByType, data.type);
 
         const slug = slugify(data.title, { lower: true, strict: true });
+        const [crowdActionBySlug] = await this.crowdActionRepository.findAll({ slug });
 
         const now = new Date();
         const crowdAction = await this.crowdActionRepository.create({
@@ -70,6 +71,12 @@ export class CreateCrowdActionCommand implements ICommand {
                 banner: 'crowdaction-banners/placeholder.png',
             },
         });
+
+        if (crowdActionBySlug) {
+            // TODO: Consider improving this method of unique slug generation
+            const updateSlug = { slug: `${slug}-${crowdAction.id.substring(0, 10)}` };
+            await this.crowdActionRepository.patch(crowdAction.id, updateSlug);   
+        }
 
         if (crowdAction) {
             this.schedulerService.createCron(crowdAction);
