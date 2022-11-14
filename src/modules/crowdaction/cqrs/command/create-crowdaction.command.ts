@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import slugify from 'slugify';
 import { ICQRSHandler, ICommand } from '@common/cqrs';
 import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
 import {
@@ -52,6 +53,12 @@ export class CreateCrowdActionCommand implements ICommand {
 
         const commitmentOptions: CommitmentOption[] = await this.CQRSHandler.fetch(GetCommitmentOptionsByType, data.type);
 
+        let slug = slugify(data.title, { lower: true, strict: true });
+        const [crowdActionBySlug] = await this.crowdActionRepository.findAll({ slug });
+        if (crowdActionBySlug) {
+            slug = `${slug}-${Date.now().toString().substring(0, 10)}`;
+        }
+
         const now = new Date();
         const crowdAction = await this.crowdActionRepository.create({
             ...data,
@@ -59,6 +66,7 @@ export class CreateCrowdActionCommand implements ICommand {
             participantCount: 0,
             joinEndAt,
             location,
+            slug,
             joinStatus: joinEndAt < now ? CrowdActionJoinStatusEnum.CLOSED : CrowdActionJoinStatusEnum.OPEN,
             status: data.startAt < now ? CrowdActionStatusEnum.STARTED : CrowdActionStatusEnum.WAITING,
             images: {

@@ -11,6 +11,7 @@ import {
     UpdateCrowdActionStatusesCommand,
     IncrementParticipantCountCommand,
     ListCrowdActionsForUserQuery,
+    FindCrowdActionBySlugQuery,
 } from './cqrs';
 import { CrowdActionService } from './service';
 
@@ -21,6 +22,7 @@ import { CrowdActionService } from './service';
         CreateCrowdActionCommand,
         ListCrowdActionsQuery,
         FindCrowdActionByIdQuery,
+        FindCrowdActionBySlugQuery,
         UpdateCrowdActionImagesCommand,
         UpdateCrowdActionStatusesCommand,
         {
@@ -35,6 +37,7 @@ import { CrowdActionService } from './service';
         CreateCrowdActionCommand,
         ListCrowdActionsQuery,
         FindCrowdActionByIdQuery,
+        FindCrowdActionBySlugQuery,
         UpdateCrowdActionImagesCommand,
         UpdateCrowdActionStatusesCommand,
         ListCrowdActionsForUserQuery,
