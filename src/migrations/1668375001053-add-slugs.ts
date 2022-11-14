@@ -1,7 +1,7 @@
-import { CrowdActionDocument } from '@infrastructure/mongo';
 import slugify from 'slugify';
 import { MongoQueryRunner } from 'typeorm/driver/mongodb/MongoQueryRunner';
 import { Collection } from 'typeorm/driver/mongodb/typings';
+import { CrowdActionDocument } from '@infrastructure/mongo';
 import { BaseMigration } from './util/base-migration';
 
 export class addSlugs1668375001053 extends BaseMigration {

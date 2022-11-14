@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import slugify from 'slugify';
 import { ICQRSHandler, ICommand } from '@common/cqrs';
 import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
 import {
@@ -14,7 +15,6 @@ import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 import { CommitmentOption } from '@domain/commitmentoption';
 import { SchedulerService } from '@modules/scheduler';
-import slugify from 'slugify';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
@@ -53,8 +53,11 @@ export class CreateCrowdActionCommand implements ICommand {
 
         const commitmentOptions: CommitmentOption[] = await this.CQRSHandler.fetch(GetCommitmentOptionsByType, data.type);
 
-        const slug = slugify(data.title, { lower: true, strict: true });
+        let slug = slugify(data.title, { lower: true, strict: true });
         const [crowdActionBySlug] = await this.crowdActionRepository.findAll({ slug });
+        if (crowdActionBySlug) {
+            slug = `${slug}-${Date.now().toString().substring(0, 10)}`;
+        }
 
         const now = new Date();
         const crowdAction = await this.crowdActionRepository.create({
@@ -71,12 +74,6 @@ export class CreateCrowdActionCommand implements ICommand {
                 banner: 'crowdaction-banners/placeholder.png',
             },
         });
-
-        if (crowdActionBySlug) {
-            // TODO: Consider improving this method of unique slug generation
-            const updateSlug = { slug: `${slug}-${crowdAction.id.substring(0, 10)}` };
-            await this.crowdActionRepository.patch(crowdAction.id, updateSlug);
-        }
 
         if (crowdAction) {
             this.schedulerService.createCron(crowdAction);
