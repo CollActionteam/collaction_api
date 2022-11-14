@@ -75,7 +75,7 @@ export class CreateCrowdActionCommand implements ICommand {
         if (crowdActionBySlug) {
             // TODO: Consider improving this method of unique slug generation
             const updateSlug = { slug: `${slug}-${crowdAction.id.substring(0, 10)}` };
-            await this.crowdActionRepository.patch(crowdAction.id, updateSlug);   
+            await this.crowdActionRepository.patch(crowdAction.id, updateSlug);
         }
 
         if (crowdAction) {

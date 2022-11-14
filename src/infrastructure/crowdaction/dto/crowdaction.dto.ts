@@ -32,7 +32,7 @@ export class CreateCrowdActionDto {
 
     @ApiProperty({ name: 'country', example: 'NL', required: true })
     readonly country: string;
-    
+
     @ApiProperty({ name: 'password', example: 'veganuary-2022', required: false })
     readonly password?: string;
 
