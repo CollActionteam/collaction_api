@@ -35,9 +35,8 @@ jobs:
                   echo $DEV_ENV_FILE | base64 --decode > .env
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-            - name: Run pending migrations
-              run: npm run migration:run
+                  npm run migration:run:dev
+                  npm run migration:run
 
             - name: Deploy to Amazon ECS
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
