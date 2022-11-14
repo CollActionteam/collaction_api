@@ -6,10 +6,7 @@ import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 
 @Injectable()
 export class FindCrowdActionBySlugQuery implements IQuery<string> {
-    constructor(
-        private readonly crowdActionRepository: ICrowdActionRepository,
-        private readonly cqrsHandler: ICQRSHandler,
-    ) {}
+    constructor(private readonly crowdActionRepository: ICrowdActionRepository, private readonly cqrsHandler: ICQRSHandler) {}
 
     async handle(slug: string): Promise<CrowdAction> {
         const [crowdAction] = await this.crowdActionRepository.findAll({ slug });

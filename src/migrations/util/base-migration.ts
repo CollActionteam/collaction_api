@@ -1,6 +1,6 @@
-import { MongoQueryRunner } from "typeorm/driver/mongodb/MongoQueryRunner";
-import { Collection } from "typeorm/driver/mongodb/typings";
-import { MigrationInterface } from "typeorm/migration/MigrationInterface";
+import { MongoQueryRunner } from 'typeorm/driver/mongodb/MongoQueryRunner';
+import { Collection } from 'typeorm/driver/mongodb/typings';
+import { MigrationInterface } from 'typeorm/migration/MigrationInterface';
 
 export abstract class BaseMigration implements MigrationInterface {
     name?: string | undefined;
@@ -14,6 +14,4 @@ export abstract class BaseMigration implements MigrationInterface {
     protected getCollection<T>(queryRunner: MongoQueryRunner, collectionName: string): Collection<T> {
         return this.getDb(queryRunner).collection(collectionName);
     }
-
-    
 }
