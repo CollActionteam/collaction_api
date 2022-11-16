@@ -7,6 +7,6 @@ import { ProfileModule } from './profile';
 import { StartupModule } from './startup';
 
 @Module({
-    imports: [CrowdActionModule, ProfileModule, ParticipationModule, CommitmentOptionModule, ContactModule, StartupModule],
+    imports: [StartupModule, CrowdActionModule, ProfileModule, ParticipationModule, CommitmentOptionModule, ContactModule],
 })
 export class ModulesModule {}
