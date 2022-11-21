@@ -71,6 +71,7 @@ export class ProfileController {
     @Post('/me/image')
     @FirebaseGuard(UserRole.ADMIN, UserRole.MODERATOR, UserRole.USER)
     @ApiConsumes('multipart/form-data')
+    
     @ApiBody({
         schema: {
             type: 'object',
