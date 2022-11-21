@@ -5,7 +5,7 @@ import { IForum } from '../interface/forum.interface';
 export class Forum implements IForum {
     readonly id: string;
     readonly type: ForumTypeEnum;
-    // readonly icon: Icon;
+    readonly icon: string;
     readonly name: string;
     readonly description: string;
     readonly parentId?: string | undefined;
@@ -14,7 +14,7 @@ export class Forum implements IForum {
     readonly threadCount: number;
     readonly postCount: number;
     readonly visible: boolean;
-    readonly lastPostInfo: ILastPostInfo;
+    readonly lastPostInfo?: ILastPostInfo;
 
     constructor(entityLike: IForum) {
         this.id = entityLike.id;
