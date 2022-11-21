@@ -4,7 +4,7 @@ import { ForumTypeEnum } from '../enum/forum.enum';
 export interface IForum {
     readonly id: string;
     readonly type: ForumTypeEnum;
-    // readonly icon: Icon;
+    readonly icon: string;
     readonly name: string;
     readonly description: string;
     readonly parentId?: string;
@@ -13,5 +13,5 @@ export interface IForum {
     readonly threadCount: number;
     readonly postCount: number;
     readonly visible: boolean;
-    readonly lastPostInfo: ILastPostInfo;
+    readonly lastPostInfo?: ILastPostInfo;
 }

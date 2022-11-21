@@ -9,8 +9,8 @@ export class ForumDto {
     @ApiProperty({ name: 'type', type: ForumTypeEnum, enum: ForumTypeEnum, required: true })
     readonly type: ForumTypeEnum;
 
-    // @ApiProperty({ name: 'icon', type: Icon, required: true })
-    // readonly icon: Icon;
+    @ApiProperty({ name: 'icon', type: String, required: true })
+    readonly icon: string;
 
     @ApiProperty({ name: 'name', type: String, required: true })
     name: string;
@@ -36,6 +36,6 @@ export class ForumDto {
     @ApiProperty({ name: 'visible', type: Boolean, required: true })
     visible: boolean;
 
-    @ApiProperty({ name: 'lastPostInfo', type: LastPostInfoDto, required: true })
-    lastPostInfo: LastPostInfoDto;
+    @ApiProperty({ name: 'lastPostInfo', type: LastPostInfoDto, required: false })
+    lastPostInfo: LastPostInfoDto | undefined;
 }

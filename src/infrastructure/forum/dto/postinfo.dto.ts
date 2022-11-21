@@ -9,10 +9,10 @@ export class PostInfoDto {
     readonly title: string;
 
     @Type(() => Date)
-    @ApiProperty({ name: 'postId', type: Date, example: '2022-11-20T10:00:00.000Z', required: true })
+    @ApiProperty({ name: 'createdAt', type: Date, example: '2022-11-20T10:00:00.000Z', required: true })
     readonly createdAt: Date;
 
     @Type(() => Date)
-    @ApiProperty({ name: 'postId', type: Date, example: '2022-11-20T10:00:00.000Z', required: true })
+    @ApiProperty({ name: 'updatedAt', type: Date, example: '2022-11-20T10:00:00.000Z', required: true })
     readonly updatedAt: Date;
 }
