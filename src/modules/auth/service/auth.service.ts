@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithEmailLink } from 'firebase/auth';
 import { AuthUser } from '@domain/auth/entity';
 import { AuthToken, FirebaseAuthAdmin, FirebaseAuthClient } from '@infrastructure/auth';
 import { UserRole } from '@domain/auth/enum';
@@ -56,4 +56,41 @@ export class AuthService {
             throw new AuthenticationError(error.message);
         }
     }
+
+    async inviteAdmin(email: string): Promise<String> {
+        const user = await this.adminAuth.getUserByEmail(email);
+
+        if (user && user.emailVerified) {
+            this.adminAuth.setCustomUserClaims(user.uid, { role: UserRole.ADMIN });
+
+            return 'User is already verified and has been promoted to Admin';
+        } else if (user && !user.emailVerified) {
+            throw new AuthenticationError('User already exists, and needs to verify their email');    
+        }
+
+        const actionCodeSettings = {
+            url: `${process.env.ADMINCMS_URL}/verification`,
+            handleCodeInApp: true,
+        };
+
+        await sendSignInLinkToEmail(this.firebaseAuth, email, actionCodeSettings);
+
+        return 'Successfully sent invite';
+    }
+
+    async verifyEmail(email: string, url: string): Promise<VerifyEmailResponse> {
+        const credential = await signInWithEmailLink(this.firebaseAuth, email, url);
+        const token = await credential.user.getIdToken();
+
+        return { identifier: credential.user.uid, token };
+    }
+
+    async updatePassword(user: AuthUser, password: string): Promise<void> {
+        await this.adminAuth.updateUser(user.uid, { password });
+    }
+}
+
+export interface VerifyEmailResponse {
+    identifier: string;
+    token: string;
 }
