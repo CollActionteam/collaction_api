@@ -11,6 +11,7 @@ import {
     ListCrowdActionsQuery,
     UpdateCrowdActionImagesCommand,
     ListCrowdActionsForUserQuery,
+    FindCrowdActionBySlugQuery,
 } from '@modules/crowdaction';
 import { PaginationDto } from '@infrastructure/pagination';
 import { IdentifiableResponse } from '@api/rest/core';
@@ -75,6 +76,18 @@ export class CrowdActionController {
     @ApiParam({ name: 'id', required: true })
     async getCrowdAction(@Param('id') id: string): Promise<Omit<ICrowdAction, 'joinEndAt'>> {
         return await this.cqrsHandler.fetch(FindCrowdActionByIdQuery, id);
+    }
+
+    @Get(':slug')
+    @ApiResponse({
+        status: 200,
+        description: 'Returns the found CrowdAction if any',
+        type: GetCrowdActionDto,
+    })
+    @ApiOperation({ summary: 'Retrieves a specific CrowdAction by its slug' })
+    @ApiParam({ name: 'slug', required: true })
+    async getCrowdActionBySlug(@Param('slug') slug: string): Promise<Omit<ICrowdAction, 'joinEndAt'>> {
+        return await this.cqrsHandler.fetch(FindCrowdActionBySlugQuery, slug);
     }
 
     @Post()

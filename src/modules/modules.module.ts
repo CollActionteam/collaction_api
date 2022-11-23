@@ -4,8 +4,9 @@ import { ContactModule } from './contact/contact.module';
 import { CrowdActionModule } from './crowdaction';
 import { ParticipationModule } from './participation';
 import { ProfileModule } from './profile';
+import { StartupModule } from './startup';
 
 @Module({
-    imports: [CrowdActionModule, ProfileModule, ParticipationModule, CommitmentOptionModule, ContactModule],
+    imports: [StartupModule, CrowdActionModule, ProfileModule, ParticipationModule, CommitmentOptionModule, ContactModule],
 })
 export class ModulesModule {}
