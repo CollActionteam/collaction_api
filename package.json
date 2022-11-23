@@ -21,7 +21,15 @@
         "test": "jest",
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage",
-        "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+        "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+        "typeorm:cli": "node -r dotenv/config ./node_modules/typeorm/cli.js",
+        "typeorm:cli:dev": "ts-node -T -r dotenv/config -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+        "migration:create": "npm run typeorm:cli -- migration:create",
+        "migration:create:dev": "npm run typeorm:cli:dev -- migration:create",
+        "migration:run": "npm run typeorm:cli -- migration:run -d src/ormconfig.ts",
+        "migration:run:dev": "npm run typeorm:cli:dev -- migration:run -d src/ormconfig.ts",
+        "migration:revert": "npm run typeorm:cli -- migration:revert -d src/ormconfig.ts",
+        "migration:revert:dev": "npm run typeorm:cli:dev -- migration:revert -d src/ormconfig.ts"
     },
     "dependencies": {
         "@nestjs/common": "^8.4.7",
@@ -41,6 +49,7 @@
         "firebase": "^9.8.4",
         "firebase-admin": "^11.0.0",
         "i18n-iso-countries": "^7.5.0",
+        "mongodb": "^3.7.3",
         "mongodb-memory-server": "^8.8.0",
         "mongoose": "^6.4.0",
         "pino": "^8.1.0",
@@ -48,8 +57,9 @@
         "reflect-metadata": "^0.1.13",
         "rimraf": "^3.0.2",
         "rxjs": "^7.5.5",
+        "slugify": "^1.6.5",
         "swagger-ui-express": "^4.4.0",
-        "typeorm": "^0.3.6"
+        "typeorm": "^0.3.10"
     },
     "devDependencies": {
         "@nestjs/cli": "^8.2.8",

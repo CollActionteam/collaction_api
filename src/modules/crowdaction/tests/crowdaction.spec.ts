@@ -71,6 +71,7 @@ const CrowdActionStub = (): CrowdAction => {
         id: '628cdea92e19fd912f0d520e',
         type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
+        slug: 'crowdaction-title',
         description: 'Crowdaction description',
         category: CrowdActionCategoryEnum.FOOD,
         subcategory: CrowdActionCategoryEnum.FOOD,
