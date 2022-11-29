@@ -1,25 +1,26 @@
+import assert from 'assert';
 import { INestApplication, Injectable } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { AppModule } from '../../../app.module';
 import { createUserWithEmailAndPassword, getAuth, UserCredential } from 'firebase/auth';
 import * as firebaseAdmin from 'firebase-admin';
 import { initializeApp } from 'firebase/app';
-import { FirebaseAuthAdmin } from '@infrastructure/auth';
-import { ProfileDto, ProfileResponseDto, UpdateProfileDto } from '@infrastructure/profile';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection } from 'mongoose';
 import { MongooseModule } from '@nestjs/mongoose';
-import assert from 'assert';
+import { ConfigService } from '@nestjs/config';
+import { FirebaseAuthAdmin } from '@infrastructure/auth';
+import { ProfileDto, ProfileResponseDto, UpdateProfileDto } from '@infrastructure/profile';
 import { IS3ClientRepository } from '@core/s3-client.interface';
 import { S3ClientService } from '@modules/core/s3';
-import { ConfigService } from '@nestjs/config';
+import { AppModule } from '../../../app.module';
 
 describe('Profile', () => {
     let app: INestApplication;
-    let jwtToken: string, headersRequest: Object;
+    let jwtToken: string;
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
+    let headersRequest;
 
     const profileDto: ProfileDto = {
         country: 'NL',
@@ -63,7 +64,7 @@ describe('Profile', () => {
         const auth = getAuth();
         const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-        let adminAuth: FirebaseAuthAdmin = firebaseAdmin.auth();
+        const adminAuth: FirebaseAuthAdmin = firebaseAdmin.auth();
         await adminAuth.updateUser(userCredential.user.uid, {
             providerToLink: {
                 providerId: 'phone',
