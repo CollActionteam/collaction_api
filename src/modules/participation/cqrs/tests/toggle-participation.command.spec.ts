@@ -14,8 +14,8 @@ import {
     ParticipationPersistence,
     ParticipationRepository,
     ParticipationSchema,
-    ProfilePersistence,
     ProfileRepository,
+    ProfilePersistence,
     ProfileSchema,
 } from '@infrastructure/mongo';
 import {
@@ -88,19 +88,23 @@ describe('ToggleParticipationCommand', () => {
     });
 
     describe('toggleParticipationCommand', () => {
-        it('shoould create a new crowdaction and a user', async () => {
-            await profileModel.create(CreateProfileStub());
+        it('should toggle the participation command', async () => {
+            // create profile, commitmenoption, crowdaction, and participation
+            const profile = await profileModel.create({ CreateProfileStub });
+
             const commitmentOptionDocument = await commitmentOptionModel.create(CreateCommitmentOptionStub());
             const commitmentOption = CommitmentOption.create(commitmentOptionDocument.toObject({ getters: true }));
 
             const crowdactionDocument = await crowdActionModel.create(CreateCrowdActionStub([commitmentOption]));
-
             const crowdAction = CrowdAction.create(crowdactionDocument.toObject({ getters: true }));
 
-            await participationModel.create(CreateParticipationStub(crowdAction.id, [commitmentOption.id]));
+            const participation = await toggleParticipationCommand.execute({
+                userId: profile.userId,
+                toggleParticipation: { crowdActionId: crowdAction.id, commitmentOptions: [commitmentOption.id] },
+            });
 
-            await toggleParticipationCommand,
-                { userId: 'user id', toggleParticipation: { crowdActionId: crowdAction.id, commitmentOptionId: commitmentOption.id } };
+            expect(participation).toBeDefined();
+            expect(participation.isParticipating).toBeDefined();
         });
     });
 });
@@ -150,17 +154,5 @@ const CreateCrowdActionStub = (commitmentOptions: CommitmentOption[]): any => {
             card: 'card-image',
             banner: 'banner-image',
         },
-    };
-};
-
-const CreateParticipationStub = (id: string, commitmentOptions: string[]): any => {
-    return {
-        crowdActionId: id,
-        userId: 'user-id',
-        fullName: 'John Doe',
-        avatar: 'avatar',
-        commitmentOptions: commitmentOptions,
-        joinDate: new Date('06/06/2025'),
-        dailyCheckIns: 15,
     };
 };
