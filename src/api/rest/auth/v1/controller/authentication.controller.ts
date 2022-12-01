@@ -4,6 +4,7 @@ import { AuthService, VerifyEmailResponse } from '@modules/auth/service';
 import { AuthToken, SignInCredentialsDto } from '@infrastructure/auth';
 import { CurrentUser, FirebaseGuard } from '@modules/auth/decorators';
 import { AuthUser } from '@domain/auth/entity';
+// import { FirebaseGuard } from '@modules/auth/decorators';
 import { UserRole } from '@domain/auth/enum';
 
 @Controller('v1/auth')
@@ -32,7 +33,8 @@ export class AuthenticationController {
     
     @Post('/update-password')
     @ApiOkResponse()
-    async updatePassword(@CurrentUser() user: AuthUser, @Body() { password }: { password: string }): Promise<void> {
+    @FirebaseGuard(UserRole.ADMIN)
+    async updatePassword(@CurrentUser() user: AuthUser, @Body() { password }: { password: string }): Promise<String> {
         return this.authService.updatePassword(user, password);
     }
 }
