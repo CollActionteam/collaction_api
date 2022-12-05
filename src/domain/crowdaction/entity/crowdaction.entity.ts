@@ -19,6 +19,7 @@ export class CrowdAction implements ICrowdAction, Identifiable {
     readonly category: CrowdActionCategoryEnum;
     readonly subcategory?: CrowdActionCategoryEnum;
     readonly location: Country;
+    readonly slug: string;
     readonly password?: string;
     readonly participantCount: number;
     readonly images: ICrowdActionImages;
@@ -46,6 +47,7 @@ export class CrowdAction implements ICrowdAction, Identifiable {
         this.category = entityLike.category;
         this.subcategory = entityLike.subcategory;
         this.location = entityLike.location;
+        this.slug = entityLike.slug;
         this.password = entityLike.password;
         this.participantCount = entityLike.participantCount;
         this.images = entityLike.images;

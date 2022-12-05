@@ -49,6 +49,9 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
     readonly password?: string;
 
     @Prop({ required: true })
+    readonly slug: string;
+
+    @Prop({ required: true })
     readonly participantCount: number;
 
     @Prop({ type: CrowdActionImagesSchema, required: true })

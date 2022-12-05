@@ -133,6 +133,7 @@ const CreateCrowdActionStub = (commitmentOptions: CommitmentOption[]): any => {
     return {
         type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
+        slug: 'crowdaction-title',
         description: 'Crowdaction description',
         category: CrowdActionCategoryEnum.FOOD,
         subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,

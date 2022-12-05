@@ -74,6 +74,9 @@ export class GetCrowdActionDto {
     @ApiProperty({ name: 'country', example: 'NL', required: true })
     readonly country: string;
 
+    @ApiProperty({ name: 'slug', example: 'veganuary', required: true })
+    readonly slug: string;
+
     @ApiProperty({ name: 'password', example: 'veganuary-2022', required: false })
     readonly password?: string;
 
