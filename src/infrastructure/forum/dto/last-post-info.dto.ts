@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PostInfoDto } from './postinfo.dto';
-import { UserInfoDto } from './userinfo.dto';
+import { PostInfoDto } from './post-info.dto';
+import { UserInfoDto } from './user-info.dto';
 
 export class LastPostInfoDto {
     @ApiProperty({ name: 'postInfo', type: PostInfoDto, required: true })

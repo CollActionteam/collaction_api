@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
 import { IContact } from '@domain/contact';
+import { CollActionDocument } from '@common/utils/document.utils';
 
-export type ContactDocument = ContactPersistence & Document;
+export type ContactDocument = CollActionDocument<ContactPersistence>;
 @Schema({ collection: 'contacts', autoCreate: true, versionKey: false, timestamps: true })
 export class ContactPersistence implements Omit<IContact, 'id'> {
     @Prop({ required: true })

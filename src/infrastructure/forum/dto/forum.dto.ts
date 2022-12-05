@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ForumTypeEnum } from '@domain/forum/enum/forum.enum';
-import { LastPostInfoDto } from './lastpostinfo.dto';
+import { LastPostInfoDto } from './last-post-info.dto';
 
 export class ForumDto {
     @ApiProperty({ name: 'id', type: String, required: true })

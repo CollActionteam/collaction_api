@@ -1,2 +1,2 @@
 export * from './forum.entity';
-export * from './forumpermission.entity';
+export * from './forum-permission.entity';

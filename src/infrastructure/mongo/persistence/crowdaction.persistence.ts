@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
 import {
     CrowdActionCategoryEnum,
     CrowdActionJoinStatusEnum,
@@ -11,6 +10,7 @@ import {
 import { Country, CountrySchema } from '@infrastructure/mongo/persistence/country.persistence';
 import { ICommitmentOption } from '@domain/commitmentoption';
 import { IBadge } from '@domain/badge';
+import { CollActionDocument } from '@common/utils/document.utils';
 import { CrowdActionCommitmentOptionSchema } from './commitmentoption.persistence';
 import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
 
@@ -24,7 +24,7 @@ class CrowdActionImages implements ICrowdActionImages {
 }
 export const CrowdActionImagesSchema = SchemaFactory.createForClass(CrowdActionImages);
 
-export type CrowdActionDocument = CrowdActionPersistence & Document;
+export type CrowdActionDocument = CollActionDocument<CrowdActionPersistence>;
 @Schema({ collection: 'crowdactions', autoCreate: true, versionKey: false, timestamps: true })
 export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'createdAt' | 'updatedAt'> {
     @Prop({ enum: CrowdActionTypeEnum, required: true })

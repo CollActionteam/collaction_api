@@ -5,5 +5,5 @@ export * from './participation.persistence';
 export * from './commitmentoption.persistence';
 export * from './contact.persistence';
 export * from './forum.persistence';
-export * from './lastpostinfo.persistence';
+export * from './last-post-info.persistence';
 export * from './thread.persistence';
