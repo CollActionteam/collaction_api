@@ -16,6 +16,7 @@ export interface ICrowdAction {
     readonly category: CrowdActionCategoryEnum;
     readonly subcategory?: CrowdActionCategoryEnum;
     readonly location: Country;
+    readonly slug: string;
     readonly password?: string;
     readonly participantCount: number;
     readonly images: ICrowdActionImages;
