@@ -165,6 +165,7 @@ const CreateCrowdActionStub = (commitmentOptions: CommitmentOption[]): any => {
             name: 'Netherlands',
         },
         password: 'pa$$w0rd',
+        slug: 'crowdaction-title',
         startAt: new Date('01/01/2025'),
         endAt: new Date('08/01/2025'),
         joinEndAt: new Date('07/07/2025'),
