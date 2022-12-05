@@ -1,5 +1,5 @@
 import { UserRole } from '@domain/auth/enum';
-import { IForumPermission } from '../interface/forumpermission.interface';
+import { IForumPermission } from '../interface/forum-permission.interface';
 
 export class ForumPermission implements IForumPermission {
     readonly id: string;

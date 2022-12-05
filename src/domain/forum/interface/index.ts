@@ -1,2 +1,2 @@
 export * from './forum.interface';
-export * from './forumpermission.interface';
+export * from './forum-permission.interface';

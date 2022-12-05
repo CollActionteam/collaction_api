@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
 import { ILastPostInfo } from '@domain/core';
 import { ForumTypeEnum, IForum } from '@domain/forum';
-import { LastPostInfoPersistenceSchema } from './lastpostinfo.persistence';
+import { CollActionDocument } from '@common/utils/document.utils';
+import { LastPostInfoPersistenceSchema } from './last-post-info.persistence';
 
-export type ForumDocument = ForumPersistence & Document;
+export type ForumDocument = CollActionDocument<ForumPersistence>;
 @Schema({ collection: 'forums', autoCreate: true, versionKey: false, timestamps: true })
 export class ForumPersistence implements Omit<IForum, 'id'> {
     @Prop({ enum: ForumTypeEnum, required: true })

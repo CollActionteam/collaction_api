@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
 import { IUserInfo, ILastPostInfo } from '@domain/core';
 import { IThread } from '@domain/thread';
-import { LastPostInfoPersistenceSchema, UserInfoPersistenceSchema } from './lastpostinfo.persistence';
+import { CollActionDocument } from '@common/utils/document.utils';
+import { LastPostInfoPersistenceSchema, UserInfoPersistenceSchema } from './last-post-info.persistence';
 
-export type ThreadDocument = ThreadPersistence & Document;
+export type ThreadDocument = CollActionDocument<ThreadPersistence>;
 @Schema({ collection: 'threads', autoCreate: true, versionKey: false, timestamps: true })
 export class ThreadPersistence implements Omit<IThread, 'id' | 'createdAt' | 'updatedAt'> {
     @Prop({ required: true })
