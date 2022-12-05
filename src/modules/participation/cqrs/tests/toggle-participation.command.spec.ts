@@ -17,6 +17,7 @@ import {
     ProfileRepository,
     ProfilePersistence,
     ProfileSchema,
+    CommitmentOptionRepository,
 } from '@infrastructure/mongo';
 import {
     ICrowdActionRepository,
@@ -29,9 +30,13 @@ import {
 import { IProfileRepository } from '@domain/profile';
 import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
 import { IParticipationRepository } from '@domain/participation';
-import { CreateCrowdActionCommand } from '@modules/crowdaction/cqrs';
-import { CommitmentOption } from '@domain/commitmentoption';
+import { CreateCrowdActionCommand, FindCrowdActionByIdQuery, IncrementParticipantCountCommand } from '@modules/crowdaction/cqrs';
+import { CommitmentOption, ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { SchedulerService } from '@modules/scheduler';
+import { ProfileService } from '@modules/profile';
+import { FindProfileByUserIdQuery } from '@modules/profile/cqrs';
+import { CrowdActionService } from '@modules/crowdaction';
+import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 
 describe('ToggleParticipationCommand', () => {
     let toggleParticipationCommand: ToggleParticipationCommand;
@@ -57,10 +62,20 @@ describe('ToggleParticipationCommand', () => {
             providers: [
                 ToggleParticipationCommand,
                 CreateCrowdActionCommand,
+                IncrementParticipantCountCommand,
                 SchedulerService,
                 SchedulerRegistry,
+                FindProfileByUserIdQuery,
+                ProfileService,
+                FindCrowdActionByIdQuery,
+                GetCommitmentOptionsByType,
+                {
+                    provide: 'CrowdActionService',
+                    useClass: CrowdActionService,
+                },
                 { provide: ICQRSHandler, useClass: CQRSHandler },
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
+                { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
                 { provide: IProfileRepository, useClass: ProfileRepository },
                 { provide: IParticipationRepository, useClass: ParticipationRepository },
                 { provide: getModelToken(ProfilePersistence.name), useValue: profileModel },
@@ -90,7 +105,7 @@ describe('ToggleParticipationCommand', () => {
     describe('toggleParticipationCommand', () => {
         it('should toggle the participation command', async () => {
             // create profile, commitmenoption, crowdaction, and participation
-            const profile = await profileModel.create({ CreateProfileStub });
+            const profile = await profileModel.create(CreateProfileStub());
 
             const commitmentOptionDocument = await commitmentOptionModel.create(CreateCommitmentOptionStub());
             const commitmentOption = CommitmentOption.create(commitmentOptionDocument.toObject({ getters: true }));
@@ -98,18 +113,25 @@ describe('ToggleParticipationCommand', () => {
             const crowdactionDocument = await crowdActionModel.create(CreateCrowdActionStub([commitmentOption]));
             const crowdAction = CrowdAction.create(crowdactionDocument.toObject({ getters: true }));
 
-            const participation = await toggleParticipationCommand.execute({
+            const participate = await toggleParticipationCommand.execute({
                 userId: profile.userId,
                 toggleParticipation: { crowdActionId: crowdAction.id, commitmentOptions: [commitmentOption.id] },
             });
 
-            expect(participation).toBeDefined();
-            expect(participation.isParticipating).toBeDefined();
+            expect(participate).toBeDefined();
+            expect(participate.isParticipating).toEqual(true);
+
+            const unparticipate = await toggleParticipationCommand.execute({
+                userId: profile.userId,
+                toggleParticipation: { crowdActionId: crowdAction.id, commitmentOptions: [commitmentOption.id] },
+            });
+
+            expect(unparticipate.isParticipating).toEqual(false);
         });
     });
 });
 
-export const CreateProfileStub = (): any => {
+const CreateProfileStub = (): any => {
     return {
         userId: 'user-id',
         location: {
