@@ -7,7 +7,7 @@ import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 @Injectable()
 export class FindCrowdActionByIdQuery implements IQuery<string> {
     constructor(
-        @Inject('PCrowdActionService') private readonly crowdActionService: CrowdActionService,
+        @Inject('CrowdActionService') private readonly crowdActionService: CrowdActionService,
         private readonly cqrsHandler: ICQRSHandler,
     ) {}
 
