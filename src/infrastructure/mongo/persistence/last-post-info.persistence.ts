@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ILastPostInfo, IPostInfo, IUserInfo } from '@domain/core';
+import { UserInfoPersistenceSchema } from './user-info.persistence';
 
 @Schema({ versionKey: false })
 class PostInfoPersistence implements IPostInfo {
@@ -16,25 +17,6 @@ class PostInfoPersistence implements IPostInfo {
     updatedAt: Date;
 }
 export const PostInfoPersistenceSchema = SchemaFactory.createForClass(PostInfoPersistence);
-
-@Schema({ versionKey: false })
-class UserInfoPersistence implements IUserInfo {
-    @Prop({ required: true })
-    userId: string;
-
-    @Prop({ required: true })
-    fullName: string;
-
-    @Prop({ required: true })
-    avatar: string;
-
-    @Prop({ required: true })
-    threadCount: number;
-
-    @Prop({ required: true })
-    postCount: number;
-}
-export const UserInfoPersistenceSchema = SchemaFactory.createForClass(UserInfoPersistence);
 
 @Schema({ _id: false, versionKey: false })
 class LastPostInfoPersistence implements ILastPostInfo {
