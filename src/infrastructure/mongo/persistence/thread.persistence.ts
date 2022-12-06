@@ -2,7 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IUserInfo, ILastPostInfo } from '@domain/core';
 import { IThread } from '@domain/thread';
 import { CollActionDocument } from '@common/utils/document.utils';
-import { LastPostInfoPersistenceSchema, UserInfoPersistenceSchema } from './last-post-info.persistence';
+import { LastPostInfoPersistenceSchema } from './last-post-info.persistence';
+import { UserInfoPersistenceSchema } from './user-info.persistence';
 
 export type ThreadDocument = CollActionDocument<ThreadPersistence>;
 @Schema({ collection: 'threads', autoCreate: true, versionKey: false, timestamps: true })
