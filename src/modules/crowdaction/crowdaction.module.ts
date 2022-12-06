@@ -26,7 +26,7 @@ import { CrowdActionService } from './service';
         UpdateCrowdActionImagesCommand,
         UpdateCrowdActionStatusesCommand,
         {
-            provide: 'PCrowdActionService',
+            provide: 'CrowdActionService',
             useClass: CrowdActionService,
         },
         ListCrowdActionsForUserQuery,
