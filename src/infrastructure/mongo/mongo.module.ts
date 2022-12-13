@@ -9,6 +9,10 @@ import {
     ParticipationSchema,
     ProfilePersistence,
     ProfileSchema,
+    ForumPersistence,
+    ForumSchema,
+    ThreadPersistence,
+    ThreadPersistenceSchema,
 } from '@infrastructure/mongo/persistence';
 import {
     CommitmentOptionRepository,
@@ -32,6 +36,8 @@ import { ContactPersistence, ContactSchema } from './persistence/contact.persist
             { name: ParticipationPersistence.name, schema: ParticipationSchema },
             { name: CommitmentOptionPersistence.name, schema: CommitmentOptionSchema },
             { name: ContactPersistence.name, schema: ContactSchema },
+            { name: ForumPersistence.name, schema: ForumSchema },
+            { name: ThreadPersistence.name, schema: ThreadPersistenceSchema },
         ]),
     ],
     providers: [
