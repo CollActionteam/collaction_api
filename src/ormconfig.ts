@@ -1,10 +1,10 @@
 import { basename } from 'path';
-import { MongoConnectionOptions } from 'typeorm/driver/mongodb/MongoConnectionOptions';
+import { DataSource } from 'typeorm';
 
 const baseName: string = basename(__dirname);
-const migrationsDir = `${baseName}/migration`;
+const migrationsDir = `${baseName}/migrations`;
 
-const mongo: MongoConnectionOptions = {
+export const dataSource = new DataSource({
     type: 'mongodb',
     url: process.env['MONGO_URL'],
     entities: [],
@@ -16,6 +16,4 @@ const mongo: MongoConnectionOptions = {
     migrations: [`${migrationsDir}/!(*.draft).{ts,js}`],
     migrationsTableName: 'migrations',
     migrationsRun: false,
-};
-
-export = mongo;
+});

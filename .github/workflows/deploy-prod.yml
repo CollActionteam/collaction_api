@@ -36,6 +36,18 @@ jobs:
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile.prod .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+            - name: Run pending migrations
+              env:
+                  SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+                  PROD_ENV_FILE: ${{ secrets.PROD_ENV }}
+                  MONGO_URL: ${{ secrets.PROD_MONGO_URL}}
+              run: |
+                  echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
+                  echo $PROD_ENV_FILE | base64 --decode > .env
+                  npm ci
+                  npm run build
+                  npm run migration:run
+
             - name: Deploy to Amazon ECS
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
               with:

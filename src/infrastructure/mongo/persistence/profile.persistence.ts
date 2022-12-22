@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
 import { IProfile } from '@domain/profile';
 import { Badge } from '@domain/badge';
+import { CollActionDocument } from '@common/utils/document.utils';
 import { Country, CountrySchema } from './country.persistence';
 import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
 
-export type ProfileDocument = ProfilePersistence & Document;
+export type ProfileDocument = CollActionDocument<ProfilePersistence>;
 
 @Schema({ collection: 'profiles', autoCreate: true, versionKey: false, timestamps: true })
 export class ProfilePersistence implements Omit<IProfile, 'id' | 'createdAt' | 'updatedAt'> {
