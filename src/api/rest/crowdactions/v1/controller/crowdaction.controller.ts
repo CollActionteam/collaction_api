@@ -78,7 +78,7 @@ export class CrowdActionController {
         return await this.cqrsHandler.fetch(FindCrowdActionByIdQuery, id);
     }
 
-    @Get(':slug')
+    @Get('/slug/:slug')
     @ApiResponse({
         status: 200,
         description: 'Returns the found CrowdAction if any',
