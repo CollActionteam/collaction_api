@@ -7,12 +7,17 @@ import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
 import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
 import { ListCrowdActionsQuery } from '@modules/crowdaction';
 import { SchedulerService } from '@modules/scheduler';
-import { ICrowdActionRepository, CrowdActionStatusEnum } from '@domain/crowdaction';
 import { CrowdActionRepository } from '@infrastructure/mongo';
 import { CrowdActionService } from '@modules/crowdaction';
 import { ICommitmentOptionRepository } from '@domain/commitmentoption';
-
 import { IParticipationRepository } from '@domain/participation';
+import {
+    ICrowdActionRepository,
+    CrowdActionStatusEnum,
+    CrowdActionJoinStatusEnum,
+    CrowdActionTypeEnum,
+    CrowdActionCategoryEnum,
+} from '@domain/crowdaction';
 import {
     CrowdActionSchema,
     CommitmentOptionSchema,
@@ -85,25 +90,73 @@ describe('ListParticipationsForCrowdActionQuery ', () => {
         it('should retrieve a paginated list of participations in a crowdaction', async () => {
             // create 3 crowdActions with all 3 statuses
             const startedCrowdAction = await crowdActionModel.create({
+                type: CrowdActionTypeEnum.FOOD,
                 title: 'started crowdaction',
-                description: 'crowdaction wtih the status started',
+                description: 'crowdaction with the status started',
+                category: CrowdActionCategoryEnum.FOOD,
+                location: {
+                    code: 'NL',
+                    name: 'Netherlands',
+                },
+                slug: 'crowdaction-title',
+                startAt: new Date('01/01/2025'),
+                endAt: new Date('08/01/2025'),
+                joinEndAt: new Date('07/07/2025'),
+                joinStatus: CrowdActionJoinStatusEnum.OPEN,
                 status: CrowdActionStatusEnum.STARTED,
+                participantCount: 0,
+                images: {
+                    card: 'card-image',
+                    banner: 'banner-image',
+                },
             });
 
             expect(startedCrowdAction.status).toBe(CrowdActionStatusEnum.STARTED);
 
             const waitingCrowdAction = await crowdActionModel.create({
+                type: CrowdActionTypeEnum.FOOD,
                 title: 'waiting crowdaction',
-                description: 'crowdaction wtih the status waiting',
+                description: 'crowdaction with the status waiting',
+                category: CrowdActionCategoryEnum.FOOD,
+                location: {
+                    code: 'NL',
+                    name: 'Netherlands',
+                },
+                slug: 'crowdaction-title',
+                startAt: new Date('01/01/2025'),
+                endAt: new Date('08/01/2025'),
+                joinEndAt: new Date('07/07/2025'),
+                joinStatus: CrowdActionJoinStatusEnum.OPEN,
                 status: CrowdActionStatusEnum.WAITING,
+                participantCount: 0,
+                images: {
+                    card: 'card-image',
+                    banner: 'banner-image',
+                },
             });
 
             expect(waitingCrowdAction.status).toBe(CrowdActionStatusEnum.WAITING);
 
             const endedCrowdAction = await crowdActionModel.create({
+                type: CrowdActionTypeEnum.FOOD,
                 title: 'ended crowdaction',
-                descripion: 'crowdaction with the status ended',
+                description: 'crowdaction with the status ended',
+                category: CrowdActionCategoryEnum.FOOD,
+                location: {
+                    code: 'NL',
+                    name: 'Netherlands',
+                },
+                slug: 'crowdaction-title',
+                startAt: new Date('01/01/2025'),
+                endAt: new Date('08/01/2025'),
+                joinEndAt: new Date('07/07/2025'),
+                joinStatus: CrowdActionJoinStatusEnum.OPEN,
                 status: CrowdActionStatusEnum.ENDED,
+                participantCount: 0,
+                images: {
+                    card: 'card-image',
+                    banner: 'banner-image',
+                },
             });
 
             expect(endedCrowdAction.status).toBe(CrowdActionStatusEnum.ENDED);
