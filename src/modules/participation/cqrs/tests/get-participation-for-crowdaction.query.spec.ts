@@ -3,10 +3,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { getModelToken } from '@nestjs/mongoose';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { connect, Connection, Model } from 'mongoose';
-import { SchedulerService } from '@modules/scheduler';
-import { UserIsNotParticipatingError } from '../../error/participation.error';
 import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
-import { GetParticipationForCrowdactionQuery } from '@modules/participation';
+import { ToggleParticipationCommand } from '@modules/participation/cqrs/command/toggle-participation.command';
 import {
     CommitmentOptionPersistence,
     CommitmentOptionSchema,
@@ -21,7 +19,6 @@ import {
     ParticipationRepository,
     CommitmentOptionRepository,
 } from '@infrastructure/mongo';
-import { CrowdActionService } from '@modules/crowdaction';
 import {
     CrowdAction,
     ICrowdActionRepository,
@@ -30,19 +27,26 @@ import {
     CrowdActionJoinStatusEnum,
     CrowdActionStatusEnum,
 } from '@domain/crowdaction';
-import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
-
-import { IParticipationRepository } from '@domain/participation';
-import { CommitmentOption, ICommitmentOptionRepository } from '@domain/commitmentoption';
-
 import { IProfileRepository } from '@domain/profile';
+import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
+import { IParticipationRepository } from '@domain/participation';
+import { CreateCrowdActionCommand, FindCrowdActionByIdQuery, IncrementParticipantCountCommand } from '@modules/crowdaction/cqrs';
+import { CommitmentOption, ICommitmentOptionRepository } from '@domain/commitmentoption';
+import { SchedulerService } from '@modules/scheduler';
+import { ProfileService } from '@modules/profile';
+import { GetParticipationForCrowdactionQuery } from '@modules/participation';
+import { FindProfileByUserIdQuery } from '@modules/profile/cqrs';
+import { CrowdActionService } from '@modules/crowdaction';
+import { UserIsNotParticipatingError } from '../../error/participation.error';
+import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 
 describe('GetParticipationForCrowdactionQuery', () => {
     let getParticipationForCrowdactionQuery: GetParticipationForCrowdactionQuery;
+    let toggleParticipationCommand: ToggleParticipationCommand;
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
-    let crowdActionModel: Model<CrowdActionPersistence>;
     let participationModel: Model<ParticipationPersistence>;
+    let crowdActionModel: Model<CrowdActionPersistence>;
     let profileModel: Model<ProfilePersistence>;
     let commitmentOptionModel: Model<CommitmentOptionPersistence>;
 
@@ -59,9 +63,16 @@ describe('GetParticipationForCrowdactionQuery', () => {
         const moduleRef = await Test.createTestingModule({
             imports: [CQRSModule],
             providers: [
-                GetParticipationForCrowdactionQuery,
+                ToggleParticipationCommand,
+                CreateCrowdActionCommand,
+                IncrementParticipantCountCommand,
                 SchedulerService,
                 SchedulerRegistry,
+                FindProfileByUserIdQuery,
+                ProfileService,
+                FindCrowdActionByIdQuery,
+                GetCommitmentOptionsByType,
+                GetParticipationForCrowdactionQuery,
                 {
                     provide: 'CrowdActionService',
                     useClass: CrowdActionService,
@@ -79,6 +90,7 @@ describe('GetParticipationForCrowdactionQuery', () => {
         }).compile();
 
         getParticipationForCrowdactionQuery = moduleRef.get<GetParticipationForCrowdactionQuery>(GetParticipationForCrowdactionQuery);
+        toggleParticipationCommand = moduleRef.get<ToggleParticipationCommand>(ToggleParticipationCommand);
     });
 
     afterAll(async () => {
@@ -105,12 +117,28 @@ describe('GetParticipationForCrowdactionQuery', () => {
             const crowdactionDocument = await crowdActionModel.create(CreateCrowdActionStub([commitmentOption]));
             const crowdAction = CrowdAction.create(crowdactionDocument.toObject({ getters: true }));
 
+            const participate = await toggleParticipationCommand.execute({
+                userId: profile.userId,
+                toggleParticipation: { crowdActionId: crowdAction.id, commitmentOptions: [commitmentOption.id] },
+            });
+
+            expect(participate).toBeDefined();
+            expect(participate.isParticipating).toEqual(true);
+
             const result = await getParticipationForCrowdactionQuery.handle({
                 userId: profile.userId,
                 crowdActionId: crowdAction.id,
             });
 
             expect(result).toBeDefined();
+
+            const unparticipate = await toggleParticipationCommand.execute({
+                userId: profile.userId,
+                toggleParticipation: { crowdActionId: crowdAction.id, commitmentOptions: [commitmentOption.id] },
+            });
+
+            expect(unparticipate).toBeDefined();
+            expect(unparticipate.isParticipating).toEqual(false);
         });
         it('should throw UserIsNotParticipatingError', async () => {
             const profile = await profileModel.create(CreateProfileStub());
@@ -159,10 +187,12 @@ const CreateCrowdActionStub = (commitmentOptions: CommitmentOption[]): any => {
         title: 'Crowdaction title',
         description: 'Crowdaction description',
         category: CrowdActionCategoryEnum.FOOD,
+        subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
         location: {
             code: 'NL',
             name: 'Netherlands',
         },
+        password: 'pa$$w0rd',
         slug: 'crowdaction-title',
         startAt: new Date('01/01/2025'),
         endAt: new Date('08/01/2025'),
