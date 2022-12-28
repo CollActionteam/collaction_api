@@ -37,8 +37,8 @@ import { ProfileService } from '@modules/profile';
 import { GetParticipationForCrowdactionQuery } from '@modules/participation';
 import { FindProfileByUserIdQuery } from '@modules/profile/cqrs';
 import { CrowdActionService } from '@modules/crowdaction';
-import { UserIsNotParticipatingError } from '../../error/participation.error';
 import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
+import { UserIsNotParticipatingError } from '../../error/participation.error';
 
 describe('GetParticipationForCrowdactionQuery', () => {
     let getParticipationForCrowdactionQuery: GetParticipationForCrowdactionQuery;
