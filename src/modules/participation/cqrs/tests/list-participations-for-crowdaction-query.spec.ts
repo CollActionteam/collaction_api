@@ -30,7 +30,6 @@ import {
 } from '@infrastructure/mongo';
 
 describe('ListParticipationsForCrowdActionQuery ', () => {
-    // let listParticipationsForCrowdActionQuery: ListParticipationsForCrowdActionQuery;
     let listCrowdActionsQuery: ListCrowdActionsQuery;
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
@@ -68,7 +67,6 @@ describe('ListParticipationsForCrowdActionQuery ', () => {
             ],
         }).compile();
 
-        // listParticipationsForCrowdActionQuery = moduleRef.get<ListParticipationsForCrowdActionQuery>(ListParticipationsForCrowdActionQuery);
         listCrowdActionsQuery = moduleRef.get<ListCrowdActionsQuery>(ListCrowdActionsQuery);
     });
 
