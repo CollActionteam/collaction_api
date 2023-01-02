@@ -9,6 +9,7 @@ import { AuthService } from '@modules/auth/service';
 import { ParticipationController } from './participations';
 import { CommitmentOptionController } from './commitmentoptions';
 import { AuthenticationController } from './auth';
+import { ThreadController } from './threads';
 import { ContactController } from './contact';
 
 @Module({
@@ -19,6 +20,7 @@ import { ContactController } from './contact';
         ProfileController,
         ParticipationController,
         CommitmentOptionController,
+        ThreadController,
         ContactController,
     ],
     providers: [CrowdActionService, ProfileService, AuthService],
