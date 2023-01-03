@@ -67,3 +67,20 @@ export class CreateThreadDto {
     @ApiProperty({ name: 'message', type: String, example: 'Sit eiusmod dolore adipisicing enim commodo cupidatat minim.', required: true })
     readonly message: string;
 }
+
+export class PaginatedThreadResponseDto {
+    @ApiProperty({ type: [ThreadDto] })
+    readonly items: ThreadDto[];
+
+    @ApiProperty({ example: 1 })
+    readonly page: number;
+
+    @ApiProperty({ example: 10 })
+    readonly pageSize: number;
+
+    @ApiProperty({ example: 1 })
+    readonly totalPages: number;
+
+    @ApiProperty({ example: 1 })
+    readonly totalItems: number;
+}
