@@ -2,13 +2,13 @@ import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { connect, Connection, Model } from 'mongoose';
+import { getModelToken } from '@nestjs/mongoose';
 import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
-import { SendFormCommand } from '../send-form.command';
 import { SchedulerService } from '@modules/scheduler';
 import { ContactDto } from '@infrastructure/contact/dto/contact.dto';
 import { IContactRepository } from '@domain/contact';
 import { ContactPersistence, ContactRepository, ContactSchema } from '@infrastructure/mongo';
-import { getModelToken } from '@nestjs/mongoose';
+import { SendFormCommand } from '../send-form.command';
 
 describe('SendFormCommand', () => {
     let sendFormCommand: SendFormCommand;
