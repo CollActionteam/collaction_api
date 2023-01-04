@@ -20,31 +20,56 @@ export class CreateThreadCommand implements ICommand {
         private readonly threadRepository: IThreadRepository,
     ) {}
 
+    /**
+     *
+     * @param data the thread DTO
+     * @returns the ID of the newly created thread in an object
+     */
     async execute(data: CreateThreadDto): Promise<Identifiable> {
         const query: FindCriteria<QueryForumPermission> = {
             query: { forumId: data.forumId },
             orderBy: [{ field: 'createdAt', direction: 'desc' }],
         };
-        const [{ users }, forum, forumPermission, threadCount] = await Promise.all([
+        const [user, { users: userRecords }, forum, forumPermission, threadCount] = await Promise.all([
+            this.profileRepository.findOne({ userId: data.userId }),
             this.adminAuth.getUsers([{ uid: data.userId }]),
             this.forumRepository.findOne({ id: data.forumId }),
             this.forumPermissionRepository.findOne(query),
             this.threadRepository.count({ query: { forumId: data.forumId, author: { userId: data.userId } } }),
         ]);
-        const userRecord = users[0];
-        const user = await this.profileRepository.findOne({ userId: userRecord.uid });
-        if (!forum) throw new ForumDoesNotExistError();
-        if (!forumPermission && (forum.parentId || forum.parentList?.length)) {
-            const parentForumsPermission = await this.forumPermissionRepository.findAll({
-                query: { forumId: { in: [...new Set([forum.parentId, ...(forum.parentList || [])])] } },
-            });
-            const parentForumPermission = parentForumsPermission[parentForumsPermission.length - 1];
+        const userRecord = userRecords[0];
 
+        // Check if the forum exists
+        if (!forum) throw new ForumDoesNotExistError();
+
+        // Check if the forum doesn't have a permission
+        if (!forumPermission && (forum.parentId || forum.parentList?.length)) {
+            // Use parent forum permission if the forum doesn't have its permission
+            const query: FindCriteria<QueryForumPermission> = {
+                query: { forumId: { in: [...new Set([forum.parentId, ...(forum.parentList || [])])] } },
+                orderBy: [{ field: 'createdAt', direction: 'desc' }],
+            };
+            const parentForumPermission = await this.forumPermissionRepository.findOne(query);
+
+            // Create a new thread using parent forum permission
             return this.#handleCreateThread(user, userRecord, parentForumPermission, data, '', threadCount);
         }
+
+        // Create a new thread using its forum permission
         return this.#handleCreateThread(user, userRecord, forumPermission, data, '', threadCount);
     }
 
+    /**
+     * Private function for handling thread creation.
+     *
+     * @param user the user profile object
+     * @param userRecord the user record coming from firebase
+     * @param forumPermission the forum permission
+     * @param param3 the thread DTO
+     * @param firstPost the ID of the first post in the forum
+     * @param threadCount total number of threads in the forum
+     * @returns the ID of the newly created thread in an object
+     */
     async #handleCreateThread(
         user: Profile,
         userRecord: UserRecord,
