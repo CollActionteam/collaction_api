@@ -10,13 +10,13 @@ import {
     CrowdActionPersistence,
     CrowdActionSchema,
     CrowdActionRepository,
-    CommitmentOptionRepository,
-    CommitmentOptionPersistence,
-    CommitmentOptionSchema,
+    CommitmentRepository,
+    CommitmentPersistence,
+    CommitmentSchema,
 } from '@infrastructure/mongo';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
-import { ICommitmentOptionRepository } from '@domain/commitmentoption';
-import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
+import { ICommitmentRepository } from '@domain/commitment';
+import { GetCommitmentsByType } from '@modules/commitment';
 import {
     CrowdActionMustBeInTheFutureError,
     MustEndAfterStartError,
@@ -31,26 +31,26 @@ describe('CreateCrowdActionCommand', () => {
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
     let crowdactionModel: Model<CrowdActionPersistence>;
-    let commitmentOptionModel: Model<CommitmentOptionPersistence>;
+    let commitmentModel: Model<CommitmentPersistence>;
 
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
         const uri = mongod.getUri();
         mongoConnection = (await connect(uri)).connection;
         crowdactionModel = mongoConnection.model(CrowdActionPersistence.name, CrowdActionSchema);
-        commitmentOptionModel = mongoConnection.model(CommitmentOptionPersistence.name, CommitmentOptionSchema);
+        commitmentModel = mongoConnection.model(CommitmentPersistence.name, CommitmentSchema);
 
         const moduleRef = await Test.createTestingModule({
             imports: [CQRSModule],
             providers: [
                 CreateCrowdActionCommand,
-                GetCommitmentOptionsByType,
+                GetCommitmentsByType,
                 SchedulerService,
                 SchedulerRegistry,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
-                { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
+                { provide: ICommitmentRepository, useClass: CommitmentRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdactionModel },
-                { provide: getModelToken(CommitmentOptionPersistence.name), useValue: commitmentOptionModel },
+                { provide: getModelToken(CommitmentPersistence.name), useValue: commitmentModel },
             ],
         }).compile();
 

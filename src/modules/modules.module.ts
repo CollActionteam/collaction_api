@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { CommitmentOptionModule } from './commitmentoption';
+import { CommitmentModule } from './commitment';
 import { ContactModule } from './contact/contact.module';
 import { CrowdActionModule } from './crowdaction';
 import { ParticipationModule } from './participation';
@@ -7,6 +7,6 @@ import { ProfileModule } from './profile';
 import { StartupModule } from './startup';
 
 @Module({
-    imports: [StartupModule, CrowdActionModule, ProfileModule, ParticipationModule, CommitmentOptionModule, ContactModule],
+    imports: [StartupModule, CrowdActionModule, ProfileModule, ParticipationModule, CommitmentModule, ContactModule],
 })
 export class ModulesModule {}

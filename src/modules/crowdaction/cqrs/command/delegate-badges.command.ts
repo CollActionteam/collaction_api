@@ -3,8 +3,8 @@ import { ICommand, ICQRSHandler } from '@common/cqrs';
 import { ICrowdAction } from '@domain/crowdaction';
 import { AwardTypeEnum, Badge, BadgeTierEnum } from '@domain/badge';
 import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
-import { CommitmentOption } from '@domain/commitmentoption';
 import { AwardBadgesCommand } from '@modules/profile/cqrs';
+import { Commitment } from '@domain/commitment';
 
 interface AwardThreshold {
     readonly diamondThreshold: number;
@@ -20,7 +20,7 @@ export class DelegateBadgesCommand implements ICommand {
     async execute(crowdAction: ICrowdAction): Promise<any> {
         if (crowdAction.badges?.length) {
             // Get Thresholds for the CrowdAction
-            const thresholds: AwardThreshold = getThresholds(crowdAction.commitmentOptions);
+            const thresholds: AwardThreshold = getThresholds(crowdAction.commitments);
 
             const participantList = await this.cqrsHandler.fetch(ListParticipationsForCrowdActionQuery, {
                 filter: { crowdActionId: crowdAction.id },
@@ -47,7 +47,7 @@ export class DelegateBadgesCommand implements ICommand {
                                 continue;
                             }
 
-                            const commitments = crowdAction.commitmentOptions.filter((c) => participant.commitmentOptions.includes(c.id));
+                            const commitments = crowdAction.commitments.filter((c) => participant.commitments.includes(c.id));
                             const points = commitments.reduce((acc, cur) => acc + cur.points, 0);
 
                             if (badge.tier === BadgeTierEnum.DIAMOND && points >= thresholds.diamondThreshold) {
@@ -84,7 +84,7 @@ export class DelegateBadgesCommand implements ICommand {
     }
 }
 
-function getThresholds(options: CommitmentOption[]): AwardThreshold {
+function getThresholds(options: Commitment[]): AwardThreshold {
     const diamondThreshold = options.sort((a, b) => b.points - a.points)[0].points; // 100%
     const goldThreshold = (diamondThreshold / 100) * 75; // 75%
     const silverThreshold = (diamondThreshold / 100) * 50; // 50%

@@ -1,6 +1,6 @@
 import { Country } from '@common/country';
 import { Badge } from '@domain/badge/entity';
-import { ICommitmentOption } from '@domain/commitmentoption';
+import { ICommitment } from '@domain/commitment';
 import { Identifiable } from '@domain/core';
 import {
     ICrowdAction,
@@ -23,7 +23,7 @@ export class CrowdAction implements ICrowdAction, Identifiable {
     readonly password?: string;
     readonly participantCount: number;
     readonly images: ICrowdActionImages;
-    readonly commitmentOptions: ICommitmentOption[];
+    readonly commitments: ICommitment[];
     status: CrowdActionStatusEnum;
     joinStatus: CrowdActionJoinStatusEnum;
 
@@ -51,7 +51,7 @@ export class CrowdAction implements ICrowdAction, Identifiable {
         this.password = entityLike.password;
         this.participantCount = entityLike.participantCount;
         this.images = entityLike.images;
-        this.commitmentOptions = entityLike.commitmentOptions;
+        this.commitments = entityLike.commitments;
 
         // TODO: Remove from Entity, move to response and pseudo the variables with logic
         this.status = entityLike.status;

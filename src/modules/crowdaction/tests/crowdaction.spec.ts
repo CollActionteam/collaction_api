@@ -12,7 +12,7 @@ import {
 } from '@domain/crowdaction';
 import { CrowdActionPersistence, CrowdActionRepository, CrowdActionSchema } from '@infrastructure/mongo';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
-import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
+import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import { CrowdActionService } from '../service';
 import { CrowdActionDoesNotExist } from '../errors';
 
@@ -85,7 +85,7 @@ const CrowdActionStub = (): CrowdAction => {
             card: 'TheCard',
             banner: 'TheBanner',
         },
-        commitmentOptions: [
+        commitments: [
             {
                 id: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',
                 type: CrowdActionTypeEnum.FOOD,
@@ -93,7 +93,7 @@ const CrowdActionStub = (): CrowdAction => {
                 description: 'TheDescription',
                 points: 14,
                 blocks: ['O9pbPDY3s5e5XwzgwKZtZTDPvLS2'],
-                icon: CommitmentOptionIconEnum.no_beef,
+                icon: CommitmentIconEnum.no_beef,
                 createdAt: new Date(1 - 1 - 2020),
                 updatedAt: new Date(1 - 1 - 2020),
             },

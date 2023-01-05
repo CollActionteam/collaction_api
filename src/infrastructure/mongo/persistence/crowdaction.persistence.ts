@@ -8,11 +8,11 @@ import {
     ICrowdActionImages,
 } from '@domain/crowdaction';
 import { Country, CountrySchema } from '@infrastructure/mongo/persistence/country.persistence';
-import { ICommitmentOption } from '@domain/commitmentoption';
 import { IBadge } from '@domain/badge';
 import { CollActionDocument } from '@common/utils/document.utils';
-import { CrowdActionCommitmentOptionSchema } from './commitmentoption.persistence';
+import { CrowdActionCommitmentSchema } from './commitment.persistence';
 import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
+import { ICommitment } from '@domain/commitment';
 
 @Schema({ _id: false, versionKey: false })
 class CrowdActionImages implements ICrowdActionImages {
@@ -72,8 +72,8 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
     @Prop({ type: Date, required: true })
     readonly joinEndAt: Date;
 
-    @Prop({ type: [CrowdActionCommitmentOptionSchema], required: true, array: true })
-    readonly commitmentOptions: ICommitmentOption[];
+    @Prop({ type: [CrowdActionCommitmentSchema], required: true, array: true })
+    readonly commitments: ICommitment[];
 
     @Prop({ type: [CrowdActionBadgePersistenceSchema], required: false, array: true })
     readonly badges: IBadge[];

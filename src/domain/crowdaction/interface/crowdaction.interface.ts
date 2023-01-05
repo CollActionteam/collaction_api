@@ -1,6 +1,6 @@
 import { Country } from '@common/country';
 import { Badge } from '@domain/badge/entity';
-import { ICommitmentOption } from '@domain/commitmentoption';
+import { ICommitment } from '@domain/commitment';
 import { CrowdActionCategoryEnum, CrowdActionJoinStatusEnum, CrowdActionStatusEnum, CrowdActionTypeEnum } from '@domain/crowdaction';
 
 export interface ICrowdActionImages {
@@ -20,7 +20,7 @@ export interface ICrowdAction {
     readonly password?: string;
     readonly participantCount: number;
     readonly images: ICrowdActionImages;
-    readonly commitmentOptions: ICommitmentOption[];
+    readonly commitments: ICommitment[];
     readonly status: CrowdActionStatusEnum;
     readonly joinStatus: CrowdActionJoinStatusEnum;
 

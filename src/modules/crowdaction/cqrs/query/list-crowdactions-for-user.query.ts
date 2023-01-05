@@ -23,11 +23,11 @@ export class ListCrowdActionsForUserQuery implements IQuery<IListCrowdActionsFor
         const paginatedCrowdActions = await paginate(filters, this.crowdActionRepository);
         const newItems = paginatedCrowdActions.items.map((c) => {
             const participation = participations.find((p) => p.crowdActionId === c.id);
-            const commitmentOptions = c.commitmentOptions.filter((co) => {
-                return participation?.commitmentOptions.includes(co.id);
+            const commitments = c.commitments.filter((co) => {
+                return participation?.commitments.includes(co.id);
             });
 
-            return { ...c, commitmentOptions };
+            return { ...c, commitments };
         });
 
         return { pageInfo: paginatedCrowdActions.pageInfo, items: newItems };

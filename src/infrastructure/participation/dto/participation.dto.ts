@@ -15,12 +15,12 @@ export class ParticipationDto implements Omit<IParticipation, 'id' | 'joinDate' 
     readonly avatar?: string | undefined;
 
     @ApiProperty({
-        name: 'commitmentOptions',
+        name: 'commitments',
         type: [String],
         isArray: true,
         required: true,
     })
-    readonly commitmentOptions: string[];
+    readonly commitments: string[];
 }
 
 export class ToggleParticipationDto {
@@ -28,12 +28,12 @@ export class ToggleParticipationDto {
     readonly crowdActionId: string;
 
     @ApiProperty({
-        name: 'commitmentOptions',
+        name: 'commitments',
         type: [String],
         isArray: true,
         required: false,
     })
-    readonly commitmentOptions?: string[];
+    readonly commitments?: string[];
 }
 
 export class ToggleParticipationResponse {

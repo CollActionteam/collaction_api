@@ -5,8 +5,8 @@ import { getModelToken } from '@nestjs/mongoose';
 import { DelegateBadgesCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
 import {
-    CommitmentOptionPersistence,
-    CommitmentOptionSchema,
+    CommitmentPersistence,
+    CommitmentSchema,
     CrowdActionPersistence,
     CrowdActionSchema,
     ParticipationPersistence,
@@ -19,7 +19,7 @@ import {
 import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
 import { IProfileRepository, Profile } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
-import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
+import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import {
     CrowdAction,
     CrowdActionCategoryEnum,
@@ -28,7 +28,7 @@ import {
     CrowdActionTypeEnum,
 } from '@domain/crowdaction';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
-import { CommitmentOption } from '@domain/commitmentoption';
+import { Commitment } from '@domain/commitment';
 import { AwardBadgesCommand } from '@modules/profile/cqrs';
 
 describe('DelegateBadgesCommand', () => {
@@ -38,7 +38,7 @@ describe('DelegateBadgesCommand', () => {
     let crowdActionModel: Model<CrowdActionPersistence>;
     let profileModel: Model<ProfilePersistence>;
     let participationModel: Model<ParticipationPersistence>;
-    let commitmentOptionModel: Model<CommitmentOptionPersistence>;
+    let commitmentModel: Model<CommitmentPersistence>;
 
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
@@ -48,7 +48,7 @@ describe('DelegateBadgesCommand', () => {
         crowdActionModel = mongoConnection.model(CrowdActionPersistence.name, CrowdActionSchema);
         profileModel = mongoConnection.model(ProfilePersistence.name, ProfileSchema);
         participationModel = mongoConnection.model(ParticipationPersistence.name, ParticipationSchema);
-        commitmentOptionModel = mongoConnection.model(CommitmentOptionPersistence.name, CommitmentOptionSchema);
+        commitmentModel = mongoConnection.model(CommitmentPersistence.name, CommitmentSchema);
 
         const moduleRef = await Test.createTestingModule({
             imports: [CQRSModule],
@@ -61,7 +61,7 @@ describe('DelegateBadgesCommand', () => {
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdActionModel },
                 { provide: getModelToken(ProfilePersistence.name), useValue: profileModel },
                 { provide: getModelToken(ParticipationPersistence.name), useValue: participationModel },
-                { provide: getModelToken(CommitmentOptionPersistence.name), useValue: commitmentOptionModel },
+                { provide: getModelToken(CommitmentPersistence.name), useValue: commitmentModel },
             ],
         }).compile();
 
@@ -83,16 +83,16 @@ describe('DelegateBadgesCommand', () => {
     });
 
     describe('delegateBadgesCommand', () => {
-        it('should create a new profile, new commitmentOption, new crowdAction, new participation, and delegate badges', async () => {
+        it('should create a new profile, new commitment, new crowdAction, new participation, and delegate badges', async () => {
             await profileModel.create(CreateProfileStub());
-            const commitmentOptionDocument = await commitmentOptionModel.create(CreateCommitmentOptionStub());
-            const commitmentOption = CommitmentOption.create(commitmentOptionDocument.toObject({ getters: true }));
+            const commitmentDocument = await commitmentModel.create(CreateCommitmentStub());
+            const commitment = Commitment.create(commitmentDocument.toObject({ getters: true }));
 
-            const crowdactionDocument = await crowdActionModel.create(CreateCrowdActionStub([commitmentOption]));
+            const crowdactionDocument = await crowdActionModel.create(CreateCrowdActionStub([commitment]));
 
             const crowdAction = CrowdAction.create(crowdactionDocument.toObject({ getters: true }));
 
-            await participationModel.create(CreateParticipationStub(crowdAction.id, [commitmentOption.id]));
+            await participationModel.create(CreateParticipationStub(crowdAction.id, [commitment.id]));
 
             await delegateBadgesCommand.execute(crowdAction);
 
@@ -120,16 +120,16 @@ const CreateProfileStub = (): any => {
     };
 };
 
-const CreateCommitmentOptionStub = (): any => {
+const CreateCommitmentStub = (): any => {
     return {
         type: CrowdActionTypeEnum.FOOD,
         label: 'label',
         points: 10,
-        icon: CommitmentOptionIconEnum.no_beef,
+        icon: CommitmentIconEnum.no_beef,
     };
 };
 
-const CreateCrowdActionStub = (commitmentOptions: CommitmentOption[]): any => {
+const CreateCrowdActionStub = (commitments: Commitment[]): any => {
     return {
         type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
@@ -148,7 +148,7 @@ const CreateCrowdActionStub = (commitmentOptions: CommitmentOption[]): any => {
         joinStatus: CrowdActionJoinStatusEnum.OPEN,
         status: CrowdActionStatusEnum.STARTED,
         participantCount: 0,
-        commitmentOptions: commitmentOptions,
+        commitments: commitments,
         images: {
             card: 'card-image',
             banner: 'banner-image',
@@ -163,13 +163,13 @@ const CreateCrowdActionStub = (commitmentOptions: CommitmentOption[]): any => {
     };
 };
 
-const CreateParticipationStub = (id: string, commitmentOptions: string[]): any => {
+const CreateParticipationStub = (id: string, commitments: string[]): any => {
     return {
         crowdActionId: id,
         userId: 'user-id',
         fullName: 'John Doe',
         avatar: 'avatar',
-        commitmentOptions: commitmentOptions,
+        commitments: commitments,
         joinDate: new Date('06/06/2025'),
         dailyCheckIns: 15,
     };

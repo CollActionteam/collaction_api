@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ICQRSHandler, IQuery } from '@common/cqrs';
 import { CrowdAction, ICrowdActionRepository } from '@domain/crowdaction';
 import { CrowdActionDoesNotExist } from '@modules/crowdaction';
-import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
+import { GetCommitmentsByType } from '@modules/commitment';
 
 @Injectable()
 export class FindCrowdActionBySlugQuery implements IQuery<string> {
@@ -15,8 +15,8 @@ export class FindCrowdActionBySlugQuery implements IQuery<string> {
             throw new CrowdActionDoesNotExist();
         }
 
-        const commitmentOptions = await this.cqrsHandler.fetch(GetCommitmentOptionsByType, crowdAction.type);
+        const commitments = await this.cqrsHandler.fetch(GetCommitmentsByType, crowdAction.type);
 
-        return CrowdAction.create({ ...crowdAction, commitmentOptions });
+        return CrowdAction.create({ ...crowdAction, commitments });
     }
 }
