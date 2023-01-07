@@ -7,7 +7,9 @@ import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
 import { SchedulerService } from '@modules/scheduler';
 import { ContactDto } from '@infrastructure/contact/dto/contact.dto';
 import { IContactRepository } from '@domain/contact';
+import { ContactService } from '@modules/contact/service/contact.service';
 import { ContactPersistence, ContactRepository, ContactSchema } from '@infrastructure/mongo';
+import { ContactDoesNotExistError } from '@modules/contact/errors';
 import { SendFormCommand } from '../send-form.command';
 
 describe('SendFormCommand', () => {
@@ -20,7 +22,6 @@ describe('SendFormCommand', () => {
         mongod = await MongoMemoryServer.create();
         const uri = mongod.getUri();
         mongoConnection = (await connect(uri)).connection;
-
         contactModel = mongoConnection.model(ContactPersistence.name, ContactSchema);
 
         const moduleRef = await Test.createTestingModule({
@@ -30,6 +31,7 @@ describe('SendFormCommand', () => {
                 SendFormCommand,
                 SchedulerService,
                 SchedulerRegistry,
+                { provide: ContactService, useClass: ContactService },
                 { provide: ICQRSHandler, useClass: CQRSHandler },
                 { provide: IContactRepository, useClass: ContactRepository },
                 { provide: getModelToken(ContactPersistence.name), useValue: contactModel },
@@ -61,6 +63,17 @@ describe('SendFormCommand', () => {
                 email: 'test@email.com',
             });
             expect(contact).toBeDefined();
+        });
+        it('should throw ContactDoesNotExistError', async () => {
+            try {
+                await sendFormCommand.execute({
+                    title: 'Test title',
+                    body: 'Test body',
+                    email: 'test@email.com',
+                });
+            } catch (error) {
+                expect(error).toEqual(ContactDoesNotExistError);
+            }
         });
     });
 });
