@@ -17,7 +17,7 @@ export class ContactController {
     constructor(private readonly cqrsHandler: ICQRSHandler) {}
 
     @Get()
-    @FirebaseGuard(UserRole.ADMIN, UserRole.MODERATOR)  //??
+    @FirebaseGuard(UserRole.ADMIN, UserRole.MODERATOR)
     @ApiOperation({ summary: 'Retrieve a paginated list of CrowdActions' })
     @ApiResponse({
         status: 200,
