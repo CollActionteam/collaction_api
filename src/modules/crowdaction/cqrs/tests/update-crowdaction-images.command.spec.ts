@@ -7,7 +7,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { CrowdAction, ICrowdActionRepository, CrowdActionTypeEnum, CrowdActionCategoryEnum } from '@domain/crowdaction';
+import { CrowdAction, ICrowdActionRepository } from '@domain/crowdaction';
 import { CreateCrowdActionCommand, UpdateCrowdActionImagesCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
 import {
@@ -102,11 +102,11 @@ describe('UpdateCrowdActionImagesCommand', () => {
 
 const CreateCrowdActionStub = (): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
+        type: 'FOOD',
         title: 'Crowdaction title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
+        category: 'FOOD',
+        subcategory: 'SUSTAINABILITY',
         country: 'TG',
         password: 'pa$$w0rd',
         images: {

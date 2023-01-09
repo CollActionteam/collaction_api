@@ -20,16 +20,6 @@ export class ListCrowdActionsForUserQuery implements IQuery<IListCrowdActionsFor
         const crowdActionIds = participations.map((p) => p.crowdActionId);
         const filters = { ...args.filter, filter: { ...args.filter.filter, id: { in: crowdActionIds } }, sort: { endAt: 'DESC' } };
 
-        const paginatedCrowdActions = await paginate(filters, this.crowdActionRepository);
-        const newItems = paginatedCrowdActions.items.map((c) => {
-            const participation = participations.find((p) => p.crowdActionId === c.id);
-            const commitmentOptions = c.commitmentOptions.filter((co) => {
-                return participation?.commitmentOptions.includes(co.id);
-            });
-
-            return { ...c, commitmentOptions };
-        });
-
-        return { pageInfo: paginatedCrowdActions.pageInfo, items: newItems };
+        return await paginate(filters, this.crowdActionRepository);
     }
 }

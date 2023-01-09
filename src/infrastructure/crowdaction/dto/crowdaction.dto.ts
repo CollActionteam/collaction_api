@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { CrowdActionCategoryEnum, CrowdActionTypeEnum, ICrowdActionImages } from '@domain/crowdaction';
+import { ICrowdActionImages } from '@domain/crowdaction';
 import { CommitmentOption } from '@domain/commitmentoption';
 import { CreateCommitmentOptionDto } from '@infrastructure/commitmentoption';
 import { IBadge, Badge } from '@domain/badge';
@@ -15,8 +15,8 @@ export class CrowdActionImagesDto implements ICrowdActionImages {
 }
 
 export class CreateCrowdActionDto {
-    @ApiProperty({ name: 'type', enum: CrowdActionTypeEnum, required: true })
-    readonly type: CrowdActionTypeEnum;
+    @ApiProperty({ name: 'type', required: true })
+    readonly type: string;
 
     @ApiProperty({ name: 'title', example: 'Veganuary', required: true })
     readonly title: string;
@@ -24,11 +24,11 @@ export class CreateCrowdActionDto {
     @ApiProperty({ name: 'description', example: 'Improve your health, improve the world!', required: true })
     readonly description: string;
 
-    @ApiProperty({ name: 'category', enum: CrowdActionCategoryEnum, required: true })
-    readonly category: CrowdActionCategoryEnum;
+    @ApiProperty({ name: 'category', required: true })
+    readonly category: string;
 
-    @ApiProperty({ name: 'subcategory', enum: CrowdActionCategoryEnum, example: CrowdActionCategoryEnum.FOOD, required: false })
-    readonly subcategory?: CrowdActionCategoryEnum;
+    @ApiProperty({ name: 'subcategory', example: 'FOOD', required: false })
+    readonly subcategory?: string;
 
     @ApiProperty({ name: 'country', example: 'NL', required: true })
     readonly country: string;
@@ -53,8 +53,8 @@ export class CreateCrowdActionDto {
 }
 
 export class GetCrowdActionDto {
-    @ApiProperty({ name: 'type', enum: CrowdActionTypeEnum, required: true })
-    readonly type: CrowdActionTypeEnum;
+    @ApiProperty({ name: 'type', required: true })
+    readonly type: string;
 
     @ApiProperty({ name: 'title', example: 'Veganuary', required: true })
     readonly title: string;
@@ -62,11 +62,11 @@ export class GetCrowdActionDto {
     @ApiProperty({ name: 'description', example: 'Improve your health, improve the world!', required: true })
     readonly description: string;
 
-    @ApiProperty({ name: 'category', enum: CrowdActionCategoryEnum, required: true })
-    readonly category: CrowdActionCategoryEnum;
+    @ApiProperty({ name: 'category', required: true })
+    readonly category: string;
 
-    @ApiProperty({ name: 'subcategory', enum: CrowdActionCategoryEnum, example: CrowdActionCategoryEnum.FOOD, required: false })
-    readonly subcategory?: CrowdActionCategoryEnum;
+    @ApiProperty({ name: 'subcategory', example: 'FOOD', required: false })
+    readonly subcategory?: string;
 
     @ApiProperty({ name: 'commitmentOptions', isArray: true, type: CreateCommitmentOptionDto })
     readonly commitmentOptions: CommitmentOption[];

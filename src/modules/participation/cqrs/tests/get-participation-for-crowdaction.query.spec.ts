@@ -19,16 +19,8 @@ import {
     ParticipationRepository,
     CommitmentOptionRepository,
 } from '@infrastructure/mongo';
-import {
-    CrowdAction,
-    ICrowdActionRepository,
-    CrowdActionTypeEnum,
-    CrowdActionCategoryEnum,
-    CrowdActionJoinStatusEnum,
-    CrowdActionStatusEnum,
-} from '@domain/crowdaction';
+import { CrowdAction, ICrowdActionRepository, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
 import { IProfileRepository } from '@domain/profile';
-import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
 import { IParticipationRepository } from '@domain/participation';
 import { CreateCrowdActionCommand, FindCrowdActionByIdQuery, IncrementParticipantCountCommand } from '@modules/crowdaction/cqrs';
 import { CommitmentOption, ICommitmentOptionRepository } from '@domain/commitmentoption';
@@ -174,20 +166,20 @@ const CreateProfileStub = (): any => {
 
 const CreateCommitmentOptionStub = (): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
+        type: 'FOOD',
         label: 'label',
         points: 10,
-        icon: CommitmentOptionIconEnum.no_beef,
+        icon: 'add',
     };
 };
 
 const CreateCrowdActionStub = (commitmentOptions: CommitmentOption[]): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
+        type: 'FOOD',
         title: 'Crowdaction title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
+        category: 'FOOD',
+        subcategory: 'SUSTAINABILITY',
         location: {
             code: 'NL',
             name: 'Netherlands',

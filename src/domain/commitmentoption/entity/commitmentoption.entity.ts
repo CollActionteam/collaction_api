@@ -1,15 +1,13 @@
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
-import { CommitmentOptionIconEnum } from '../enum/commitmentoption.enum';
 import { ICommitmentOption } from '../interface';
 
 export class CommitmentOption implements ICommitmentOption {
     readonly id: string;
-    readonly type: CrowdActionTypeEnum;
+    readonly type: string;
     readonly label: string;
     readonly description?: string | undefined;
     readonly points: number;
     readonly blocks?: string[]; // IDs of other CommitmentOptions to be blocked
-    readonly icon: CommitmentOptionIconEnum;
+    readonly icon: string;
 
     readonly createdAt: Date;
     readonly updatedAt: Date;

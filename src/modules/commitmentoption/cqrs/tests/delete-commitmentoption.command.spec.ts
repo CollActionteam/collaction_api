@@ -3,8 +3,6 @@ import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { CreateCommitmentOptionDto } from '@infrastructure/commitmentoption';
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
-import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
 import { CreateCommitmentOptionCommand, DeleteCommitmentOptionCommand } from '@modules/commitmentoption/cqrs';
 import { CommitmentOption, ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { CommitmentOptionPersistence, CommitmentOptionRepository, CommitmentOptionSchema } from '@infrastructure/mongo';
@@ -68,10 +66,10 @@ describe('DeleteCommitmentOptionCommand', () => {
 
 export const CreateCommitmentOptionStub = (): CreateCommitmentOptionDto => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
+        type: 'FOOD',
         label: 'commitment option label',
         description: 'commitment option description',
         points: 10,
-        icon: CommitmentOptionIconEnum.no_beef,
+        icon: 'add',
     };
 };

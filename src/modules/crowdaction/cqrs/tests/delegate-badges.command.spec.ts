@@ -19,14 +19,7 @@ import {
 import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
 import { IProfileRepository, Profile } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
-import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
-import {
-    CrowdAction,
-    CrowdActionCategoryEnum,
-    CrowdActionJoinStatusEnum,
-    CrowdActionStatusEnum,
-    CrowdActionTypeEnum,
-} from '@domain/crowdaction';
+import { CrowdAction, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { CommitmentOption } from '@domain/commitmentoption';
 import { AwardBadgesCommand } from '@modules/profile/cqrs';
@@ -122,21 +115,21 @@ const CreateProfileStub = (): any => {
 
 const CreateCommitmentOptionStub = (): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
+        type: 'FOOD',
         label: 'label',
         points: 10,
-        icon: CommitmentOptionIconEnum.no_beef,
+        icon: 'add',
     };
 };
 
 const CreateCrowdActionStub = (commitmentOptions: CommitmentOption[]): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
+        type: 'FOOD',
         title: 'Crowdaction title',
         slug: 'crowdaction-title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
+        category: 'FOOD',
+        subcategory: 'SUSTAINABILITY',
         location: {
             code: 'NL',
             name: 'Netherlands',
