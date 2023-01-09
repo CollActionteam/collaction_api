@@ -1,29 +1,20 @@
 import { Country } from '@common/country';
 import { Badge } from '@domain/badge/entity';
-import { ICommitmentOption } from '@domain/commitmentoption';
 import { Identifiable } from '@domain/core';
-import {
-    ICrowdAction,
-    ICrowdActionImages,
-    CrowdActionCategoryEnum,
-    CrowdActionTypeEnum,
-    CrowdActionJoinStatusEnum,
-    CrowdActionStatusEnum,
-} from '@domain/crowdaction';
+import { ICrowdAction, ICrowdActionImages, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
 
 export class CrowdAction implements ICrowdAction, Identifiable {
     readonly id: string;
-    readonly type: CrowdActionTypeEnum;
+    readonly type: string;
     readonly title: string;
     readonly description: string;
-    readonly category: CrowdActionCategoryEnum;
-    readonly subcategory?: CrowdActionCategoryEnum;
+    readonly category: string;
+    readonly subcategory?: string;
     readonly location: Country;
     readonly slug: string;
     readonly password?: string;
     readonly participantCount: number;
     readonly images: ICrowdActionImages;
-    readonly commitmentOptions: ICommitmentOption[];
     status: CrowdActionStatusEnum;
     joinStatus: CrowdActionJoinStatusEnum;
 
@@ -51,7 +42,6 @@ export class CrowdAction implements ICrowdAction, Identifiable {
         this.password = entityLike.password;
         this.participantCount = entityLike.participantCount;
         this.images = entityLike.images;
-        this.commitmentOptions = entityLike.commitmentOptions;
 
         // TODO: Remove from Entity, move to response and pseudo the variables with logic
         this.status = entityLike.status;

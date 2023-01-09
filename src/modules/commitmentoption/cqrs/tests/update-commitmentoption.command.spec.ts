@@ -2,10 +2,8 @@ import { Test } from '@nestjs/testing';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
 import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { CommitmentOptionPersistence, CommitmentOptionRepository, CommitmentOptionSchema } from '@infrastructure/mongo';
-import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
 import { CreateCommitmentOptionCommand, IUpdateCommitmentOptionArgs, UpdateCommitmentOptionCommand } from '../command';
 import { CreateCommitmentOptionStub } from './create-commitmentoption.command.spec';
 
@@ -64,8 +62,8 @@ export const UpdateCommitmentOptionCommandStub = (): IUpdateCommitmentOptionArgs
     return {
         id: '5f9f1b9f9b9b9b9b9b9b9b9b',
         updateDto: {
-            type: CrowdActionTypeEnum.FOOD,
-            icon: CommitmentOptionIconEnum.no_beef,
+            type: 'FOOD',
+            icon: 'add',
         },
     };
 };

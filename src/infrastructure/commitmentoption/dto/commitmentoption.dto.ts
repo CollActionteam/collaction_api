@@ -1,10 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
-import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
 
 export class CreateCommitmentOptionDto {
-    @ApiProperty({ name: 'type', type: CrowdActionTypeEnum, enum: CrowdActionTypeEnum, required: true })
-    readonly type: CrowdActionTypeEnum;
+    @ApiProperty({ name: 'type', required: true })
+    readonly type: string;
 
     @ApiProperty({ name: 'label', required: true })
     readonly label: string;
@@ -24,13 +22,13 @@ export class CreateCommitmentOptionDto {
     })
     readonly blocks?: string[];
 
-    @ApiProperty({ name: 'icon', type: CommitmentOptionIconEnum, enum: CommitmentOptionIconEnum, required: true })
-    readonly icon: CommitmentOptionIconEnum;
+    @ApiProperty({ name: 'icon', required: true })
+    readonly icon: string;
 }
 
 export class UpdateCommitmentOptionDto {
-    @ApiProperty({ name: 'type', type: CrowdActionTypeEnum, enum: CrowdActionTypeEnum, required: true })
-    readonly type: CrowdActionTypeEnum;
+    @ApiProperty({ name: 'type', required: true })
+    readonly type: string;
 
     @ApiProperty({ name: 'label', required: false })
     readonly label?: string;
@@ -50,6 +48,6 @@ export class UpdateCommitmentOptionDto {
     })
     readonly blocks?: string[];
 
-    @ApiProperty({ name: 'icon', type: CommitmentOptionIconEnum, enum: CommitmentOptionIconEnum, required: true })
-    readonly icon: CommitmentOptionIconEnum;
+    @ApiProperty({ name: 'icon', required: true })
+    readonly icon: string;
 }
