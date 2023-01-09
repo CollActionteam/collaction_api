@@ -4,8 +4,6 @@ import { Connection, connect, Model } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { ICommitmentOptionRepository, CommitmentOption } from '@domain/commitmentoption';
 import { CommitmentOptionPersistence, CommitmentOptionRepository, CommitmentOptionSchema } from '@infrastructure/mongo';
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
-import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
 import { CommitmentOptionDoesNotExistError } from '../errors/commitmentoption.error';
 import { CommitmentOptionService } from '../service';
 
@@ -64,12 +62,12 @@ describe('CommitmentOptionService', () => {
 export const CommitmentOptionStub = (): CommitmentOption => {
     return {
         id: '628cdea92e19fd912f0d520e',
-        type: CrowdActionTypeEnum.FOOD,
+        type: 'FOOD',
         label: 'Food',
         description: 'I want to help people with food',
         points: 10,
         blocks: [],
-        icon: CommitmentOptionIconEnum.no_beef,
+        icon: 'add',
         createdAt: new Date(),
         updatedAt: new Date(),
     };

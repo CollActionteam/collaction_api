@@ -11,13 +11,7 @@ import {
     CommitmentOptionSchema,
     CommitmentOptionRepository,
 } from '@infrastructure/mongo';
-import {
-    ICrowdActionRepository,
-    CrowdActionTypeEnum,
-    CrowdActionCategoryEnum,
-    CrowdActionStatusEnum,
-    CrowdActionJoinStatusEnum,
-} from '@domain/crowdaction';
+import { ICrowdActionRepository, CrowdActionStatusEnum, CrowdActionJoinStatusEnum } from '@domain/crowdaction';
 import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
@@ -91,11 +85,11 @@ describe('UpdateCrowdActionStatusesCommand', () => {
 
 const CreateCrowdActionStub = (): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
+        type: 'FOOD',
         title: 'Crowdaction title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
+        category: 'FOOD',
+        subcategory: 'SUSTAINABILITY',
         country: 'TG',
         password: 'pa$$w0rd',
         startAt: new Date('01/01/2025'),

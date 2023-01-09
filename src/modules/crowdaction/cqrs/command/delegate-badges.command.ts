@@ -5,6 +5,7 @@ import { AwardTypeEnum, Badge, BadgeTierEnum } from '@domain/badge';
 import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
 import { CommitmentOption } from '@domain/commitmentoption';
 import { AwardBadgesCommand } from '@modules/profile/cqrs';
+import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 
 interface AwardThreshold {
     readonly diamondThreshold: number;
@@ -18,9 +19,11 @@ export class DelegateBadgesCommand implements ICommand {
     constructor(private readonly cqrsHandler: ICQRSHandler) {}
 
     async execute(crowdAction: ICrowdAction): Promise<any> {
+        const crowdActionCommitments = await this.cqrsHandler.fetch(GetCommitmentOptionsByType, crowdAction.type);
+
         if (crowdAction.badges?.length) {
             // Get Thresholds for the CrowdAction
-            const thresholds: AwardThreshold = getThresholds(crowdAction.commitmentOptions);
+            const thresholds: AwardThreshold = getThresholds(crowdActionCommitments);
 
             const participantList = await this.cqrsHandler.fetch(ListParticipationsForCrowdActionQuery, {
                 filter: { crowdActionId: crowdAction.id },
@@ -47,7 +50,7 @@ export class DelegateBadgesCommand implements ICommand {
                                 continue;
                             }
 
-                            const commitments = crowdAction.commitmentOptions.filter((c) => participant.commitmentOptions.includes(c.id));
+                            const commitments = crowdActionCommitments.filter((c) => participant.commitmentOptions.includes(c.id));
                             const points = commitments.reduce((acc, cur) => acc + cur.points, 0);
 
                             if (badge.tier === BadgeTierEnum.DIAMOND && points >= thresholds.diamondThreshold) {

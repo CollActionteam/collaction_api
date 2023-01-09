@@ -10,6 +10,7 @@ import {
     ParticipantChangeEnum,
 } from '@modules/crowdaction/cqrs/command/increment-participant-count.command';
 import { FindProfileByUserIdQuery } from '@modules/profile/cqrs';
+import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 
 export interface ToggleParticipationCommandArgs {
     readonly userId: string;
@@ -40,7 +41,9 @@ export class ToggleParticipationCommand implements ICommand {
         const profile = await this.cqrsHandler.fetch(FindProfileByUserIdQuery, userId);
 
         const crowdAction = await this.cqrsHandler.fetch(FindCrowdActionByIdQuery, toggleParticipation.crowdActionId);
-        const allowedCommitmentOptions = crowdAction.commitmentOptions.map((option) => option.id);
+        const crowdActionCommitments = await this.cqrsHandler.fetch(GetCommitmentOptionsByType, crowdAction.type);
+
+        const allowedCommitmentOptions = crowdActionCommitments.map((option) => option.id);
 
         this.isCommitmentOptionsAllowed(toggleParticipation.commitmentOptions, allowedCommitmentOptions);
 
