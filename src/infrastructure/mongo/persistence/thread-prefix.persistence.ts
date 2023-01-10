@@ -4,7 +4,7 @@ import { UserRole } from '@domain/auth/enum';
 import { IThreadPrefix } from '@domain/thread';
 
 export type ThreadPrefixDocument = CollActionDocument<ThreadPrefixPersistence>;
-@Schema({ collection: 'threadprefix', autoCreate: true, versionKey: false, timestamps: true })
+@Schema({ collection: 'thread-prefix', autoCreate: true, versionKey: false, timestamps: true })
 export class ThreadPrefixPersistence implements Omit<IThreadPrefix, 'id'> {
     @Prop({ required: true })
     readonly prefix: string;

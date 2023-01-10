@@ -6,7 +6,7 @@ import { IPost } from '@domain/post/interface';
 import { UserInfoPersistenceSchema } from './user-info.persistence';
 
 export type ReportedPostDocument = CollActionDocument<ReportedPostPersistence>;
-@Schema({ collection: 'reportedposts', autoCreate: true, versionKey: false, timestamps: true })
+@Schema({ collection: 'reported-posts', autoCreate: true, versionKey: false, timestamps: true })
 export class ReportedPostPersistence implements Omit<IPost, 'id' | 'createdAt' | 'updatedAt'> {
     @Prop({ required: true })
     readonly threadId: string;
