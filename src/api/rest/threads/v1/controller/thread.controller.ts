@@ -32,6 +32,7 @@ export class ThreadController {
     }
 
     @Get(':forumId')
+    @FirebaseGuard(UserRole.USER, UserRole.MODERATOR, UserRole.ADMIN)
     @ApiOperation({ summary: 'Retrieve a paginated list of threads for a specific forum' })
     @ApiParam({ name: 'forumId', required: true, example: 'O9pbPDY7s5e5XwzgwKZtZTDPvLS2' })
     @ApiResponse({
