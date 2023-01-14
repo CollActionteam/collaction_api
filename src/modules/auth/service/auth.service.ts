@@ -3,7 +3,7 @@ import { sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithEmailLink 
 import { AuthUser } from '@domain/auth/entity';
 import { AuthToken, FirebaseAuthAdmin, FirebaseAuthClient } from '@infrastructure/auth';
 import { UserRole } from '@domain/auth/enum';
-import { AuthenticationError, BadCredentialsError } from '../errors';
+import { AuthenticationError, BadCredentialsError, OnlyInviteOrganization } from '../errors';
 import { UserRecord } from 'firebase-admin/auth';
 
 @Injectable()
@@ -58,24 +58,25 @@ export class AuthService {
         }
     }
 
-    async inviteAdmin(email: string) {
+    async inviteAdmin(email: string): Promise<void> {
+        if (!email.includes('@collaction.org')) {
+            throw new OnlyInviteOrganization();
+        }
 
-        let userRecord : UserRecord | null;
-        let customClaims : any ;
-        let role : string | undefined | null;
+        let customClaims: any;
+        let role: string | undefined | null;
 
+        let userRecord: UserRecord | undefined = undefined;
         try {
-            userRecord = await this.adminAuth.getUserByEmail(email)
-        } catch(e) {
-            userRecord = null
+            userRecord = await this.adminAuth.getUserByEmail(email);
+        } catch {}
+
+        if (userRecord != null) {
+            customClaims = userRecord.customClaims;
         }
 
-        if(userRecord != null) {
-            customClaims = userRecord.customClaims
-        }
-
-        if(customClaims != undefined) {
-            role = customClaims['role']
+        if (customClaims != undefined) {
+            role = customClaims['role'];
         }
 
         const actionCodeSettings = {
@@ -83,36 +84,26 @@ export class AuthService {
             handleCodeInApp: true,
         };
 
-        if(role == 'ADMIN') {
-            throw new AuthenticationError('User is already an admin'); 
+        if (role == 'ADMIN') {
+            throw new AuthenticationError('User is already an admin');
         }
-        
-        await sendSignInLinkToEmail(this.firebaseAuth, email, actionCodeSettings);
 
-        return 'Successfully sent invite';
-        
+        await sendSignInLinkToEmail(this.firebaseAuth, email, actionCodeSettings);
     }
 
     async verifyEmail(email: string, url: string): Promise<VerifyEmailResponse> {
         const credential = await signInWithEmailLink(this.firebaseAuth, email, url);
 
-
         const uid = credential.user.uid;
-        
-        await this.adminAuth.setCustomUserClaims(
-            uid,
-            {role: UserRole.ADMIN}
-        )
-        
-        const token = await credential.user.getIdToken(true)
+        const token = await credential.user.getIdToken(true);
+
+        await this.adminAuth.setCustomUserClaims(uid, { role: UserRole.ADMIN });
 
         return { identifier: credential.user.uid, token };
     }
 
-    async updatePassword(user: AuthUser, password: string): Promise<String> {
+    async updatePassword(user: AuthUser, password: string): Promise<void> {
         await this.adminAuth.updateUser(user.uid, { password });
-
-        return "password updated succesfully"
     }
 }
 
