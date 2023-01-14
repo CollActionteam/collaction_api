@@ -36,7 +36,6 @@ jobs:
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
                   npm run migration:run:dev
-                  npm run migration:run
 
             - name: Deploy to Amazon ECS
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1

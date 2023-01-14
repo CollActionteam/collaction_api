@@ -14,3 +14,8 @@ export abstract class SignInCredentialsDto {
     @ApiProperty()
     abstract readonly password: string;
 }
+
+export abstract class InviteAdminDto {
+    @ApiProperty({ name: 'email' })
+    readonly email: String;
+}
