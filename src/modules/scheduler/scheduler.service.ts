@@ -6,17 +6,24 @@ import { ICQRSHandler } from '@common/cqrs';
 import { ListCrowdActionsQuery, UpdateCrowdActionStatusesCommand } from '@modules/crowdaction';
 import { CrowdAction, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
 import { DelegateBadgesCommand } from '@modules/crowdaction/cqrs/command/delegate-badges.command';
+import { Initialized } from '@modules/startup/interface';
 
 const FILTER = { status: { in: [CrowdActionStatusEnum.STARTED, CrowdActionStatusEnum.WAITING] } };
-@Injectable()
-export class SchedulerService {
-    constructor(private readonly CQRSHandler: ICQRSHandler, private readonly schedulerRegistry: SchedulerRegistry) {}
 
-    async scheduleTasks() {
+@Injectable()
+export class SchedulerService extends Initialized {
+    constructor(private readonly CQRSHandler: ICQRSHandler, private readonly schedulerRegistry: SchedulerRegistry) {
+        super();
+    }
+
+    async init() {
+        this.stopAllCrons();
+
         const crowdActionsList = await this.CQRSHandler.fetch(ListCrowdActionsQuery, { filter: FILTER });
 
         let pageInfo = crowdActionsList.pageInfo;
         let items = crowdActionsList.items;
+
         let changedCrowdActions = 0;
         for (let page = 1; page <= pageInfo.totalPages; page++) {
             for (const crowdAction of items) {
@@ -65,9 +72,13 @@ export class SchedulerService {
             this.CQRSHandler.execute(UpdateCrowdActionStatusesCommand, { id, status, joinStatus });
         });
 
-        this.schedulerRegistry.addCronJob(crowdAction.id, crowdActionJob);
-        Logger.log(`[SchedulerService] CreateCron:Successfully - Executed on ${crowdAction.id}`);
-        crowdActionJob.start();
+        try {
+            this.schedulerRegistry.addCronJob(crowdAction.id, crowdActionJob);
+            Logger.log(`[SchedulerService] CreateCron:Successfully - Executed on ${crowdAction.id}`);
+            crowdActionJob.start();
+        } catch (e) {
+            Logger.error(`[SchedulerService] CreateCron:Error - Cron Creation failed for ${crowdAction.id}`, e);
+        }
     }
 
     stopAllCrons() {
