@@ -32,7 +32,7 @@ describe('SendFormCommand', () => {
                 SendFormCommand,
                 SchedulerService,
                 SchedulerRegistry,
-                { provide: ContactService, useClass: ContactService },
+                ContactService,
                 { provide: ICQRSHandler, useClass: CQRSHandler },
                 { provide: IContactRepository, useClass: ContactRepository },
                 { provide: getModelToken(ContactPersistence.name), useValue: contactModel },
