@@ -5,10 +5,8 @@ import { SchedulerRegistry } from '@nestjs/schedule';
 import { connect, Connection, Model } from 'mongoose';
 import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
 import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
-import { ListCrowdActionsQuery } from '@modules/crowdaction';
+import { ListCrowdActionsQuery, CrowdActionService } from '@modules/crowdaction';
 import { SchedulerService } from '@modules/scheduler';
-import { CrowdActionRepository } from '@infrastructure/mongo';
-import { CrowdActionService } from '@modules/crowdaction';
 import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { IParticipationRepository } from '@domain/participation';
 import {
@@ -27,6 +25,7 @@ import {
     ParticipationPersistence,
     ParticipationSchema,
     ParticipationRepository,
+    CrowdActionRepository,
 } from '@infrastructure/mongo';
 
 describe('ListParticipationsForCrowdActionQuery ', () => {
