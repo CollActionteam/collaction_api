@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
 import { IParticipation } from '@domain/participation';
+import { CollActionDocument } from '@common/utils/document.utils';
 
-export type ParticipationDocument = ParticipationPersistence & Document;
+export type ParticipationDocument = CollActionDocument<ParticipationPersistence>;
 @Schema({ collection: 'participations', autoCreate: true, versionKey: false, timestamps: true })
 export class ParticipationPersistence implements Omit<IParticipation, 'id'> {
     @Prop({ required: true })
