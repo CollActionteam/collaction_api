@@ -6,13 +6,14 @@ import { getModelToken } from '@nestjs/mongoose';
 import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
 import { SchedulerService } from '@modules/scheduler';
 import { ContactDto } from '@infrastructure/contact/dto/contact.dto';
-import { IContactRepository } from '@domain/contact';
-import { ContactService } from '@modules/contact/service/contact.service';
+import { IContactRepository, Contact } from '@domain/contact';
+import { ContactService } from '@modules/contact/service';
 import { ContactPersistence, ContactRepository, ContactSchema } from '@infrastructure/mongo';
 import { ContactDoesNotExistError } from '@modules/contact/errors';
 import { SendFormCommand } from '../send-form.command';
 
 describe('SendFormCommand', () => {
+    let contactService: ContactService;
     let sendFormCommand: SendFormCommand;
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
@@ -64,16 +65,26 @@ describe('SendFormCommand', () => {
             });
             expect(contact).toBeDefined();
         });
-        it('should throw ContactDoesNotExistError', async () => {
-            try {
-                await sendFormCommand.execute({
-                    title: 'Test title',
-                    body: 'Test body',
-                    email: 'test@email.com',
-                });
-            } catch (error) {
-                expect(error).toEqual(ContactDoesNotExistError);
-            }
+    });
+
+    describe('findByIdOrFail', () => {
+        it('should find a contact using an id or fail', async () => {
+            const newContact = await new contactModel(ContactStub()).save();
+            const foundContact: Contact = await contactService.findByIdOrFail(newContact.id);
+            expect(newContact.id).toBe(foundContact.id);
+        });
+        it('should return ContactDoesNotExistError', async () => {
+            await new contactModel(ContactStub()).save();
+            await expect(contactService.findByIdOrFail('63c14ec0403d3562d58bb708')).rejects.toThrowError(ContactDoesNotExistError);
         });
     });
 });
+
+export const ContactStub = (): Contact => {
+    return {
+        id: '63c14ec0403d3562d58bb708',
+        title: 'Test title',
+        body: 'Test body',
+        email: 'test@email.com',
+    };
+};
