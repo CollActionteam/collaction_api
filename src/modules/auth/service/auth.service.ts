@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithEmailLink } from 'firebase/auth';
+import { UserRecord } from 'firebase-admin/auth';
 import { AuthUser } from '@domain/auth/entity';
 import { AuthToken, FirebaseAuthAdmin, FirebaseAuthClient } from '@infrastructure/auth';
 import { UserRole } from '@domain/auth/enum';
 import { AuthenticationError, BadCredentialsError, OnlyInviteOrganization } from '../errors';
-import { UserRecord } from 'firebase-admin/auth';
 
 @Injectable()
 export class AuthService {
