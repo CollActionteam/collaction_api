@@ -14,12 +14,11 @@ import {
     CrowdActionSchema,
 } from '@infrastructure/mongo';
 import { ICommitmentOptionRepository } from '@domain/commitmentoption';
-import { SchedulerService } from '@modules/scheduler';
 import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
-import { CreateCrowdActionCommand } from '../command';
-import { ListCrowdActionsQuery } from '../query';
+import { CreateCrowdActionCommand, ListCrowdActionsQuery } from '@modules/crowdaction/cqrs';
+import { SchedulerService } from '@modules/scheduler';
 
 describe('ListCrowdActionsQuery', () => {
     let listCrowdActionsQuery: ListCrowdActionsQuery;

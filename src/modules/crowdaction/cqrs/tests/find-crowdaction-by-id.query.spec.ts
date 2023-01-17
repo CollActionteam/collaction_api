@@ -15,13 +15,12 @@ import {
     CrowdActionRepository,
     CrowdActionSchema,
 } from '@infrastructure/mongo';
-import { SchedulerService } from '@modules/scheduler';
 import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 import { CrowdActionDoesNotExist } from '@modules/crowdaction/errors';
-import { CreateCrowdActionCommand } from '../command';
-import { FindCrowdActionByIdQuery } from '../query';
+import { CreateCrowdActionCommand, FindCrowdActionByIdQuery } from '@modules/crowdaction/cqrs';
+import { SchedulerService } from '@modules/scheduler';
 
 describe('FindCrowdActionByIdQuery', () => {
     let findCrowdActionByIdQuery: FindCrowdActionByIdQuery;
