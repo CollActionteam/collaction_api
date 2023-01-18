@@ -18,4 +18,27 @@ export class ForumPermission implements IForumPermission {
     readonly canEditOwnPosts: boolean;
     readonly canPostPolls: boolean;
     readonly canVotePolls: boolean;
+
+    constructor(entityLike: IForumPermission) {
+        this.id = entityLike.id;
+        this.forumId = entityLike.forumId;
+        this.role = entityLike.role;
+        this.createThreads = entityLike.createThreads;
+        this.createPosts = entityLike.createPosts;
+        this.canLike = entityLike.canLike;
+        this.canDeleteThreads = entityLike.canDeleteThreads;
+        this.canDeleteOwnThreads = entityLike.canDeleteOwnThreads;
+        this.canDeletePosts = entityLike.canDeletePosts;
+        this.canDeleteOwnPosts = entityLike.canDeleteOwnPosts;
+        this.canEditThreads = entityLike.canEditThreads;
+        this.canEditPosts = entityLike.canEditPosts;
+        this.canEditOwnThreads = entityLike.canEditOwnThreads;
+        this.canEditOwnPosts = entityLike.canEditOwnPosts;
+        this.canPostPolls = entityLike.canPostPolls;
+        this.canVotePolls = entityLike.canVotePolls;
+    }
+
+    static create(entityLike: IForumPermission): ForumPermission {
+        return new ForumPermission(entityLike);
+    }
 }
