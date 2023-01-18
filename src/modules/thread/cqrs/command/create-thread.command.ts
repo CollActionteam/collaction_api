@@ -1,90 +1,69 @@
 import { Injectable } from '@nestjs/common';
-import { UserRecord } from 'firebase-admin/auth';
-import { ICommand } from '@common/cqrs';
-import { IProfileRepository, Profile } from '@domain/profile';
-import { ForumPermission, IForumPermissionRepository, IForumRepository, QueryForumPermission } from '@domain/forum';
+import { ICQRSHandler, ICommand } from '@common/cqrs';
+import { Profile } from '@domain/profile';
+import { ForumPermission } from '@domain/forum';
 import { IThreadRepository } from '@domain/thread';
-import { FirebaseAuthAdmin } from '@infrastructure/auth';
 import { CreateThreadDto } from '@infrastructure/thread';
 import { Identifiable, IUserInfo } from '@domain/core';
 import { ForumDoesNotExistError, UserCannotCreateThreadInForumError } from '@modules/thread/errors';
-import { FindCriteria } from '@core/repository.interface';
+import { FindForumByIdQuery, FindForumPermissionByIdQuery } from '@modules/forum';
+import { AuthUser } from '@domain/auth/entity';
+import { FindProfileByUserIdQuery } from '@modules/profile/cqrs';
 
 @Injectable()
 export class CreateThreadCommand implements ICommand {
-    constructor(
-        private readonly adminAuth: FirebaseAuthAdmin,
-        private readonly profileRepository: IProfileRepository,
-        private readonly forumRepository: IForumRepository,
-        private readonly forumPermissionRepository: IForumPermissionRepository,
-        private readonly threadRepository: IThreadRepository,
-    ) {}
+    constructor(private readonly cqrsHandler: ICQRSHandler, private readonly threadRepository: IThreadRepository) {}
 
     /**
      *
-     * @param data the thread DTO
+     * @param data the create thread dto
      * @returns the ID of the newly created thread in an object
      */
-    async execute(data: CreateThreadDto): Promise<Identifiable> {
-        const query: FindCriteria<QueryForumPermission> = {
-            query: { forumId: data.forumId },
-            orderBy: [{ field: 'createdAt', direction: 'desc' }],
-        };
-        const [user, { users: userRecords }, forum, forumPermission, threadCount] = await Promise.all([
-            this.profileRepository.findOne({ userId: data.userId }),
-            this.adminAuth.getUsers([{ uid: data.userId }]),
-            this.forumRepository.findOne({ id: data.forumId }),
-            this.forumPermissionRepository.findOne(query),
-            this.threadRepository.count({ query: { forumId: data.forumId, author: { userId: data.userId } } }),
+    async execute({ authUser, ...data }: CreateThreadDto): Promise<Identifiable> {
+        const [profile, forum] = await Promise.all([
+            this.cqrsHandler.fetch(FindProfileByUserIdQuery, authUser.uid),
+            this.cqrsHandler.fetch(FindForumByIdQuery, data.forumId),
         ]);
-        const userRecord = userRecords[0];
 
         // Check if the forum exists
         if (!forum) throw new ForumDoesNotExistError();
 
-        // Check if the forum doesn't have a permission
-        if (!forumPermission && (forum.parentId || forum.parentList?.length)) {
-            // Use parent forum permission if the forum doesn't have its permission
-            const query: FindCriteria<QueryForumPermission> = {
-                query: { forumId: { in: [...new Set([forum.parentId, ...(forum.parentList || [])])] } },
-                orderBy: [{ field: 'createdAt', direction: 'desc' }],
-            };
-            const parentForumPermission = await this.forumPermissionRepository.findOne(query);
-
-            // Create a new thread using parent forum permission
-            return this.#handleCreateThread(user, userRecord, parentForumPermission, data, '', threadCount);
-        }
+        const forumPermission = await this.cqrsHandler.fetch(FindForumPermissionByIdQuery, {
+            forumId: data.forumId,
+            role: authUser.customClaims.role,
+            parentId: forum.parentId,
+            parentList: forum.parentList,
+        });
 
         // Create a new thread using its forum permission
-        return this.#handleCreateThread(user, userRecord, forumPermission, data, '', threadCount);
+        return this.#handleCreateThread(profile, forumPermission, authUser, data, '');
     }
 
     /**
      * Private function for handling thread creation.
      *
-     * @param user the user profile object
-     * @param userRecord the user record coming from firebase
+     * @param profile the user profile object
      * @param forumPermission the forum permission
+     * @param authUser the current user object
      * @param param3 the thread DTO
      * @param firstPost the ID of the first post in the forum
      * @param threadCount total number of threads in the forum
      * @returns the ID of the newly created thread in an object
      */
     async #handleCreateThread(
-        user: Profile,
-        userRecord: UserRecord,
+        profile: Profile,
         forumPermission: ForumPermission | undefined,
-        { userId, forumId, prefixId, subject, message }: CreateThreadDto,
+        authUser: AuthUser,
+        { forumId, prefixId, subject, message }: Omit<CreateThreadDto, 'authUser'>,
         firstPost: string,
-        threadCount: number,
     ) {
-        const cannotCreateThread = forumPermission?.role !== userRecord?.customClaims?.role;
-        if (cannotCreateThread) throw new UserCannotCreateThreadInForumError();
+        if (forumPermission?.role !== authUser.customClaims?.role) throw new UserCannotCreateThreadInForumError();
+
         const author: IUserInfo = {
-            userId,
-            fullName: `${user.firstName} ${user.lastName}`,
-            avatar: user.avatar,
-            threadCount,
+            userId: authUser.uid,
+            fullName: `${profile.firstName} ${profile.lastName}`,
+            avatar: profile.avatar,
+            threadCount: 0,
             postCount: 0,
         };
 

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { LastPostInfoDto, UserInfoDto } from '@infrastructure/forum';
+import { AuthUser } from '@domain/auth/entity';
 
 export class ThreadDto {
     @ApiProperty({ name: 'id', type: String, required: true })
@@ -52,7 +53,7 @@ export class ThreadDto {
 }
 
 export class CreateThreadDto {
-    readonly userId: string;
+    readonly authUser: AuthUser;
 
     @ApiProperty({ name: 'forumId', type: String, example: '63ab19666a4f8c5fc3c9ac78', required: true })
     readonly forumId: string;

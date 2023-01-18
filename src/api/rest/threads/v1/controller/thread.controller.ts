@@ -23,7 +23,7 @@ export class ThreadController {
         type: IdentifiableResponse,
     })
     @ApiBody({ type: CreateThreadDto, description: 'Creates a new Thread' })
-    async createThread(@CurrentUser() user: AuthUser, @Body() createThreadBody: CreateThreadDto): Promise<Identifiable> {
-        return await this.cqrsHandler.execute(CreateThreadCommand, { ...createThreadBody, userId: user.uid });
+    async createThread(@CurrentUser() authUser: AuthUser, @Body() createThreadBody: CreateThreadDto): Promise<Identifiable> {
+        return await this.cqrsHandler.execute(CreateThreadCommand, { ...createThreadBody, authUser });
     }
 }

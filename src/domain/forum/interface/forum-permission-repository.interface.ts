@@ -5,7 +5,7 @@ import { IForumPermission } from './forum-permission.interface';
 
 export type CreateForumPermission = Omit<ForumPermission, 'id'>;
 export type PatchForumPermission = Partial<IForumPermission>;
-export type QueryForumPermission = FindQuery<Partial<Pick<IForumPermission, 'id' | 'forumId'>>>;
+export type QueryForumPermission = FindQuery<Partial<Pick<IForumPermission, 'id' | 'forumId' | 'role'>>>;
 
 export abstract class IForumPermissionRepository
     implements IRepository<ForumPermission, CreateForumPermission, PatchForumPermission, QueryForumPermission>
