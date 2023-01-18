@@ -9,39 +9,39 @@ export type ThreadDocument = CollActionDocument<ThreadPersistence>;
 @Schema({ collection: 'threads', autoCreate: true, versionKey: false, timestamps: true })
 export class ThreadPersistence implements Omit<IThread, 'id' | 'createdAt' | 'updatedAt'> {
     @Prop({ required: true })
-    readonly prefixId: string;
+    prefixId: string;
 
     @Prop({ required: true })
-    readonly forumId: string;
+    forumId: string;
 
     @Prop({ required: true })
-    readonly firstPost: string;
+    firstPost: string;
 
     @Prop({ required: false })
-    readonly pollId?: string;
+    pollId?: string;
 
     @Prop({ required: true })
-    readonly subject: string;
+    subject: string;
 
     @Prop({ required: true })
-    readonly message: string;
+    message: string;
 
     @Prop({ type: UserInfoPersistenceSchema, required: true })
-    readonly author: IUserInfo;
+    author: IUserInfo;
 
     @Prop({ required: true })
-    readonly closed: boolean;
+    closed: boolean;
 
     @Prop({ required: true })
-    readonly stickied: boolean;
+    stickied: boolean;
 
     @Prop({ required: true })
-    readonly visible: boolean;
+    visible: boolean;
 
     @Prop({ required: true })
-    readonly replyCount: number;
+    replyCount: number;
 
     @Prop({ type: LastPostInfoPersistenceSchema, required: true })
-    readonly lastPostInfo: ILastPostInfo;
+    lastPostInfo: ILastPostInfo;
 }
 export const ThreadPersistenceSchema = SchemaFactory.createForClass(ThreadPersistence);

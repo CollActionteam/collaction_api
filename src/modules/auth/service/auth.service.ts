@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithEmailLink } from 'firebase/auth';
-import { UserRecord } from 'firebase-admin/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { AuthUser } from '@domain/auth/entity';
 import { AuthToken, FirebaseAuthAdmin, FirebaseAuthClient } from '@infrastructure/auth';
 import { UserRole } from '@domain/auth/enum';
-import { AuthenticationError, BadCredentialsError, OnlyInviteOrganization } from '../errors';
+import { AuthenticationError, BadCredentialsError } from '../errors';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +24,7 @@ export class AuthService {
                     }
                 }
 
-                if (record.customClaims) {
+                if (record.phoneNumber && record.customClaims) {
                     return AuthUser.create(record as any);
                 }
 
@@ -57,57 +56,4 @@ export class AuthService {
             throw new AuthenticationError(error.message);
         }
     }
-
-    async inviteAdmin(email: string): Promise<void> {
-        if (!email.includes('@collaction.org')) {
-            throw new OnlyInviteOrganization();
-        }
-
-        let customClaims: any;
-        let role: string | undefined | null;
-
-        let userRecord: UserRecord | undefined = undefined;
-        try {
-            userRecord = await this.adminAuth.getUserByEmail(email);
-        } catch {}
-
-        if (userRecord != null) {
-            customClaims = userRecord.customClaims;
-        }
-
-        if (customClaims != undefined) {
-            role = customClaims['role'];
-        }
-
-        const actionCodeSettings = {
-            url: `${process.env.ADMINCMS_URL}/verification`,
-            handleCodeInApp: true,
-        };
-
-        if (role == 'ADMIN') {
-            throw new AuthenticationError('User is already an admin');
-        }
-
-        await sendSignInLinkToEmail(this.firebaseAuth, email, actionCodeSettings);
-    }
-
-    async verifyEmail(email: string, url: string): Promise<VerifyEmailResponse> {
-        const credential = await signInWithEmailLink(this.firebaseAuth, email, url);
-
-        const uid = credential.user.uid;
-        const token = await credential.user.getIdToken(true);
-
-        await this.adminAuth.setCustomUserClaims(uid, { role: UserRole.ADMIN });
-
-        return { identifier: credential.user.uid, token };
-    }
-
-    async updatePassword(user: AuthUser, password: string): Promise<void> {
-        await this.adminAuth.updateUser(user.uid, { password });
-    }
-}
-
-export interface VerifyEmailResponse {
-    identifier: string;
-    token: string;
 }

@@ -6,7 +6,6 @@ import { DelegateBadgesCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
 import {
     CommitmentOptionPersistence,
-    CommitmentOptionRepository,
     CommitmentOptionSchema,
     CrowdActionPersistence,
     CrowdActionSchema,
@@ -29,9 +28,8 @@ import {
     CrowdActionTypeEnum,
 } from '@domain/crowdaction';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
-import { CommitmentOption, ICommitmentOptionRepository } from '@domain/commitmentoption';
+import { CommitmentOption } from '@domain/commitmentoption';
 import { AwardBadgesCommand } from '@modules/profile/cqrs';
-import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 
 describe('DelegateBadgesCommand', () => {
     let delegateBadgesCommand: DelegateBadgesCommand;
@@ -58,8 +56,6 @@ describe('DelegateBadgesCommand', () => {
                 DelegateBadgesCommand,
                 AwardBadgesCommand,
                 ListParticipationsForCrowdActionQuery,
-                GetCommitmentOptionsByType,
-                { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
                 { provide: IParticipationRepository, useClass: ParticipationRepository },
                 { provide: IProfileRepository, useClass: ProfileRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdActionModel },
