@@ -26,6 +26,7 @@ import {
     ParticipationPersistence,
     ParticipationSchema,
     ParticipationRepository,
+    CrowdActionRepository,
 } from '@infrastructure/mongo';
 
 describe('ListParticipationsForCrowdActionQuery ', () => {
