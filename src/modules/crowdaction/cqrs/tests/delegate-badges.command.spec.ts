@@ -6,6 +6,7 @@ import { DelegateBadgesCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
 import {
     CommitmentPersistence,
+    CommitmentRepository,
     CommitmentSchema,
     CrowdActionPersistence,
     CrowdActionSchema,
@@ -22,13 +23,11 @@ import { IParticipationRepository } from '@domain/participation';
 import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import {
     CrowdAction,
-    CrowdActionCategoryEnum,
     CrowdActionJoinStatusEnum,
     CrowdActionStatusEnum,
-    CrowdActionTypeEnum,
 } from '@domain/crowdaction';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
-import { Commitment } from '@domain/commitment';
+import { Commitment, ICommitmentRepository } from '@domain/commitment';
 import { AwardBadgesCommand } from '@modules/profile/cqrs';
 
 describe('DelegateBadgesCommand', () => {
@@ -56,6 +55,7 @@ describe('DelegateBadgesCommand', () => {
                 DelegateBadgesCommand,
                 AwardBadgesCommand,
                 ListParticipationsForCrowdActionQuery,
+                { provide: ICommitmentRepository, useClass: CommitmentRepository },
                 { provide: IParticipationRepository, useClass: ParticipationRepository },
                 { provide: IProfileRepository, useClass: ProfileRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdActionModel },
@@ -122,7 +122,6 @@ const CreateProfileStub = (): any => {
 
 const CreateCommitmentStub = (): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
         label: 'label',
         points: 10,
         icon: CommitmentIconEnum.no_beef,
@@ -131,12 +130,9 @@ const CreateCommitmentStub = (): any => {
 
 const CreateCrowdActionStub = (commitments: Commitment[]): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
         slug: 'crowdaction-title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
         location: {
             code: 'NL',
             name: 'Netherlands',
