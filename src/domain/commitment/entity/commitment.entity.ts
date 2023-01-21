@@ -1,10 +1,10 @@
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
 import { CommitmentIconEnum } from '../enum/commitment.enum';
 import { ICommitment } from '../interface';
+import { v4 as uuidv4 } from 'uuid';
 
 export class Commitment implements ICommitment {
-    readonly id: string;
-    readonly type: CrowdActionTypeEnum;
+    readonly id: string = uuidv4();
+    readonly tag: string;
     readonly label: string;
     readonly description?: string | undefined;
     readonly points: number;
@@ -15,8 +15,7 @@ export class Commitment implements ICommitment {
     readonly updatedAt: Date;
 
     constructor(entityLike: ICommitment) {
-        this.id = entityLike.id;
-        this.type = entityLike.type;
+        this.tag = entityLike.tag;
         this.label = entityLike.label;
         this.description = entityLike.description;
         this.points = entityLike.points;

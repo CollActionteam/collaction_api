@@ -5,19 +5,16 @@ import { Identifiable } from '@domain/core';
 import {
     ICrowdAction,
     ICrowdActionImages,
-    CrowdActionCategoryEnum,
-    CrowdActionTypeEnum,
     CrowdActionJoinStatusEnum,
     CrowdActionStatusEnum,
 } from '@domain/crowdaction';
 
 export class CrowdAction implements ICrowdAction, Identifiable {
     readonly id: string;
-    readonly type: CrowdActionTypeEnum;
     readonly title: string;
     readonly description: string;
-    readonly category: CrowdActionCategoryEnum;
-    readonly subcategory?: CrowdActionCategoryEnum;
+    readonly category: string;
+    readonly subcategory?: string;
     readonly location: Country;
     readonly slug: string;
     readonly password?: string;
@@ -41,7 +38,6 @@ export class CrowdAction implements ICrowdAction, Identifiable {
 
     constructor(entityLike: ICrowdAction) {
         this.id = entityLike.id;
-        this.type = entityLike.type;
         this.title = entityLike.title;
         this.description = entityLike.description;
         this.category = entityLike.category;

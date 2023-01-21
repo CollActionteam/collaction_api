@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { InfrastructureModule } from '@infrastructure/infrastructure.module';
-import { CreateCommitmentCommand, DeleteCommitmentCommand, GetCommitmentsByType, UpdateCommitmentCommand } from './cqrs';
+import { CreateCommitmentCommand, DeleteCommitmentCommand, GetCommitmentsByTag, UpdateCommitmentCommand } from './cqrs';
 
 @Module({
     imports: [InfrastructureModule],
-    providers: [CreateCommitmentCommand, DeleteCommitmentCommand, UpdateCommitmentCommand, GetCommitmentsByType],
-    exports: [CreateCommitmentCommand, DeleteCommitmentCommand, UpdateCommitmentCommand, GetCommitmentsByType],
+    providers: [CreateCommitmentCommand, DeleteCommitmentCommand, UpdateCommitmentCommand, GetCommitmentsByTag],
+    exports: [CreateCommitmentCommand, DeleteCommitmentCommand, UpdateCommitmentCommand, GetCommitmentsByTag],
 })
 export class CommitmentModule {}

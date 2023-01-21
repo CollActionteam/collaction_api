@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
 import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 
 export class CreateCommitmentDto {
-    @ApiProperty({ name: 'type', type: CrowdActionTypeEnum, enum: CrowdActionTypeEnum, required: true })
-    readonly type: CrowdActionTypeEnum;
+    @ApiProperty({ name: 'tag', required: true })
+    readonly tag: string;
 
     @ApiProperty({ name: 'label', required: true })
     readonly label: string;
@@ -29,8 +28,8 @@ export class CreateCommitmentDto {
 }
 
 export class UpdateCommitmentDto {
-    @ApiProperty({ name: 'type', type: CrowdActionTypeEnum, enum: CrowdActionTypeEnum, required: true })
-    readonly type: CrowdActionTypeEnum;
+    @ApiProperty({ name: 'tag', required: true })
+    readonly tag: string;
 
     @ApiProperty({ name: 'label', required: false })
     readonly label?: string;

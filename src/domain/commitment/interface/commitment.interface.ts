@@ -1,9 +1,8 @@
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
 import { CommitmentIconEnum } from '../enum/commitment.enum';
 
 export interface ICommitment {
     readonly id: string;
-    readonly type: CrowdActionTypeEnum;
+    readonly tag: string;
     readonly label: string;
     readonly description?: string | undefined;
     readonly points: number;

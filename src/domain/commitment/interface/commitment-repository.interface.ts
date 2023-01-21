@@ -5,7 +5,7 @@ import { ICommitment } from './commitment.interface';
 
 export type CreateCommitment = Omit<ICommitment, 'id' | 'createdAt' | 'updatedAt'>;
 export type PatchCommitment = Partial<ICommitment>;
-export type QueryCommitment = Partial<Pick<ICommitment, 'id' | 'type'>> & {
+export type QueryCommitment = Partial<Pick<ICommitment, 'id' | 'tag'>> & {
     readonly blocks?: string;
 };
 

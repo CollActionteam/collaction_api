@@ -1,15 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
 import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import { CollActionDocument } from '@common/utils/document.utils';
 import { ICommitment } from '@domain/commitment';
 
 export type CommitmentDocument = CollActionDocument<CommitmentPersistence>;
 
-@Schema({ collection: 'commitments', autoCreate: true, versionKey: false, timestamps: true })
+@Schema({ collection: 'commitmentoptions', autoCreate: true, versionKey: false, timestamps: true })
 export class CommitmentPersistence implements Omit<ICommitment, 'id' | 'createdAt' | 'updatedAt'> {
-    @Prop({ enum: CrowdActionTypeEnum, required: true })
-    readonly type: CrowdActionTypeEnum;
+    @Prop({ required: true })
+    readonly tag: string;
 
     @Prop({ required: true })
     readonly label: string;
