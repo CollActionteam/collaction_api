@@ -7,9 +7,9 @@ import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
 import { SchedulerService } from '@modules/scheduler';
 import { ContactDto } from '@infrastructure/contact/dto/contact.dto';
 import { IContactRepository, Contact } from '@domain/contact';
-import { ContactService } from '@modules/contact/service';
 import { ContactPersistence, ContactRepository, ContactSchema } from '@infrastructure/mongo';
 import { ContactDoesNotExistError } from '@modules/contact/errors';
+import { ContactService } from '../../service';
 import { SendFormCommand } from '../send-form.command';
 
 describe('SendFormCommand', () => {
@@ -33,12 +33,13 @@ describe('SendFormCommand', () => {
                 SchedulerService,
                 SchedulerRegistry,
                 ContactService,
+
                 { provide: ICQRSHandler, useClass: CQRSHandler },
                 { provide: IContactRepository, useClass: ContactRepository },
                 { provide: getModelToken(ContactPersistence.name), useValue: contactModel },
             ],
         }).compile();
-
+        contactService = moduleRef.get<ContactService>(ContactService);
         sendFormCommand = moduleRef.get<SendFormCommand>(SendFormCommand);
     });
 
