@@ -2,8 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 
 export class CreateCommitmentDto {
-    @ApiProperty({ name: 'tag', required: true })
-    readonly tag: string;
+    @ApiProperty({ name: 'tags', isArray: true, required: true })
+    readonly tags: string[];
 
     @ApiProperty({ name: 'label', required: true })
     readonly label: string;
@@ -28,8 +28,8 @@ export class CreateCommitmentDto {
 }
 
 export class UpdateCommitmentDto {
-    @ApiProperty({ name: 'tag', required: true })
-    readonly tag: string;
+    @ApiProperty({ name: 'tags', isArray: true, required: true })
+    readonly tags: string[];
 
     @ApiProperty({ name: 'label', required: false })
     readonly label?: string;

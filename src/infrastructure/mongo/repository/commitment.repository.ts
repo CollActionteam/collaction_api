@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { Commitment, CreateCommitment, ICommitmentRepository, PatchCommitment, QueryCommitment } from '@domain/commitment';
 import { CommitmentDocument, CommitmentPersistence } from '@infrastructure/mongo/persistence';
 import { Identifiable } from '@domain/core';
@@ -34,14 +34,14 @@ export class CommitmentRepository implements ICommitmentRepository {
     }
 
     async findAll(query: FindCriteria<QueryCommitment>, options?: IPagination): Promise<Commitment[]> {
-        const mongoQuery = toMongoQuery<FilterQuery<CommitmentDocument>>(query);
+        const mongoQuery = toMongoQuery(query);
         const documents = await this.documentModel.find(mongoQuery, null, { skip: options?.offset, limit: options?.limit });
 
         return documents.map((doc) => Commitment.create(doc.toObject({ getters: true })));
     }
 
     async count(query: FindCriteria<QueryCommitment>): Promise<number> {
-        const mongoQuery = toMongoQuery<FilterQuery<CommitmentDocument>>(query);
+        const mongoQuery = toMongoQuery(query);
         return this.documentModel.count(mongoQuery);
     }
 }

@@ -3,24 +3,22 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { getModelToken } from '@nestjs/mongoose';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { connect, Connection, Model } from 'mongoose';
+import { ICommitmentRepository } from '@domain/commitment';
 import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
 import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
 import { ListCrowdActionsQuery, CrowdActionService } from '@modules/crowdaction';
 import { SchedulerService } from '@modules/scheduler';
-import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { IParticipationRepository } from '@domain/participation';
 import {
     ICrowdActionRepository,
     CrowdActionStatusEnum,
     CrowdActionJoinStatusEnum,
-    CrowdActionTypeEnum,
-    CrowdActionCategoryEnum,
 } from '@domain/crowdaction';
 import {
     CrowdActionSchema,
-    CommitmentOptionSchema,
-    CommitmentOptionRepository,
-    CommitmentOptionPersistence,
+    CommitmentSchema,
+    CommitmentRepository,
+    CommitmentPersistence,
     CrowdActionPersistence,
     ParticipationPersistence,
     ParticipationSchema,
@@ -34,7 +32,7 @@ describe('ListParticipationsForCrowdActionQuery ', () => {
     let mongoConnection: Connection;
     let participationModel: Model<ParticipationPersistence>;
     let crowdActionModel: Model<CrowdActionPersistence>;
-    let commitmentOptionModel: Model<CommitmentOptionPersistence>;
+    let commitmentModel: Model<CommitmentPersistence>;
 
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
@@ -43,7 +41,7 @@ describe('ListParticipationsForCrowdActionQuery ', () => {
 
         crowdActionModel = mongoConnection.model(CrowdActionPersistence.name, CrowdActionSchema);
         participationModel = mongoConnection.model(ParticipationPersistence.name, ParticipationSchema);
-        commitmentOptionModel = mongoConnection.model(CommitmentOptionPersistence.name, CommitmentOptionSchema);
+        commitmentModel = mongoConnection.model(CommitmentPersistence.name, CommitmentSchema);
 
         const moduleRef = await Test.createTestingModule({
             imports: [CQRSModule],
@@ -59,10 +57,10 @@ describe('ListParticipationsForCrowdActionQuery ', () => {
                 { provide: ICQRSHandler, useClass: CQRSHandler },
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: IParticipationRepository, useClass: ParticipationRepository },
-                { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
+                { provide: ICommitmentRepository, useClass: CommitmentRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdActionModel },
                 { provide: getModelToken(ParticipationPersistence.name), useValue: participationModel },
-                { provide: getModelToken(CommitmentOptionPersistence.name), useValue: commitmentOptionModel },
+                { provide: getModelToken(CommitmentPersistence.name), useValue: commitmentModel },
             ],
         }).compile();
 
@@ -87,10 +85,9 @@ describe('ListParticipationsForCrowdActionQuery ', () => {
         it('should retrieve a paginated list of participations in a crowdaction', async () => {
             // create 3 crowdActions with all 3 statuses
             const startedCrowdAction = await crowdActionModel.create({
-                type: CrowdActionTypeEnum.FOOD,
                 title: 'started crowdaction',
                 description: 'crowdaction with the status started',
-                category: CrowdActionCategoryEnum.FOOD,
+                category: 'FOOD',
                 location: {
                     code: 'NL',
                     name: 'Netherlands',
@@ -111,10 +108,9 @@ describe('ListParticipationsForCrowdActionQuery ', () => {
             expect(startedCrowdAction.status).toBe(CrowdActionStatusEnum.STARTED);
 
             const waitingCrowdAction = await crowdActionModel.create({
-                type: CrowdActionTypeEnum.FOOD,
                 title: 'waiting crowdaction',
                 description: 'crowdaction with the status waiting',
-                category: CrowdActionCategoryEnum.FOOD,
+                category: 'FOOD',
                 location: {
                     code: 'NL',
                     name: 'Netherlands',
@@ -135,10 +131,9 @@ describe('ListParticipationsForCrowdActionQuery ', () => {
             expect(waitingCrowdAction.status).toBe(CrowdActionStatusEnum.WAITING);
 
             const endedCrowdAction = await crowdActionModel.create({
-                type: CrowdActionTypeEnum.FOOD,
                 title: 'ended crowdaction',
                 description: 'crowdaction with the status ended',
-                category: CrowdActionCategoryEnum.FOOD,
+                category: 'FOOD',
                 location: {
                     code: 'NL',
                     name: 'Netherlands',

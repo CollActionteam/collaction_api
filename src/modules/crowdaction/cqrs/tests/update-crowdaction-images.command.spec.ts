@@ -7,7 +7,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { CrowdAction, ICrowdActionRepository, CrowdActionTypeEnum, CrowdActionCategoryEnum } from '@domain/crowdaction';
+import { CrowdAction, ICrowdActionRepository } from '@domain/crowdaction';
 import { CreateCrowdActionCommand, UpdateCrowdActionImagesCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
 import {
@@ -20,7 +20,6 @@ import {
 } from '@infrastructure/mongo';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { ICommitmentRepository } from '@domain/commitment';
-import { GetCommitmentsByType } from '@modules/commitment';
 import { S3ClientService } from '@modules/core/s3';
 import { IS3ClientRepository } from '@core/s3-client.interface';
 import { SchedulerService } from '@modules/scheduler';
@@ -45,7 +44,6 @@ describe('UpdateCrowdActionImagesCommand', () => {
             providers: [
                 UpdateCrowdActionImagesCommand,
                 CreateCrowdActionCommand,
-                GetCommitmentsByType,
                 ConfigService,
                 SchedulerService,
                 SchedulerRegistry,
@@ -102,11 +100,10 @@ describe('UpdateCrowdActionImagesCommand', () => {
 
 const CreateCrowdActionStub = (): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
+        category: 'FOOD',
+        subcategory: 'SUSTAINABILITY',
         country: 'TG',
         password: 'pa$$w0rd',
         images: {

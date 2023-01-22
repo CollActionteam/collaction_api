@@ -25,8 +25,8 @@ import { ICrowdActionRepository } from '@domain/crowdaction';
 import { IProfileRepository } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
 import { IContactRepository } from '@domain/contact';
-import { ContactPersistence, ContactSchema } from './persistence/contact.persistence';
 import { ICommitmentRepository } from '@domain/commitment';
+import { ContactPersistence, ContactSchema } from './persistence/contact.persistence';
 
 @Module({
     imports: [

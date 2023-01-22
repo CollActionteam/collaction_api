@@ -4,7 +4,6 @@ import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { CreateCommitmentDto } from '@infrastructure/commitment';
 import { ICommitmentRepository } from '@domain/commitment';
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
 import { CreateCommitmentCommand } from '@modules/commitment/cqrs/command/create-commitment.command';
 import { CommitmentPersistence, CommitmentRepository, CommitmentSchema } from '@infrastructure/mongo';
 import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
@@ -56,7 +55,7 @@ describe('CreateCommitmentCommand', () => {
 
 export const CreateCommitmentStub = (): CreateCommitmentDto => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
+        tags: ['FOOD'],
         label: 'commitment option label',
         description: 'commitment option description',
         points: 10,

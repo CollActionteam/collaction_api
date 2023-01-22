@@ -13,13 +13,10 @@ import {
 } from '@infrastructure/mongo';
 import {
     ICrowdActionRepository,
-    CrowdActionTypeEnum,
-    CrowdActionCategoryEnum,
     CrowdActionStatusEnum,
     CrowdActionJoinStatusEnum,
 } from '@domain/crowdaction';
 import { ICommitmentRepository } from '@domain/commitment';
-import { GetCommitmentsByType } from '@modules/commitment';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { UpdateCrowdActionStatusesCommand, CreateCrowdActionCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
@@ -45,7 +42,6 @@ describe('UpdateCrowdActionStatusesCommand', () => {
             providers: [
                 UpdateCrowdActionStatusesCommand,
                 CreateCrowdActionCommand,
-                GetCommitmentsByType,
                 SchedulerService,
                 SchedulerRegistry,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
@@ -91,11 +87,10 @@ describe('UpdateCrowdActionStatusesCommand', () => {
 
 const CreateCrowdActionStub = (): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
+        category: 'FOOD',
+        subcategory: 'SUSTAINABILITY',
         country: 'TG',
         password: 'pa$$w0rd',
         startAt: new Date('01/01/2025'),

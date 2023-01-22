@@ -22,10 +22,8 @@ import {
 import {
     ICrowdActionRepository,
     CrowdAction,
-    CrowdActionCategoryEnum,
     CrowdActionJoinStatusEnum,
     CrowdActionStatusEnum,
-    CrowdActionTypeEnum,
 } from '@domain/crowdaction';
 import { IProfileRepository } from '@domain/profile';
 import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
@@ -35,7 +33,6 @@ import { SchedulerService } from '@modules/scheduler';
 import { ProfileService } from '@modules/profile';
 import { FindProfileByUserIdQuery } from '@modules/profile/cqrs';
 import { CrowdActionService } from '@modules/crowdaction';
-import { GetCommitmentsByType } from '@modules/commitment';
 import { Commitment, ICommitmentRepository } from '@domain/commitment';
 
 describe('ToggleParticipationCommand', () => {
@@ -68,7 +65,6 @@ describe('ToggleParticipationCommand', () => {
                 FindProfileByUserIdQuery,
                 ProfileService,
                 FindCrowdActionByIdQuery,
-                GetCommitmentsByType,
                 {
                     provide: 'CrowdActionService',
                     useClass: CrowdActionService,
@@ -146,7 +142,7 @@ const CreateProfileStub = (): any => {
 
 const CreateCommitmentStub = (): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
+        tags: ['FOOD'],
         label: 'label',
         points: 10,
         icon: CommitmentIconEnum.no_beef,
@@ -155,11 +151,10 @@ const CreateCommitmentStub = (): any => {
 
 const CreateCrowdActionStub = (commitments: Commitment[]): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
+        category: 'FOOD',
+        subcategory: 'SUSTAINABILITY',
         location: {
             code: 'NL',
             name: 'Netherlands',

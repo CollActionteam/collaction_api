@@ -4,7 +4,6 @@ import { Connection, connect, Model } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { ICommitmentRepository, Commitment } from '@domain/commitment';
 import { CommitmentPersistence, CommitmentRepository, CommitmentSchema } from '@infrastructure/mongo';
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
 import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import { CommitmentDoesNotExistError } from '../errors/commitment.error';
 import { CommitmentService } from '../service';
@@ -50,7 +49,7 @@ describe('CommitmentService', () => {
         it('should find a commitment using an id or fail', async () => {
             const newCommitment = await new commitmentModel(CommitmentStub()).save();
             const foundCommitment: Commitment = await commitmentService.findByIdOrFail(newCommitment.id);
-            expect(newCommitment.id).toBe(foundCommitment.id);
+            expect(newCommitment._id).toBe(foundCommitment._id);
         });
         it('should return CommitmentDoesNotExistError', async () => {
             await new commitmentModel(CommitmentStub()).save();
@@ -61,8 +60,8 @@ describe('CommitmentService', () => {
 
 export const CommitmentStub = (): Commitment => {
     return {
-        id: '628cdea92e19fd912f0d520e',
-        type: CrowdActionTypeEnum.FOOD,
+        _id: '2a04ded6-7109-4e23-83b0-38b16a33db41',
+        tags: ['FOOD'],
         label: 'Food',
         description: 'I want to help people with food',
         points: 10,

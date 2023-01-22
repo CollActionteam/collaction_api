@@ -3,7 +3,6 @@ import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { CreateCommitmentDto } from '@infrastructure/commitment';
-import { CrowdActionTypeEnum } from '@domain/crowdaction';
 import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import { CreateCommitmentCommand, DeleteCommitmentCommand } from '@modules/commitment/cqrs';
 import { Commitment, ICommitmentRepository } from '@domain/commitment';
@@ -68,7 +67,7 @@ describe('DeleteCommitmentCommand', () => {
 
 export const CreateCommitmentStub = (): CreateCommitmentDto => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
+        tags: ['FOOD'],
         label: 'commitment option label',
         description: 'commitment option description',
         points: 10,

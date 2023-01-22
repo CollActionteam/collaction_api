@@ -5,8 +5,6 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import {
     CrowdAction,
     ICrowdActionRepository,
-    CrowdActionTypeEnum,
-    CrowdActionCategoryEnum,
     CrowdActionStatusEnum,
     CrowdActionJoinStatusEnum,
 } from '@domain/crowdaction';
@@ -69,12 +67,11 @@ describe('CrowdActionService', () => {
 const CrowdActionStub = (): CrowdAction => {
     const crowdActionStubData = {
         id: '628cdea92e19fd912f0d520e',
-        type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
         slug: 'crowdaction-title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.FOOD,
+        category: 'FOOD',
+        subcategory: 'FOOD',
         location: {
             name: 'Togo',
             code: 'TG',
@@ -88,7 +85,7 @@ const CrowdActionStub = (): CrowdAction => {
         commitments: [
             {
                 id: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',
-                type: CrowdActionTypeEnum.FOOD,
+                tags: [],
                 label: 'TheLabel',
                 description: 'TheDescription',
                 points: 14,

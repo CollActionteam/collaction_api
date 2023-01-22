@@ -6,9 +6,12 @@ import { ICommitment } from '@domain/commitment';
 export type CommitmentDocument = CollActionDocument<CommitmentPersistence>;
 
 @Schema({ collection: 'commitmentoptions', autoCreate: true, versionKey: false, timestamps: true })
-export class CommitmentPersistence implements Omit<ICommitment, 'id' | 'createdAt' | 'updatedAt'> {
-    @Prop({ required: true })
-    readonly tag: string;
+export class CommitmentPersistence implements Omit<ICommitment, 'createdAt' | 'updatedAt'> {
+    @Prop ({ required: true })
+    readonly _id: string;
+
+    @Prop({ array: true, required: true })
+    readonly tags: string[];
 
     @Prop({ required: true })
     readonly label: string;

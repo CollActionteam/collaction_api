@@ -3,7 +3,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { ICrowdActionRepository, CrowdActionTypeEnum, CrowdActionCategoryEnum } from '@domain/crowdaction';
+import { ICrowdActionRepository } from '@domain/crowdaction';
 import { CreateCrowdActionCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
 import {
@@ -16,7 +16,6 @@ import {
 } from '@infrastructure/mongo';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { ICommitmentRepository } from '@domain/commitment';
-import { GetCommitmentsByType } from '@modules/commitment';
 import {
     CrowdActionMustBeInTheFutureError,
     MustEndAfterStartError,
@@ -44,7 +43,6 @@ describe('CreateCrowdActionCommand', () => {
             imports: [CQRSModule],
             providers: [
                 CreateCrowdActionCommand,
-                GetCommitmentsByType,
                 SchedulerService,
                 SchedulerRegistry,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
@@ -95,7 +93,7 @@ describe('CreateCrowdActionCommand', () => {
         });
         it('should throw the CategoryAndSubcategoryMustBeDisimilarError', async () => {
             const stub = CreateCrowdActionStub();
-            stub.subcategory = CrowdActionCategoryEnum.FOOD;
+            stub.subcategory = 'FOOD';
             await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(CategoryAndSubcategoryMustBeDisimilarError);
         });
         it('should throw the CountryMustBeValidError', async () => {
@@ -108,11 +106,10 @@ describe('CreateCrowdActionCommand', () => {
 
 const CreateCrowdActionStub = (): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
+        category: 'FOOD',
+        subcategory: 'SUSTAINABILITY',
         country: 'TG',
         password: 'pa$$w0rd',
         startAt: new Date('01/01/2025'),

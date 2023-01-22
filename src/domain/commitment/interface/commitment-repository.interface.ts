@@ -3,10 +3,11 @@ import { Identifiable } from '@domain/core';
 import { Commitment } from '../entity/commitment.entity';
 import { ICommitment } from './commitment.interface';
 
-export type CreateCommitment = Omit<ICommitment, 'id' | 'createdAt' | 'updatedAt'>;
+export type CreateCommitment = Omit<ICommitment, '_id' | 'createdAt' | 'updatedAt'>;
 export type PatchCommitment = Partial<ICommitment>;
-export type QueryCommitment = Partial<Pick<ICommitment, 'id' | 'tag'>> & {
+export type QueryCommitment = Partial<Pick<ICommitment, '_id'>> & {
     readonly blocks?: string;
+    // readonly tags?: string;
 };
 
 export abstract class ICommitmentRepository implements IRepository<Commitment, CreateCommitment, PatchCommitment, QueryCommitment> {

@@ -21,11 +21,7 @@ import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
 import { IProfileRepository, Profile } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
 import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
-import {
-    CrowdAction,
-    CrowdActionJoinStatusEnum,
-    CrowdActionStatusEnum,
-} from '@domain/crowdaction';
+import { CrowdAction, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { Commitment, ICommitmentRepository } from '@domain/commitment';
 import { AwardBadgesCommand } from '@modules/profile/cqrs';
@@ -137,6 +133,7 @@ const CreateCrowdActionStub = (commitments: Commitment[]): any => {
             code: 'NL',
             name: 'Netherlands',
         },
+        category: 'FOOD',
         password: 'pa$$w0rd',
         startAt: new Date('01/01/2025'),
         endAt: new Date('08/01/2025'),

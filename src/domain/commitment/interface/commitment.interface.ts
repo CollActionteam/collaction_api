@@ -1,8 +1,8 @@
 import { CommitmentIconEnum } from '../enum/commitment.enum';
 
 export interface ICommitment {
-    readonly id: string;
-    readonly tag: string;
+    readonly _id: string;
+    readonly tags: string[];
     readonly label: string;
     readonly description?: string | undefined;
     readonly points: number;

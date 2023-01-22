@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { ICrowdActionImages } from '@domain/crowdaction';
 import { IBadge, Badge } from '@domain/badge';
-import { BadgeDto } from './badge.dto';
 import { CreateCommitmentDto } from '@infrastructure/commitment';
 import { ICommitment } from '@domain/commitment';
+import { BadgeDto } from './badge.dto';
 
 export class CrowdActionImagesDto implements ICrowdActionImages {
     @ApiProperty({ example: 'https://www.example.com/image.png' })

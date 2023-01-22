@@ -26,7 +26,7 @@ export class ListCrowdActionsForUserQuery implements IQuery<IListCrowdActionsFor
             const commitments = c.commitments.filter((co) => {
                 return participation?.commitments.includes(co.id);
             });
-// 
+            //
             return { ...c, commitments };
         });
 

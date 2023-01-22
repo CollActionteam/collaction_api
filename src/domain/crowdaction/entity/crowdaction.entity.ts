@@ -2,12 +2,7 @@ import { Country } from '@common/country';
 import { Badge } from '@domain/badge/entity';
 import { ICommitment } from '@domain/commitment';
 import { Identifiable } from '@domain/core';
-import {
-    ICrowdAction,
-    ICrowdActionImages,
-    CrowdActionJoinStatusEnum,
-    CrowdActionStatusEnum,
-} from '@domain/crowdaction';
+import { ICrowdAction, ICrowdActionImages, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
 
 export class CrowdAction implements ICrowdAction, Identifiable {
     readonly id: string;

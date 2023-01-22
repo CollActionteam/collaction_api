@@ -1,6 +1,7 @@
-import { CrowdActionDocument } from '@infrastructure/mongo';
+import { uuidv4 } from '@firebase/util';
 import { MongoQueryRunner } from 'typeorm/driver/mongodb/MongoQueryRunner';
 import { Collection } from 'typeorm/driver/mongodb/typings';
+import { CrowdActionDocument } from '@infrastructure/mongo';
 import { BaseMigration } from './util/base-migration';
 
 export class refactorCrowdactionsAndCommitments1674288860796 extends BaseMigration {
@@ -11,17 +12,25 @@ export class refactorCrowdactionsAndCommitments1674288860796 extends BaseMigrati
         );
         const crowdActions = await crowdActionCollection.find<CrowdActionDocument>({ type: { $exists: true } }).toArray();
         crowdActions.map(
-            async (crowdAction) => await crowdActionCollection.updateOne({ _id: crowdAction._id }, { $set: { type: undefined } }),
-        );
-        crowdActions.map(
             async (crowdAction) =>
-                await crowdActionCollection.updateOne({ _id: crowdAction._id }, { $rename: { commitmentOptions: 'commitments' } }),
+                await crowdActionCollection.updateMany(
+                    { _id: crowdAction._id },
+                    {
+                        $rename: { 'commitmentOptions.$.id': 'deprecatedId', commitmentOptions: 'commitments', type: 'deprecatedType' },
+                        $addToSet: { id: uuidv4() },
+                    },
+                ),
         );
     }
 
     public async down(queryRunner: MongoQueryRunner): Promise<void> {
         const crowdActions = await this.getCollection<CrowdActionDocument>(queryRunner, 'crowdactions');
-        crowdActions.updateMany({ commitments: { $exists: true } }, { $rename: { commitments: 'commitmentOptions' } });
-        // Not sure what to do for the other scenario? If we've deleted type how can we get it back?
+        crowdActions.updateMany(
+            { commitments: { $exists: true } },
+            {
+                $set: { id: undefined },
+                $rename: { 'commitmentOptions.$.deprecatedId': 'id', commitments: 'commitmentOptions', deprecatedType: 'type' },
+            },
+        );
     }
 }
