@@ -34,7 +34,6 @@ export class ContactController {
         status: 201,
         description: '',
         type: IdentifiableResponse,
-        type: IdentifiableResponse,
     })
     @ApiOperation({ summary: 'Send user feedback' })
     async sendFormData(@Body() contactBody: ContactDto): Promise<Identifiable> {
