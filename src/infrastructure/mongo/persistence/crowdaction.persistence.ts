@@ -5,7 +5,7 @@ import { IBadge } from '@domain/badge';
 import { CollActionDocument } from '@common/utils/document.utils';
 import { ICommitment } from '@domain/commitment';
 import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
-import { CrowdActionCommitmentSchema } from './commitment.persistence';
+import { CommitmentSchema } from './commitment.persistence';
 
 @Schema({ _id: false, versionKey: false })
 class CrowdActionImages implements ICrowdActionImages {
@@ -62,7 +62,7 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
     @Prop({ type: Date, required: true })
     readonly joinEndAt: Date;
 
-    @Prop({ type: [CrowdActionCommitmentSchema], required: true, array: true })
+    @Prop({ type: [CommitmentSchema], required: true, array: true })
     readonly commitments: ICommitment[];
 
     @Prop({ type: [CrowdActionBadgePersistenceSchema], required: false, array: true })

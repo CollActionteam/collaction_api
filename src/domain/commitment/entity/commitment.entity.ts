@@ -15,6 +15,7 @@ export class Commitment implements ICommitment {
     readonly updatedAt: Date;
 
     constructor(entityLike: ICommitment) {
+        this._id = entityLike._id;
         this.tags = entityLike.tags;
         this.label = entityLike.label;
         this.description = entityLike.description;

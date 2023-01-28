@@ -5,9 +5,9 @@ import { ICommitment } from '@domain/commitment';
 
 export type CommitmentDocument = CollActionDocument<CommitmentPersistence>;
 
-@Schema({ collection: 'commitmentoptions', autoCreate: true, versionKey: false, timestamps: true })
+@Schema({ collection: 'commitmentoptions', _id: false, autoCreate: true, versionKey: false, timestamps: true })
 export class CommitmentPersistence implements Omit<ICommitment, 'createdAt' | 'updatedAt'> {
-    @Prop ({ required: true })
+    @Prop({ required: true })
     readonly _id: string;
 
     @Prop({ array: true, required: true })
@@ -29,10 +29,3 @@ export class CommitmentPersistence implements Omit<ICommitment, 'createdAt' | 'u
     readonly icon: CommitmentIconEnum;
 }
 export const CommitmentSchema = SchemaFactory.createForClass(CommitmentPersistence);
-
-@Schema({ _id: false, versionKey: false })
-class CrowdActionCommitmentPersistence extends CommitmentPersistence {
-    @Prop({ required: true })
-    readonly id: string;
-}
-export const CrowdActionCommitmentSchema = SchemaFactory.createForClass(CrowdActionCommitmentPersistence);

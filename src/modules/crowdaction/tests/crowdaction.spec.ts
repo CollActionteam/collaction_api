@@ -2,12 +2,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Connection, connect, Model } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import {
-    CrowdAction,
-    ICrowdActionRepository,
-    CrowdActionStatusEnum,
-    CrowdActionJoinStatusEnum,
-} from '@domain/crowdaction';
+import { CrowdAction, ICrowdActionRepository, CrowdActionStatusEnum, CrowdActionJoinStatusEnum } from '@domain/crowdaction';
 import { CrowdActionPersistence, CrowdActionRepository, CrowdActionSchema } from '@infrastructure/mongo';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
@@ -84,7 +79,7 @@ const CrowdActionStub = (): CrowdAction => {
         },
         commitments: [
             {
-                id: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',
+                _id: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',
                 tags: [],
                 label: 'TheLabel',
                 description: 'TheDescription',

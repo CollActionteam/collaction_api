@@ -2,7 +2,6 @@ import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
-import { CreateCommitmentDto } from '@infrastructure/commitment';
 import { ICommitmentRepository } from '@domain/commitment';
 import { CreateCommitmentCommand } from '@modules/commitment/cqrs/command/create-commitment.command';
 import { CommitmentPersistence, CommitmentRepository, CommitmentSchema } from '@infrastructure/mongo';
@@ -53,8 +52,9 @@ describe('CreateCommitmentCommand', () => {
     });
 });
 
-export const CreateCommitmentStub = (): CreateCommitmentDto => {
+export const CreateCommitmentStub = (): any => {
     return {
+        _id: 'test',
         tags: ['FOOD'],
         label: 'commitment option label',
         description: 'commitment option description',

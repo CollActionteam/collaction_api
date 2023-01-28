@@ -7,7 +7,7 @@ export type CreateCommitment = Omit<ICommitment, '_id' | 'createdAt' | 'updatedA
 export type PatchCommitment = Partial<ICommitment>;
 export type QueryCommitment = Partial<Pick<ICommitment, '_id'>> & {
     readonly blocks?: string;
-    // readonly tags?: string;
+    readonly tags: string[];
 };
 
 export abstract class ICommitmentRepository implements IRepository<Commitment, CreateCommitment, PatchCommitment, QueryCommitment> {

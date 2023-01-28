@@ -9,11 +9,7 @@ import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
 import { ListCrowdActionsQuery, CrowdActionService } from '@modules/crowdaction';
 import { SchedulerService } from '@modules/scheduler';
 import { IParticipationRepository } from '@domain/participation';
-import {
-    ICrowdActionRepository,
-    CrowdActionStatusEnum,
-    CrowdActionJoinStatusEnum,
-} from '@domain/crowdaction';
+import { ICrowdActionRepository, CrowdActionStatusEnum, CrowdActionJoinStatusEnum } from '@domain/crowdaction';
 import {
     CrowdActionSchema,
     CommitmentSchema,

@@ -21,12 +21,7 @@ import {
     ParticipationRepository,
     CommitmentRepository,
 } from '@infrastructure/mongo';
-import {
-    CrowdAction,
-    ICrowdActionRepository,
-    CrowdActionJoinStatusEnum,
-    CrowdActionStatusEnum,
-} from '@domain/crowdaction';
+import { CrowdAction, ICrowdActionRepository, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
 import { IProfileRepository } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
 import { CreateCrowdActionCommand, FindCrowdActionByIdQuery, IncrementParticipantCountCommand } from '@modules/crowdaction/cqrs';
@@ -115,7 +110,7 @@ describe('GetParticipationForCrowdactionQuery', () => {
 
             const participate = await toggleParticipationCommand.execute({
                 userId: profile.userId,
-                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment.id] },
+                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment._id] },
             });
 
             expect(participate).toBeDefined();
@@ -130,7 +125,7 @@ describe('GetParticipationForCrowdactionQuery', () => {
 
             const unparticipate = await toggleParticipationCommand.execute({
                 userId: profile.userId,
-                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment.id] },
+                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment._id] },
             });
 
             expect(unparticipate).toBeDefined();
@@ -170,6 +165,7 @@ const CreateProfileStub = (): any => {
 
 const CreateCommitmentStub = (): any => {
     return {
+        _id: 'test',
         label: 'label',
         points: 10,
         icon: CommitmentIconEnum.no_beef,

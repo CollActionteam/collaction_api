@@ -7,7 +7,7 @@ export class CommitmentService {
     constructor(private readonly commitmentRepository: ICommitmentRepository) {}
 
     async findByIdOrFail(id: string): Promise<Commitment> {
-        const commitment = await this.commitmentRepository.findOne({ id });
+        const commitment = await this.commitmentRepository.findOne({ _id: id });
 
         if (!commitment) {
             throw new CommitmentDoesNotExistError(id);

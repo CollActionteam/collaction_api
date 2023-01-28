@@ -11,11 +11,7 @@ import {
     CommitmentSchema,
     CommitmentRepository,
 } from '@infrastructure/mongo';
-import {
-    ICrowdActionRepository,
-    CrowdActionStatusEnum,
-    CrowdActionJoinStatusEnum,
-} from '@domain/crowdaction';
+import { ICrowdActionRepository, CrowdActionStatusEnum, CrowdActionJoinStatusEnum } from '@domain/crowdaction';
 import { ICommitmentRepository } from '@domain/commitment';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { UpdateCrowdActionStatusesCommand, CreateCrowdActionCommand } from '@modules/crowdaction/cqrs';

@@ -12,7 +12,7 @@ export class CreateCommitmentCommand implements ICommand {
     async execute(data: CreateCommitmentDto): Promise<Identifiable> {
         if (data.blocks?.length) {
             for (const id of data.blocks) {
-                const [commitment] = await this.commitmentRepository.findAll({ id });
+                const [commitment] = await this.commitmentRepository.findAll({ _id: id });
                 if (!commitment) {
                     throw new CommitmentDoesNotExistError(id);
                 }
