@@ -5,7 +5,7 @@ import { ICommitment } from '@domain/commitment';
 
 export type CommitmentDocument = CollActionDocument<CommitmentPersistence>;
 
-@Schema({ collection: 'commitmentoptions', _id: false, autoCreate: true, versionKey: false, timestamps: true })
+@Schema({ collection: 'commitments', _id: false, autoCreate: true, versionKey: false, timestamps: true })
 export class CommitmentPersistence implements Omit<ICommitment, 'createdAt' | 'updatedAt'> {
     @Prop({ required: true })
     readonly _id: string;

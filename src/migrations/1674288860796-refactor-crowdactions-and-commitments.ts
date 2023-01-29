@@ -16,8 +16,8 @@ export class refactorCrowdactionsAndCommitments1674288860796 extends BaseMigrati
                 await crowdActionCollection.updateMany(
                     { _id: crowdAction._id },
                     {
-                        $rename: { 'commitmentOptions.$.id': 'deprecatedId', commitmentOptions: 'commitments', type: 'deprecatedType' },
-                        $addToSet: { id: uuidv4() },
+                        $rename: { 'commitmentOptions.$._id': 'deprecatedId', commitmentoptions: 'commitments', type: 'deprecatedType' },
+                        $addToSet: { _id: uuidv4() },
                     },
                 ),
         );
@@ -28,8 +28,8 @@ export class refactorCrowdactionsAndCommitments1674288860796 extends BaseMigrati
         crowdActions.updateMany(
             { commitments: { $exists: true } },
             {
-                $set: { id: undefined },
-                $rename: { 'commitmentOptions.$.deprecatedId': 'id', commitments: 'commitmentOptions', deprecatedType: 'type' },
+                $set: { _id: undefined },
+                $rename: { 'commitmentOptions.$.deprecatedId': '_id', commitments: 'commitmentoptions', deprecatedType: 'type' },
             },
         );
     }

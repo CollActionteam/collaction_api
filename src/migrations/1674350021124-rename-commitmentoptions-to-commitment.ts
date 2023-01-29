@@ -7,7 +7,7 @@ export class renameCommitmentoptionsToCommitment1674350021124 extends BaseMigrat
     public async up(queryRunner: MongoQueryRunner): Promise<void> {
         const commitmentsCollection: Collection<CommitmentDocument> = await this.getCollection<CommitmentDocument>(
             queryRunner,
-            'commitmentOptions',
+            'commitmentoptions',
         );
         commitmentsCollection.rename('commitments');
     }
@@ -17,6 +17,6 @@ export class renameCommitmentoptionsToCommitment1674350021124 extends BaseMigrat
             queryRunner,
             'commitments',
         );
-        commitmentsCollection.rename('commitmentOptions');
+        commitmentsCollection.rename('commitmentoptions');
     }
 }
