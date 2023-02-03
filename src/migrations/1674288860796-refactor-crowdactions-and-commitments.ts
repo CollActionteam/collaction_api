@@ -1,7 +1,6 @@
-import { uuidv4 } from '@firebase/util';
 import { MongoQueryRunner } from 'typeorm/driver/mongodb/MongoQueryRunner';
 import { Collection } from 'typeorm/driver/mongodb/typings';
-import { CrowdActionDocument } from '@infrastructure/mongo';
+import { CrowdActionDocument, ParticipationDocument } from '@infrastructure/mongo';
 import { BaseMigration } from './util/base-migration';
 
 export class refactorCrowdactionsAndCommitments1674288860796 extends BaseMigration {
@@ -10,14 +9,51 @@ export class refactorCrowdactionsAndCommitments1674288860796 extends BaseMigrati
             queryRunner,
             'crowdactions',
         );
+        const participationCollection: Collection<ParticipationDocument> = await this.getCollection<ParticipationDocument>(
+            queryRunner,
+            'participations',
+        );
         const crowdActions = await crowdActionCollection.find<CrowdActionDocument>({ type: { $exists: true } }).toArray();
         crowdActions.map(
             async (crowdAction) =>
                 await crowdActionCollection.updateMany(
                     { _id: crowdAction._id },
                     {
-                        $rename: { 'commitmentOptions.$._id': 'deprecatedId', commitmentoptions: 'commitments', type: 'deprecatedType' },
-                        $addToSet: { _id: uuidv4() },
+                        // $set: {
+                            // 'crowdAction.commitmentOptions': {
+                            //     $map: {
+                            //         input: '$crowdAction.commitmentOptions',
+                            //         in: {
+                            //             $mergedObjects: [
+                            //                 '$$this',
+                            //                 {
+                            //                     deprecatedId: '$$this._id',
+                            //                     tags: '$$this.tags',
+                            //                     label: '$$this.label',
+                            //                     description: '$$this.description',
+                            //                     points: '$$this.points',
+                            //                     blocks: '$$this.blocks',
+                            //                     icon: '$$this.icon',
+                            //                 },
+                            //             ],
+                            //         },
+                            //     },
+                            // },
+                        // },
+                        $rename: { commitmentOptions: 'commitments', type: 'deprecatedType' },
+                    },
+                ),
+        );
+
+        const participations = await participationCollection
+            .find<ParticipationDocument>({ commitmentOptions: { $exists: true } })
+            .toArray();
+        participations.map(
+            async (participation) =>
+                await participationCollection.updateMany(
+                    { id: participation.id },
+                    {
+                        $rename: { commitmentOptions: 'commitments' },
                     },
                 ),
         );
@@ -28,8 +64,37 @@ export class refactorCrowdactionsAndCommitments1674288860796 extends BaseMigrati
         crowdActions.updateMany(
             { commitments: { $exists: true } },
             {
-                $set: { _id: undefined },
-                $rename: { 'commitmentOptions.$.deprecatedId': '_id', commitments: 'commitmentoptions', deprecatedType: 'type' },
+                // $set: {
+                    // _id: undefined,
+                    // commitments: {
+                    //     $map: {
+                    //         input: '$commitments',
+                    //         in: {
+                    //             $mergedObjects: [
+                    //                 '$$this',
+                    //                 {
+                    //                     _id: '$$this.deprecatedId',
+                    //                     tags: '$$this.tags',
+                    //                     label: '$$this.label',
+                    //                     description: '$$this.description',
+                    //                     points: '$$this.points',
+                    //                     blocks: '$$this.blocks',
+                    //                     icon: '$$this.icon',
+                    //                 },
+                    //             ],
+                    //         },
+                    //     },
+                    // },
+                // },
+                $rename: { commitments: 'commitmentOptions', deprecatedType: 'type' },
+            },
+        );
+
+        const participations = await this.getCollection<ParticipationDocument>(queryRunner, 'participations');
+        participations.updateMany(
+            { commitments: { $exists: true } },
+            {
+                $rename: { commitments: 'commitmentOptions' },
             },
         );
     }
