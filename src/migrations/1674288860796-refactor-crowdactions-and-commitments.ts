@@ -19,27 +19,6 @@ export class refactorCrowdactionsAndCommitments1674288860796 extends BaseMigrati
                 await crowdActionCollection.updateMany(
                     { _id: crowdAction._id },
                     {
-                        // $set: {
-                            // 'crowdAction.commitmentOptions': {
-                            //     $map: {
-                            //         input: '$crowdAction.commitmentOptions',
-                            //         in: {
-                            //             $mergedObjects: [
-                            //                 '$$this',
-                            //                 {
-                            //                     deprecatedId: '$$this._id',
-                            //                     tags: '$$this.tags',
-                            //                     label: '$$this.label',
-                            //                     description: '$$this.description',
-                            //                     points: '$$this.points',
-                            //                     blocks: '$$this.blocks',
-                            //                     icon: '$$this.icon',
-                            //                 },
-                            //             ],
-                            //         },
-                            //     },
-                            // },
-                        // },
                         $rename: { commitmentOptions: 'commitments', type: 'deprecatedType' },
                     },
                 ),
@@ -64,28 +43,6 @@ export class refactorCrowdactionsAndCommitments1674288860796 extends BaseMigrati
         crowdActions.updateMany(
             { commitments: { $exists: true } },
             {
-                // $set: {
-                    // _id: undefined,
-                    // commitments: {
-                    //     $map: {
-                    //         input: '$commitments',
-                    //         in: {
-                    //             $mergedObjects: [
-                    //                 '$$this',
-                    //                 {
-                    //                     _id: '$$this.deprecatedId',
-                    //                     tags: '$$this.tags',
-                    //                     label: '$$this.label',
-                    //                     description: '$$this.description',
-                    //                     points: '$$this.points',
-                    //                     blocks: '$$this.blocks',
-                    //                     icon: '$$this.icon',
-                    //                 },
-                    //             ],
-                    //         },
-                    //     },
-                    // },
-                // },
                 $rename: { commitments: 'commitmentOptions', deprecatedType: 'type' },
             },
         );
