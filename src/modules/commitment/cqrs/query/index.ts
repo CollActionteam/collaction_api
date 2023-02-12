@@ -1,1 +1,1 @@
-export * from './get-commitments-by-category.query';
+export * from './get-commitments-by-tag.query';

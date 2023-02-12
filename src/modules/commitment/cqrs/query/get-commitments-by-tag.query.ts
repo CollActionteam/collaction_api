@@ -7,7 +7,6 @@ export class GetCommitmentsByTag implements IQuery<string[]> {
     constructor(private readonly commitmentRepository: ICommitmentRepository) {}
 
     async handle(tags: string[]): Promise<Commitment[]> {
-        const commitments = await this.commitmentRepository.findAll({ tags });
-        return commitments;
+        return await this.commitmentRepository.findAll({ tags });
     }
 }
