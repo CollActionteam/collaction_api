@@ -18,7 +18,7 @@ export class ParticipationPersistence implements Omit<IParticipation, 'id'> {
     readonly avatar?: string;
 
     @Prop({ type: [String], required: true })
-    readonly commitmentOptions: string[];
+    readonly commitments: string[];
 
     @Prop({ type: Date, required: true })
     readonly joinDate: Date;

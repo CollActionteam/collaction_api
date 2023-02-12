@@ -1,18 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import {
-    CrowdActionCategoryEnum,
-    CrowdActionJoinStatusEnum,
-    CrowdActionStatusEnum,
-    CrowdActionTypeEnum,
-    ICrowdAction,
-    ICrowdActionImages,
-} from '@domain/crowdaction';
+import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdAction, ICrowdActionImages } from '@domain/crowdaction';
 import { Country, CountrySchema } from '@infrastructure/mongo/persistence/country.persistence';
-import { ICommitmentOption } from '@domain/commitmentoption';
 import { IBadge } from '@domain/badge';
 import { CollActionDocument } from '@common/utils/document.utils';
-import { CrowdActionCommitmentOptionSchema } from './commitmentoption.persistence';
+import { ICommitment } from '@domain/commitment';
 import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
+import { CommitmentSchema } from './commitment.persistence';
 
 @Schema({ _id: false, versionKey: false })
 class CrowdActionImages implements ICrowdActionImages {
@@ -27,20 +20,17 @@ export const CrowdActionImagesSchema = SchemaFactory.createForClass(CrowdActionI
 export type CrowdActionDocument = CollActionDocument<CrowdActionPersistence>;
 @Schema({ collection: 'crowdactions', autoCreate: true, versionKey: false, timestamps: true })
 export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'createdAt' | 'updatedAt'> {
-    @Prop({ enum: CrowdActionTypeEnum, required: true })
-    readonly type: CrowdActionTypeEnum;
-
     @Prop({ required: true })
     readonly title: string;
 
     @Prop({ required: true })
     readonly description: string;
 
-    @Prop({ type: String, enum: CrowdActionCategoryEnum, required: true })
-    readonly category: CrowdActionCategoryEnum;
+    @Prop({ type: String, required: true })
+    readonly category: string;
 
-    @Prop({ type: String, enum: CrowdActionCategoryEnum, required: false })
-    readonly subcategory?: CrowdActionCategoryEnum;
+    @Prop({ type: String, required: false })
+    readonly subcategory?: string;
 
     @Prop({ type: CountrySchema, required: true })
     readonly location: Country;
@@ -72,8 +62,8 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
     @Prop({ type: Date, required: true })
     readonly joinEndAt: Date;
 
-    @Prop({ type: [CrowdActionCommitmentOptionSchema], required: true, array: true })
-    readonly commitmentOptions: ICommitmentOption[];
+    @Prop({ type: [CommitmentSchema], required: true, array: true })
+    readonly commitments: ICommitment[];
 
     @Prop({ type: [CrowdActionBadgePersistenceSchema], required: false, array: true })
     readonly badges: IBadge[];

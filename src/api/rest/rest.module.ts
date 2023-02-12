@@ -7,7 +7,7 @@ import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 import { ProfileService } from '@modules/profile/service/profile.service';
 import { AuthService } from '@modules/auth/service';
 import { ParticipationController } from './participations';
-import { CommitmentOptionController } from './commitmentoptions';
+import { CommitmentController } from './commitments';
 import { AuthenticationController } from './auth';
 import { ContactController } from './contact';
 
@@ -18,7 +18,7 @@ import { ContactController } from './contact';
         CrowdActionController,
         ProfileController,
         ParticipationController,
-        CommitmentOptionController,
+        CommitmentController,
         ContactController,
     ],
     providers: [CrowdActionService, ProfileService, AuthService],
