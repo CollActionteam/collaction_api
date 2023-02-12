@@ -3,11 +3,13 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { getModelToken } from '@nestjs/mongoose';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { connect, Connection, Model } from 'mongoose';
+import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
+import { Commitment, ICommitmentRepository } from '@domain/commitment';
 import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
 import { ToggleParticipationCommand } from '@modules/participation/cqrs/command/toggle-participation.command';
 import {
-    CommitmentOptionPersistence,
-    CommitmentOptionSchema,
+    CommitmentPersistence,
+    CommitmentSchema,
     CrowdActionPersistence,
     ParticipationPersistence,
     ProfilePersistence,
@@ -17,27 +19,17 @@ import {
     ProfileRepository,
     CrowdActionRepository,
     ParticipationRepository,
-    CommitmentOptionRepository,
+    CommitmentRepository,
 } from '@infrastructure/mongo';
-import {
-    CrowdAction,
-    ICrowdActionRepository,
-    CrowdActionTypeEnum,
-    CrowdActionCategoryEnum,
-    CrowdActionJoinStatusEnum,
-    CrowdActionStatusEnum,
-} from '@domain/crowdaction';
+import { CrowdAction, ICrowdActionRepository, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
 import { IProfileRepository } from '@domain/profile';
-import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
 import { IParticipationRepository } from '@domain/participation';
 import { CreateCrowdActionCommand, FindCrowdActionByIdQuery, IncrementParticipantCountCommand } from '@modules/crowdaction/cqrs';
-import { CommitmentOption, ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { SchedulerService } from '@modules/scheduler';
 import { ProfileService } from '@modules/profile';
 import { GetParticipationForCrowdactionQuery } from '@modules/participation';
 import { FindProfileByUserIdQuery } from '@modules/profile/cqrs';
 import { CrowdActionService } from '@modules/crowdaction';
-import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 import { UserIsNotParticipatingError } from '../../error/participation.error';
 
 describe('GetParticipationForCrowdactionQuery', () => {
@@ -48,7 +40,7 @@ describe('GetParticipationForCrowdactionQuery', () => {
     let participationModel: Model<ParticipationPersistence>;
     let crowdActionModel: Model<CrowdActionPersistence>;
     let profileModel: Model<ProfilePersistence>;
-    let commitmentOptionModel: Model<CommitmentOptionPersistence>;
+    let CommitmentModel: Model<CommitmentPersistence>;
 
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
@@ -58,7 +50,7 @@ describe('GetParticipationForCrowdactionQuery', () => {
         crowdActionModel = mongoConnection.model(CrowdActionPersistence.name, CrowdActionSchema);
         participationModel = mongoConnection.model(ParticipationPersistence.name, ParticipationSchema);
         profileModel = mongoConnection.model(ProfilePersistence.name, ProfileSchema);
-        commitmentOptionModel = mongoConnection.model(CommitmentOptionPersistence.name, CommitmentOptionSchema);
+        CommitmentModel = mongoConnection.model(CommitmentPersistence.name, CommitmentSchema);
 
         const moduleRef = await Test.createTestingModule({
             imports: [CQRSModule],
@@ -71,7 +63,6 @@ describe('GetParticipationForCrowdactionQuery', () => {
                 FindProfileByUserIdQuery,
                 ProfileService,
                 FindCrowdActionByIdQuery,
-                GetCommitmentOptionsByType,
                 GetParticipationForCrowdactionQuery,
                 {
                     provide: 'CrowdActionService',
@@ -81,11 +72,11 @@ describe('GetParticipationForCrowdactionQuery', () => {
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: IParticipationRepository, useClass: ParticipationRepository },
                 { provide: IProfileRepository, useClass: ProfileRepository },
-                { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
+                { provide: ICommitmentRepository, useClass: CommitmentRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdActionModel },
                 { provide: getModelToken(ParticipationPersistence.name), useValue: participationModel },
                 { provide: getModelToken(ProfilePersistence.name), useValue: profileModel },
-                { provide: getModelToken(CommitmentOptionPersistence.name), useValue: commitmentOptionModel },
+                { provide: getModelToken(CommitmentPersistence.name), useValue: CommitmentModel },
             ],
         }).compile();
 
@@ -111,15 +102,15 @@ describe('GetParticipationForCrowdactionQuery', () => {
         it('should find all participations in a crowdaction', async () => {
             const profile = await profileModel.create(CreateProfileStub());
 
-            const commitmentOptionDocument = await commitmentOptionModel.create(CreateCommitmentOptionStub());
-            const commitmentOption = CommitmentOption.create(commitmentOptionDocument.toObject({ getters: true }));
+            const commitmentDocument = await CommitmentModel.create(CreateCommitmentStub());
+            const commitment = Commitment.create(commitmentDocument.toObject({ getters: true }));
 
-            const crowdactionDocument = await crowdActionModel.create(CreateCrowdActionStub([commitmentOption]));
+            const crowdactionDocument = await crowdActionModel.create(CreateCrowdActionStub([commitment]));
             const crowdAction = CrowdAction.create(crowdactionDocument.toObject({ getters: true }));
 
             const participate = await toggleParticipationCommand.execute({
                 userId: profile.userId,
-                toggleParticipation: { crowdActionId: crowdAction.id, commitmentOptions: [commitmentOption.id] },
+                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment._id] },
             });
 
             expect(participate).toBeDefined();
@@ -134,7 +125,7 @@ describe('GetParticipationForCrowdactionQuery', () => {
 
             const unparticipate = await toggleParticipationCommand.execute({
                 userId: profile.userId,
-                toggleParticipation: { crowdActionId: crowdAction.id, commitmentOptions: [commitmentOption.id] },
+                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment._id] },
             });
 
             expect(unparticipate).toBeDefined();
@@ -143,10 +134,10 @@ describe('GetParticipationForCrowdactionQuery', () => {
         it('should throw UserIsNotParticipatingError', async () => {
             const profile = await profileModel.create(CreateProfileStub());
 
-            const commitmentOptionDocument = await commitmentOptionModel.create(CreateCommitmentOptionStub());
-            const commitmentOption = CommitmentOption.create(commitmentOptionDocument.toObject({ getters: true }));
+            const commitmentDocument = await CommitmentModel.create(CreateCommitmentStub());
+            const commitment = Commitment.create(commitmentDocument.toObject({ getters: true }));
 
-            const crowdactionDocument = await crowdActionModel.create(CreateCrowdActionStub([commitmentOption]));
+            const crowdactionDocument = await crowdActionModel.create(CreateCrowdActionStub([commitment]));
             const crowdAction = CrowdAction.create(crowdactionDocument.toObject({ getters: true }));
 
             await expect(
@@ -172,22 +163,21 @@ const CreateProfileStub = (): any => {
     };
 };
 
-const CreateCommitmentOptionStub = (): any => {
+const CreateCommitmentStub = (): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
+        _id: 'test',
         label: 'label',
         points: 10,
-        icon: CommitmentOptionIconEnum.no_beef,
+        icon: CommitmentIconEnum.no_beef,
     };
 };
 
-const CreateCrowdActionStub = (commitmentOptions: CommitmentOption[]): any => {
+const CreateCrowdActionStub = (commitments: Commitment[]): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
+        category: 'FOOD',
+        subcategory: 'SUSTAINABILITY',
         location: {
             code: 'NL',
             name: 'Netherlands',
@@ -200,7 +190,7 @@ const CreateCrowdActionStub = (commitmentOptions: CommitmentOption[]): any => {
         joinStatus: CrowdActionJoinStatusEnum.OPEN,
         status: CrowdActionStatusEnum.STARTED,
         participantCount: 0,
-        commitmentOptions: commitmentOptions,
+        commitments: commitments,
         images: {
             card: 'card-image',
             banner: 'banner-image',

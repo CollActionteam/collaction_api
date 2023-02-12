@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ICommand } from '@nestjs/cqrs';
 import { IParticipationRepository } from '@domain/participation';
 import { ToggleParticipationDto, ToggleParticipationResponse } from '@infrastructure/participation';
-import { ParticipationHasInvalidCommitmentOption, ParticipationRequiresCommitmentError } from '@modules/participation/error';
+import { ParticipationHasInvalidCommitment, ParticipationRequiresCommitmentError } from '@modules/participation/error';
 import { ICQRSHandler } from '@common/cqrs';
 import { FindCrowdActionByIdQuery } from '@modules/crowdaction';
 import {
@@ -33,23 +33,23 @@ export class ToggleParticipationCommand implements ICommand {
             return { isParticipating: false };
         }
 
-        if (!toggleParticipation.commitmentOptions || !toggleParticipation.commitmentOptions?.length) {
+        if (!toggleParticipation.commitments || !toggleParticipation.commitments?.length) {
             throw new ParticipationRequiresCommitmentError();
         }
 
         const profile = await this.cqrsHandler.fetch(FindProfileByUserIdQuery, userId);
 
         const crowdAction = await this.cqrsHandler.fetch(FindCrowdActionByIdQuery, toggleParticipation.crowdActionId);
-        const allowedCommitmentOptions = crowdAction.commitmentOptions.map((option) => option.id);
+        const allowedCommitments = crowdAction.commitments.map((option) => option._id);
 
-        this.isCommitmentOptionsAllowed(toggleParticipation.commitmentOptions, allowedCommitmentOptions);
+        this.isCommitmentsAllowed(toggleParticipation.commitments, allowedCommitments);
 
         const { id } = await this.participationRepository.create({
             userId,
             fullName: profile.firstName + ' ' + profile.lastName,
             avatar: profile.avatar,
             crowdActionId: crowdAction.id,
-            commitmentOptions: toggleParticipation.commitmentOptions,
+            commitments: toggleParticipation.commitments,
             joinDate: new Date(),
             dailyCheckIns: 0,
         });
@@ -61,7 +61,7 @@ export class ToggleParticipationCommand implements ICommand {
         return { isParticipating: true, participationId: id };
     }
 
-    isCommitmentOptionsAllowed(selectedOptions: string[], allowedOptions: string[]): boolean {
+    isCommitmentsAllowed(selectedOptions: string[], allowedOptions: string[]): boolean {
         const invalidOptions: string[] = [];
 
         for (const option of selectedOptions) {
@@ -71,7 +71,7 @@ export class ToggleParticipationCommand implements ICommand {
         }
 
         if (invalidOptions.length) {
-            throw new ParticipationHasInvalidCommitmentOption(invalidOptions);
+            throw new ParticipationHasInvalidCommitment(invalidOptions);
         }
 
         return true;

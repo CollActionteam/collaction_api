@@ -4,7 +4,7 @@ export interface IParticipation {
     readonly userId: string;
     readonly fullName: string;
     readonly avatar?: string | undefined;
-    readonly commitmentOptions: string[];
+    readonly commitments: string[];
     readonly joinDate: Date;
     readonly dailyCheckIns: number;
 }

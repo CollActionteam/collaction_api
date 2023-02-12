@@ -7,20 +7,19 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { CrowdAction, ICrowdActionRepository, CrowdActionTypeEnum, CrowdActionCategoryEnum } from '@domain/crowdaction';
+import { CrowdAction, ICrowdActionRepository } from '@domain/crowdaction';
 import { CreateCrowdActionCommand, UpdateCrowdActionImagesCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
 import {
     CrowdActionPersistence,
     CrowdActionSchema,
     CrowdActionRepository,
-    CommitmentOptionRepository,
-    CommitmentOptionPersistence,
-    CommitmentOptionSchema,
+    CommitmentRepository,
+    CommitmentPersistence,
+    CommitmentSchema,
 } from '@infrastructure/mongo';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
-import { ICommitmentOptionRepository } from '@domain/commitmentoption';
-import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
+import { ICommitmentRepository } from '@domain/commitment';
 import { S3ClientService } from '@modules/core/s3';
 import { IS3ClientRepository } from '@core/s3-client.interface';
 import { SchedulerService } from '@modules/scheduler';
@@ -31,28 +30,27 @@ describe('UpdateCrowdActionImagesCommand', () => {
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
     let crowdactionModel: Model<CrowdActionPersistence>;
-    let commitmentOptionModel: Model<CommitmentOptionPersistence>;
+    let commitmentModel: Model<CommitmentPersistence>;
 
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
         const uri = mongod.getUri();
         mongoConnection = (await connect(uri)).connection;
         crowdactionModel = mongoConnection.model(CrowdActionPersistence.name, CrowdActionSchema);
-        commitmentOptionModel = mongoConnection.model(CommitmentOptionPersistence.name, CommitmentOptionSchema);
+        commitmentModel = mongoConnection.model(CommitmentPersistence.name, CommitmentSchema);
 
         const moduleRef = await Test.createTestingModule({
             imports: [CQRSModule],
             providers: [
                 UpdateCrowdActionImagesCommand,
                 CreateCrowdActionCommand,
-                GetCommitmentOptionsByType,
                 ConfigService,
                 SchedulerService,
                 SchedulerRegistry,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
-                { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
+                { provide: ICommitmentRepository, useClass: CommitmentRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdactionModel },
-                { provide: getModelToken(CommitmentOptionPersistence.name), useValue: commitmentOptionModel },
+                { provide: getModelToken(CommitmentPersistence.name), useValue: commitmentModel },
                 {
                     provide: S3ClientService,
                     inject: [ConfigService],
@@ -102,11 +100,10 @@ describe('UpdateCrowdActionImagesCommand', () => {
 
 const CreateCrowdActionStub = (): any => {
     return {
-        type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
+        category: 'FOOD',
+        subcategory: 'SUSTAINABILITY',
         country: 'TG',
         password: 'pa$$w0rd',
         images: {

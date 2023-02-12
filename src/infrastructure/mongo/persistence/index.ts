@@ -2,7 +2,7 @@ export * from './crowdaction.persistence';
 export * from './country.persistence';
 export * from './profile.persistence';
 export * from './participation.persistence';
-export * from './commitmentoption.persistence';
+export * from './commitment.persistence';
 export * from './contact.persistence';
 export * from './forum.persistence';
 export * from './last-post-info.persistence';

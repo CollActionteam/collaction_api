@@ -19,10 +19,10 @@ export class UserIsNotParticipatingError extends ApiError {
     }
 }
 
-export class ParticipationHasInvalidCommitmentOption extends ApiError {
+export class ParticipationHasInvalidCommitment extends ApiError {
     constructor(invalidOptions: string[]) {
         super({
-            message: `CommitmentOptions (${invalidOptions.join(',')}) do not exist for this CrowdAction`,
+            message: `Commitments (${invalidOptions.join(',')}) do not exist for this CrowdAction`,
             statusCode: HttpStatus.BAD_REQUEST,
         });
     }
