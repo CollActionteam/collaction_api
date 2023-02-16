@@ -32,13 +32,48 @@ export class CrowdActionController {
         type: PaginatedCrowdActionResponse,
     })
     @ApiQuery({ name: 'status', enum: CrowdActionStatusEnum, type: [String], isArray: true, required: false })
+    @ApiQuery({ name: 'startAt', type: String, required: false })
+    @ApiQuery({ name: 'joinEndAt', type: String, required: false })
+    @ApiQuery({ name: 'endAt', type: String, required: false })
+    @ApiQuery({ name: 'category', type: String, required: false })
+    @ApiQuery({ name: 'subcategory', type: String, required: false })
     async getAllCrowdActions(
         @Query() { page, pageSize }: PaginationDto,
         @Query('status') status: CrowdActionStatusEnum[],
+        @Query('startAt') startAt: string,
+        @Query('joinEndAt') joinEndAt: string,
+        @Query('endAt') endAt: string,
+        @Query('category') category: string,
+        @Query('subcategory') subcategory: string,
     ): Promise<IPaginatedList<ICrowdAction>> {
         let filter: any;
         if (status) {
             filter = { status: { in: status } };
+        } else {
+            filter = { status: { in: [CrowdActionStatusEnum.WAITING, CrowdActionStatusEnum.STARTED] } };
+        }
+
+        if (startAt) {
+            const date = new Date(startAt);
+            filter = { startAt: { in: date } };
+        }
+
+        if (joinEndAt) {
+            const date = new Date(joinEndAt);
+            filter = { joinEndAt: { in: date } };
+        }
+
+        if (endAt) {
+            const date = new Date(endAt);
+            filter = { endAt: { in: date } };
+        }
+
+        if (category) {
+            filter = { category: { in: category } };
+        }
+
+        if (subcategory) {
+            filter = { subcategory: { in: subcategory } };
         }
 
         return this.cqrsHandler.fetch(ListCrowdActionsQuery, { page, pageSize, filter });
