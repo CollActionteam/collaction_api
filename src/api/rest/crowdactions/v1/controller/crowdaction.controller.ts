@@ -53,6 +53,10 @@ export class CrowdActionController {
             filter = { status: { in: [CrowdActionStatusEnum.WAITING, CrowdActionStatusEnum.STARTED] } };
         }
 
+        if (category && subcategory) {
+            filter = { catergory: { in: category }, subcategory: { in: subcategory } };
+        }
+
         if (startAt) {
             const date = new Date(startAt);
             filter = { startAt: { in: date } };
@@ -66,14 +70,6 @@ export class CrowdActionController {
         if (endAt) {
             const date = new Date(endAt);
             filter = { endAt: { in: date } };
-        }
-
-        if (category) {
-            filter = { category: { in: category } };
-        }
-
-        if (subcategory) {
-            filter = { subcategory: { in: subcategory } };
         }
 
         return this.cqrsHandler.fetch(ListCrowdActionsQuery, { page, pageSize, filter });
