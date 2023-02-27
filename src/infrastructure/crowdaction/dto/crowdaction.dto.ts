@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { ICrowdActionImages } from '@domain/crowdaction';
+import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionImages } from '@domain/crowdaction';
 import { IBadge, Badge } from '@domain/badge';
 import { CreateCommitmentDto } from '@infrastructure/commitment';
 import { ICommitment } from '@domain/commitment';
@@ -108,4 +108,33 @@ export class PaginatedCrowdActionResponse {
 
     @ApiProperty({ example: 1 })
     readonly totalItems: number;
+}
+
+export class FilterCrowdActionDto {
+    @ApiProperty({ name: 'id', required: false })
+    readonly id?: string;
+
+    @ApiProperty({ name: 'status', enum: CrowdActionStatusEnum, required: false })
+    readonly status?: CrowdActionStatusEnum;
+
+    @ApiProperty({ name: 'joinStatus', enum: CrowdActionJoinStatusEnum, required: false })
+    readonly joinStatus?: CrowdActionJoinStatusEnum;
+
+    @ApiProperty({ name: 'category', required: false })
+    readonly category?: string;
+
+    @ApiProperty({ name: 'subcategory', required: false })
+    readonly subcategory?: string;
+
+    @ApiProperty({ name: 'startAt', type: Date, required: false })
+    readonly startAt?: Date;
+
+    @ApiProperty({ name: 'endAt', type: Date, required: false })
+    readonly endAt?: Date;
+
+    @ApiProperty({ name: 'joinEndAt', type: Date, required: false })
+    readonly joinEndAt?: Date;
+
+    @ApiProperty({ name: 'slug', required: false })
+    readonly slug?: string;
 }

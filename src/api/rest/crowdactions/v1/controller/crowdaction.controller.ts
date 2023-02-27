@@ -4,7 +4,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Identifiable, IPaginatedList } from '@domain/core';
 import { CrowdActionStatusEnum, ICrowdAction } from '@domain/crowdaction';
 import { ICQRSHandler } from '@common/cqrs';
-import { CreateCrowdActionDto, GetCrowdActionDto, PaginatedCrowdActionResponse } from '@infrastructure/crowdaction';
+import { CreateCrowdActionDto, FilterCrowdActionDto, GetCrowdActionDto, PaginatedCrowdActionResponse } from '@infrastructure/crowdaction';
 import {
     FindCrowdActionByIdQuery,
     CreateCrowdActionCommand,
@@ -31,45 +31,24 @@ export class CrowdActionController {
         description: 'Returns the found CrowdActions and Pagination Information',
         type: PaginatedCrowdActionResponse,
     })
-    @ApiQuery({ name: 'status', enum: CrowdActionStatusEnum, type: [String], isArray: true, required: false })
-    @ApiQuery({ name: 'startAt', type: String, required: false })
-    @ApiQuery({ name: 'joinEndAt', type: String, required: false })
-    @ApiQuery({ name: 'endAt', type: String, required: false })
-    @ApiQuery({ name: 'category', type: String, required: false })
-    @ApiQuery({ name: 'subcategory', type: String, required: false })
     async getAllCrowdActions(
         @Query() { page, pageSize }: PaginationDto,
-        @Query('status') status: CrowdActionStatusEnum[],
-        @Query('startAt') startAt: string,
-        @Query('joinEndAt') joinEndAt: string,
-        @Query('endAt') endAt: string,
-        @Query('category') category: string,
-        @Query('subcategory') subcategory: string,
+        @Query() { id, status, joinStatus, startAt, joinEndAt, endAt, category, subcategory, slug }: FilterCrowdActionDto,
     ): Promise<IPaginatedList<ICrowdAction>> {
-        let filter: any;
-        if (status) {
-            filter = { status: { in: status } };
-        } else {
-            filter = { status: { in: [CrowdActionStatusEnum.WAITING, CrowdActionStatusEnum.STARTED] } };
-        }
+        const filter: any = {
+            id: id !== undefined ? { in: id } : undefined,
+            status: status !== undefined ? { in: status } : undefined,
+            joinStatus: joinStatus !== undefined ? { in: joinStatus } : undefined,
+            startAt: startAt !== undefined ? { in: startAt } : undefined,
+            joinEndAt: joinEndAt !== undefined ? { in: joinEndAt } : undefined,
+            endAt: endAt !== undefined ? { in: endAt } : undefined,
+            category: category !== undefined ? { in: category } : undefined,
+            subcategory: subcategory !== undefined ? { in: subcategory } : undefined,
+            slug: slug !== undefined ? { in: slug } : undefined,
+        };
 
-        if (category && subcategory) {
-            filter = { catergory: { in: category }, subcategory: { in: subcategory } };
-        }
-
-        if (startAt) {
-            const date = new Date(startAt);
-            filter = { startAt: { in: date } };
-        }
-
-        if (joinEndAt) {
-            const date = new Date(joinEndAt);
-            filter = { joinEndAt: { in: date } };
-        }
-
-        if (endAt) {
-            const date = new Date(endAt);
-            filter = { endAt: { in: date } };
+        for (const param in filter) {
+            if (filter[param] === undefined) delete filter[param];
         }
 
         return this.cqrsHandler.fetch(ListCrowdActionsQuery, { page, pageSize, filter });
