@@ -4,7 +4,6 @@ import { Connection, connect, Model } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { ICommitmentRepository, Commitment } from '@domain/commitment';
 import { CommitmentPersistence, CommitmentRepository, CommitmentSchema } from '@infrastructure/mongo';
-import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import { CommitmentDoesNotExistError } from '../errors/commitment.error';
 import { CommitmentService } from '../service';
 
@@ -66,7 +65,7 @@ export const CommitmentStub = (): Commitment => {
         description: 'I want to help people with food',
         points: 10,
         blocks: [],
-        icon: CommitmentIconEnum.no_beef,
+        icon: 'https://www.example.com/image.png',
         createdAt: new Date(),
         updatedAt: new Date(),
     };

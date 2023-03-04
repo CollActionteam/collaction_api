@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-import { CommitmentIconEnum } from '../enum/commitment.enum';
 import { ICommitment } from '../interface';
 
 export class Commitment implements ICommitment {
@@ -9,7 +8,7 @@ export class Commitment implements ICommitment {
     readonly description?: string | undefined;
     readonly points: number;
     readonly blocks?: string[]; // IDs of other Commitments to be blocked
-    readonly icon: CommitmentIconEnum;
+    readonly icon: string;
 
     readonly createdAt: Date;
     readonly updatedAt: Date;

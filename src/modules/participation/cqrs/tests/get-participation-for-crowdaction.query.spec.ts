@@ -3,7 +3,6 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { getModelToken } from '@nestjs/mongoose';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { connect, Connection, Model } from 'mongoose';
-import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import { Commitment, ICommitmentRepository } from '@domain/commitment';
 import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
 import { ToggleParticipationCommand } from '@modules/participation/cqrs/command/toggle-participation.command';
@@ -168,7 +167,7 @@ const CreateCommitmentStub = (): any => {
         _id: 'test',
         label: 'label',
         points: 10,
-        icon: CommitmentIconEnum.no_beef,
+        icon: 'https://www.example.com/image.png',
     };
 };
 

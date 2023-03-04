@@ -4,7 +4,6 @@ import { getModelToken } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { ICommitmentRepository } from '@domain/commitment';
 import { CommitmentPersistence, CommitmentRepository, CommitmentSchema } from '@infrastructure/mongo';
-import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import { CreateCommitmentCommand, IUpdateCommitmentArgs, UpdateCommitmentCommand } from '../command';
 import { CreateCommitmentStub } from './create-commitment.command.spec';
 
@@ -64,7 +63,7 @@ export const UpdateCommitmentCommandStub = (): IUpdateCommitmentArgs => {
         id: '5f9f1b9f9b9b9b9b9b9b9b9b',
         updateDto: {
             tags: ['FOOD'],
-            icon: CommitmentIconEnum.no_beef,
+            icon: 'https://www.example.com/image.png',
         },
     };
 };
