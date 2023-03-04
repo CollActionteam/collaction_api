@@ -5,7 +5,6 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { CrowdAction, ICrowdActionRepository, CrowdActionStatusEnum, CrowdActionJoinStatusEnum } from '@domain/crowdaction';
 import { CrowdActionPersistence, CrowdActionRepository, CrowdActionSchema } from '@infrastructure/mongo';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
-import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import { CrowdActionService } from '../service';
 import { CrowdActionDoesNotExist } from '../errors';
 
@@ -85,7 +84,7 @@ const CrowdActionStub = (): CrowdAction => {
                 description: 'TheDescription',
                 points: 14,
                 blocks: ['O9pbPDY3s5e5XwzgwKZtZTDPvLS2'],
-                icon: CommitmentIconEnum.no_beef,
+                icon: 'https://www.example.com/image.png',
                 createdAt: new Date(1 - 1 - 2020),
                 updatedAt: new Date(1 - 1 - 2020),
             },
