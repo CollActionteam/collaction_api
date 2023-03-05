@@ -63,7 +63,7 @@ export const UpdateCommitmentCommandStub = (): IUpdateCommitmentArgs => {
         id: '5f9f1b9f9b9b9b9b9b9b9b9b',
         updateDto: {
             tags: ['FOOD'],
-            icon: 'https://www.example.com/image.png',
+            icon: 'accessibility_outline',
         },
     };
 };

@@ -167,7 +167,7 @@ const CreateCommitmentStub = (): any => {
         _id: 'test',
         label: 'label',
         points: 10,
-        icon: 'https://www.example.com/image.png',
+        icon: 'accessibility_outline',
     };
 };
 
