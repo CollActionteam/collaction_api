@@ -3,20 +3,20 @@ import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Connection, Model, connect } from 'mongoose';
+import { ICommitmentRepository } from '@domain/commitment';
+import { GetCommitmentsByTag } from '@modules/commitment';
 import { CQRSModule } from '@common/cqrs';
-import { CrowdActionCategoryEnum, CrowdActionStatusEnum, CrowdActionTypeEnum, ICrowdActionRepository } from '@domain/crowdaction';
+import { CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
 import {
-    CommitmentOptionPersistence,
-    CommitmentOptionRepository,
-    CommitmentOptionSchema,
+    CommitmentPersistence,
+    CommitmentRepository,
+    CommitmentSchema,
     CrowdActionPersistence,
     CrowdActionRepository,
     CrowdActionSchema,
 } from '@infrastructure/mongo';
-import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
-import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 import { CreateCrowdActionCommand, ListCrowdActionsQuery } from '@modules/crowdaction/cqrs';
 import { SchedulerService } from '@modules/scheduler';
 
@@ -26,7 +26,7 @@ describe('ListCrowdActionsQuery', () => {
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
     let crowdactionModel: Model<CrowdActionPersistence>;
-    let commitmentOptionModel: Model<CommitmentOptionPersistence>;
+    let commitmentModel: Model<CommitmentPersistence>;
 
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
@@ -34,10 +34,7 @@ describe('ListCrowdActionsQuery', () => {
         mongoConnection = (await connect(uri)).connection;
 
         crowdactionModel = mongoConnection.model<CrowdActionPersistence>(CrowdActionPersistence.name, CrowdActionSchema);
-        commitmentOptionModel = mongoConnection.model<CommitmentOptionPersistence>(
-            CommitmentOptionPersistence.name,
-            CommitmentOptionSchema,
-        );
+        commitmentModel = mongoConnection.model<CommitmentPersistence>(CommitmentPersistence.name, CommitmentSchema);
         const moduleRef = await Test.createTestingModule({
             imports: [CQRSModule],
             providers: [
@@ -45,11 +42,11 @@ describe('ListCrowdActionsQuery', () => {
                 CreateCrowdActionCommand,
                 SchedulerService,
                 SchedulerRegistry,
-                GetCommitmentOptionsByType,
+                GetCommitmentsByTag,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
-                { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
+                { provide: ICommitmentRepository, useClass: CommitmentRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdactionModel },
-                { provide: getModelToken(CommitmentOptionPersistence.name), useValue: commitmentOptionModel },
+                { provide: getModelToken(CommitmentPersistence.name), useValue: commitmentModel },
             ],
         }).compile();
         listCrowdActionsQuery = moduleRef.get<ListCrowdActionsQuery>(ListCrowdActionsQuery);
@@ -119,22 +116,22 @@ describe('ListCrowdActionsQuery', () => {
             const response = await listCrowdActionsQuery.handle({
                 page: 1,
                 pageSize: numberOfInserts,
-                filter: { subcategory: CrowdActionCategoryEnum.ELECTIRICITY },
+                filter: { subcategory: 'ELECTIRICITY' },
             });
             expect(response.items.length).toEqual(numberOfInserts / 2);
             for (const item of response.items) {
-                expect(item.subcategory).toEqual(CrowdActionCategoryEnum.ELECTIRICITY);
+                expect(item.subcategory).toEqual('ELECTIRICITY');
             }
         });
         it('should filter the crowdactions by Category', async () => {
             const response = await listCrowdActionsQuery.handle({
                 page: 1,
                 pageSize: numberOfInserts,
-                filter: { category: CrowdActionCategoryEnum.FOOD },
+                filter: { category: 'FOOD' },
             });
             expect(response.items.length).toEqual(numberOfInserts / 2);
             for (const item of response.items) {
-                expect(item.category).toEqual(CrowdActionCategoryEnum.FOOD);
+                expect(item.category).toEqual('FOOD');
             }
         });
 
@@ -158,11 +155,10 @@ describe('ListCrowdActionsQuery', () => {
 });
 
 const CrowdActionStub: CreateCrowdActionDto = {
-    type: CrowdActionTypeEnum.FOOD,
     title: 'Crowdaction title',
     description: 'Crowdaction description',
-    category: CrowdActionCategoryEnum.FOOD,
-    subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
+    category: 'FOOD',
+    subcategory: 'SUSTAINABILITY',
     country: 'TG',
     password: 'pa$$w0rd',
     startAt: new Date('01/01/2025'),
@@ -175,14 +171,14 @@ const CrowdActionStub: CreateCrowdActionDto = {
             minimumCheckIns: 12,
         },
     ],
+    commitments: [],
 };
 
 const CrowdActionStub2: CreateCrowdActionDto = {
-    type: CrowdActionTypeEnum.BIKE,
     title: 'Crowdaction title2',
     description: 'Crowdaction description2',
-    category: CrowdActionCategoryEnum.ENERGY,
-    subcategory: CrowdActionCategoryEnum.ELECTIRICITY,
+    category: 'ENERGY',
+    subcategory: 'ELECTIRICITY',
     country: 'TG',
     password: 'pa$$w0rd',
     startAt: new Date('01/01/2025'),
@@ -195,4 +191,5 @@ const CrowdActionStub2: CreateCrowdActionDto = {
             minimumCheckIns: 12,
         },
     ],
+    commitments: [],
 };

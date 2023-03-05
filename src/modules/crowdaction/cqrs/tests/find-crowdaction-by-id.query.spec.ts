@@ -3,21 +3,21 @@ import { Connection, Model, connect } from 'mongoose';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { ICommitmentRepository } from '@domain/commitment';
+import { GetCommitmentsByTag } from '@modules/commitment';
 import { CQRSModule } from '@common/cqrs';
-import { ICommitmentOptionRepository } from '@domain/commitmentoption';
-import { CrowdActionCategoryEnum, CrowdActionTypeEnum, ICrowdActionRepository } from '@domain/crowdaction';
+import { ICrowdActionRepository } from '@domain/crowdaction';
 import { CrowdActionService } from '@modules/crowdaction/service';
 import {
-    CommitmentOptionPersistence,
-    CommitmentOptionRepository,
-    CommitmentOptionSchema,
+    CommitmentPersistence,
+    CommitmentRepository,
+    CommitmentSchema,
     CrowdActionPersistence,
     CrowdActionRepository,
     CrowdActionSchema,
 } from '@infrastructure/mongo';
 import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
-import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
 import { CrowdActionDoesNotExist } from '@modules/crowdaction/errors';
 import { CreateCrowdActionCommand, FindCrowdActionByIdQuery } from '@modules/crowdaction/cqrs';
 import { SchedulerService } from '@modules/scheduler';
@@ -28,7 +28,7 @@ describe('FindCrowdActionByIdQuery', () => {
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
     let crowdactionModel: Model<CrowdActionPersistence>;
-    let commitmentOptionModel: Model<CommitmentOptionPersistence>;
+    let commitmentModel: Model<CommitmentPersistence>;
 
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
@@ -36,10 +36,7 @@ describe('FindCrowdActionByIdQuery', () => {
         mongoConnection = (await connect(uri)).connection;
 
         crowdactionModel = mongoConnection.model<CrowdActionPersistence>(CrowdActionPersistence.name, CrowdActionSchema);
-        commitmentOptionModel = mongoConnection.model<CommitmentOptionPersistence>(
-            CommitmentOptionPersistence.name,
-            CommitmentOptionSchema,
-        );
+        commitmentModel = mongoConnection.model<CommitmentPersistence>(CommitmentPersistence.name, CommitmentSchema);
         const moduleRef = await Test.createTestingModule({
             imports: [CQRSModule],
             providers: [
@@ -47,11 +44,11 @@ describe('FindCrowdActionByIdQuery', () => {
                 CreateCrowdActionCommand,
                 SchedulerService,
                 SchedulerRegistry,
-                GetCommitmentOptionsByType,
+                GetCommitmentsByTag,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
-                { provide: ICommitmentOptionRepository, useClass: CommitmentOptionRepository },
+                { provide: ICommitmentRepository, useClass: CommitmentRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdactionModel },
-                { provide: getModelToken(CommitmentOptionPersistence.name), useValue: commitmentOptionModel },
+                { provide: getModelToken(CommitmentPersistence.name), useValue: commitmentModel },
                 { provide: CrowdActionService.name, useClass: CrowdActionService },
             ],
         }).compile();
@@ -83,11 +80,10 @@ describe('FindCrowdActionByIdQuery', () => {
 
             const response = await findCrowdActionByIdQuery.handle(crowdAction.id);
             expect(response).toBeDefined();
-            expect(response.commitmentOptions).toBeDefined();
+            expect(response.commitments).toBeDefined();
 
             expect(response.id).toEqual(crowdAction.id);
             expect({
-                type: response.type,
                 title: response.title,
                 description: response.description,
                 category: response.category,
@@ -95,7 +91,6 @@ describe('FindCrowdActionByIdQuery', () => {
                 country: response.location?.code,
                 password: response.password,
             }).toEqual({
-                type: CrowdActionStub.type,
                 title: CrowdActionStub.title,
                 description: CrowdActionStub.description,
                 category: CrowdActionStub.category,
@@ -121,11 +116,10 @@ describe('FindCrowdActionByIdQuery', () => {
 });
 
 const CrowdActionStub: CreateCrowdActionDto = {
-    type: CrowdActionTypeEnum.FOOD,
     title: 'Crowdaction title',
     description: 'Crowdaction description',
-    category: CrowdActionCategoryEnum.FOOD,
-    subcategory: CrowdActionCategoryEnum.SUSTAINABILITY,
+    category: 'FOOD',
+    subcategory: 'SUSTAINABILITY',
     country: 'TG',
     password: 'pa$$w0rd',
     startAt: new Date('01/01/2025'),
@@ -138,4 +132,5 @@ const CrowdActionStub: CreateCrowdActionDto = {
             minimumCheckIns: 12,
         },
     ],
+    commitments: [],
 };
