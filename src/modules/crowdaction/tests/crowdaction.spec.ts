@@ -84,7 +84,7 @@ const CrowdActionStub = (): CrowdAction => {
                 description: 'TheDescription',
                 points: 14,
                 blocks: ['O9pbPDY3s5e5XwzgwKZtZTDPvLS2'],
-                icon: 'https://www.example.com/image.png',
+                icon: 'accessibility_outline',
                 createdAt: new Date(1 - 1 - 2020),
                 updatedAt: new Date(1 - 1 - 2020),
             },

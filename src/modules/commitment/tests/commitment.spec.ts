@@ -65,7 +65,7 @@ export const CommitmentStub = (): Commitment => {
         description: 'I want to help people with food',
         points: 10,
         blocks: [],
-        icon: 'https://www.example.com/image.png',
+        icon: 'accessibility_outline',
         createdAt: new Date(),
         updatedAt: new Date(),
     };

@@ -140,7 +140,7 @@ const CreateCommitmentStub = (): any => {
         tags: ['FOOD'],
         label: 'label',
         points: 10,
-        icon: 'https://www.example.com/image.png',
+        icon: 'accessibility_outline',
     };
 };
 

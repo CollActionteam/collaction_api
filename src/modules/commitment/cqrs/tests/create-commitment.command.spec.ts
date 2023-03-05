@@ -58,6 +58,6 @@ export const CreateCommitmentStub = (): any => {
         label: 'commitment option label',
         description: 'commitment option description',
         points: 10,
-        icon: 'https://www.example.com/image.png',
+        icon: 'accessibility_outline',
     };
 };
