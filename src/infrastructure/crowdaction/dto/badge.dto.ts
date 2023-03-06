@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AwardTypeEnum, BadgeTierEnum, IBadge, ICrowdActionMetadata } from '@domain/badge';
 export class CrowdActionMetadataDTO implements ICrowdActionMetadata {
-    @ApiProperty({ name: 'id', example: "123", required: true })
+    @ApiProperty({ name: 'id', example: '123', required: true })
     readonly id: string;
 
-    @ApiProperty({ name: 'title', example: "Veganuary", required: true })
+    @ApiProperty({ name: 'title', example: 'Veganuary', required: true })
     readonly title: string;
 }
 
@@ -18,7 +18,7 @@ export class BadgeDto implements IBadge {
     @ApiProperty({ name: 'minimumCheckIns', example: 0, required: true })
     readonly minimumCheckIns: number;
 
-    @ApiProperty({ name: 'accessibilityOutline', example: "https://www.example.com/badge_image.png", required: false })
+    @ApiProperty({ name: 'accessibilityOutline', example: 'https://www.example.com/badge_image.png', required: false })
     readonly accessibilityOutline: string;
 
     @ApiProperty({ name: 'usedByCrowdActions', type: [CrowdActionMetadataDTO], isArray: true, required: false })
