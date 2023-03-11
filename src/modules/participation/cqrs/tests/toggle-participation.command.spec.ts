@@ -21,7 +21,6 @@ import {
 } from '@infrastructure/mongo';
 import { ICrowdActionRepository, CrowdAction, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
 import { IProfileRepository } from '@domain/profile';
-import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import { IParticipationRepository } from '@domain/participation';
 import { CreateCrowdActionCommand, FindCrowdActionByIdQuery, IncrementParticipantCountCommand } from '@modules/crowdaction/cqrs';
 import { SchedulerService } from '@modules/scheduler';
@@ -141,7 +140,7 @@ const CreateCommitmentStub = (): any => {
         tags: ['FOOD'],
         label: 'label',
         points: 10,
-        icon: CommitmentIconEnum.no_beef,
+        icon: 'accessibility_outline',
     };
 };
 

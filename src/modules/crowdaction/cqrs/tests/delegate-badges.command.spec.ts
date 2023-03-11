@@ -20,7 +20,6 @@ import {
 import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
 import { IProfileRepository, Profile } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
-import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import { CrowdAction, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { Commitment, ICommitmentRepository } from '@domain/commitment';
@@ -121,7 +120,7 @@ const CreateCommitmentStub = (): any => {
         _id: 'test',
         label: 'label',
         points: 10,
-        icon: CommitmentIconEnum.no_beef,
+        icon: 'accessibility_outline',
     };
 };
 

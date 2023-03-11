@@ -2,7 +2,6 @@ import { Test } from '@nestjs/testing';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import { CreateCommitmentCommand, DeleteCommitmentCommand } from '@modules/commitment/cqrs';
 import { Commitment, ICommitmentRepository } from '@domain/commitment';
 import { CommitmentPersistence, CommitmentRepository, CommitmentSchema } from '@infrastructure/mongo';
@@ -71,6 +70,6 @@ export const CreateCommitmentStub = (): any => {
         label: 'commitment option label',
         description: 'commitment option description',
         points: 10,
-        icon: CommitmentIconEnum.no_beef,
+        icon: 'accessibility_outline',
     };
 };

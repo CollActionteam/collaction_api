@@ -5,7 +5,6 @@ import { getModelToken } from '@nestjs/mongoose';
 import { ICommitmentRepository } from '@domain/commitment';
 import { CreateCommitmentCommand } from '@modules/commitment/cqrs/command/create-commitment.command';
 import { CommitmentPersistence, CommitmentRepository, CommitmentSchema } from '@infrastructure/mongo';
-import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 
 describe('CreateCommitmentCommand', () => {
     let createCommitmentCommand: CreateCommitmentCommand;
@@ -59,6 +58,6 @@ export const CreateCommitmentStub = (): any => {
         label: 'commitment option label',
         description: 'commitment option description',
         points: 10,
-        icon: CommitmentIconEnum.no_beef,
+        icon: 'accessibility_outline',
     };
 };

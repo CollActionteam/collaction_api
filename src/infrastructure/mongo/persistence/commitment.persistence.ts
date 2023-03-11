@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { CommitmentIconEnum } from '@domain/commitment/enum/commitment.enum';
 import { CollActionDocument } from '@common/utils/document.utils';
 import { ICommitment } from '@domain/commitment';
 
@@ -26,6 +25,6 @@ export class CommitmentPersistence implements Omit<ICommitment, 'createdAt' | 'u
     readonly blocks?: string[];
 
     @Prop({ required: true })
-    readonly icon: CommitmentIconEnum;
+    readonly icon: string;
 }
 export const CommitmentSchema = SchemaFactory.createForClass(CommitmentPersistence);
