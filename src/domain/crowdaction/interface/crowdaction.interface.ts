@@ -2,6 +2,7 @@ import { Country } from '@common/country';
 import { Badge } from '@domain/badge/entity';
 import { ICommitment } from '@domain/commitment';
 import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
+import { IBadgeConfig } from '@infrastructure/mongo';
 
 export interface ICrowdActionImages {
     readonly card: string;
@@ -22,6 +23,7 @@ export interface ICrowdAction {
     readonly commitments: ICommitment[];
     readonly status: CrowdActionStatusEnum;
     readonly joinStatus: CrowdActionJoinStatusEnum;
+    readonly badgeConfig: IBadgeConfig;
 
     readonly startAt: Date;
     readonly endAt: Date;
