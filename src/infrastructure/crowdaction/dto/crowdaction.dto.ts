@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionImages } from '@domain/crowdaction';
 import { IBadge, Badge } from '@domain/badge';
 import { CreateCommitmentDto } from '@infrastructure/commitment';
+import { IBadgeConfig, BadgeConfig } from '@infrastructure/mongo';
 import { ICommitment } from '@domain/commitment';
 import { BadgeDto } from './badge.dto';
 
@@ -50,6 +51,9 @@ export class CreateCrowdActionDto {
 
     @ApiProperty({ name: 'commitments', isArray: true, type: CreateCommitmentDto })
     readonly commitments: ICommitment[];
+
+    @ApiProperty({ name: 'badgeConfig', type: BadgeConfig, required: false })
+    readonly badgeConfig?: IBadgeConfig;
 }
 
 export class GetCrowdActionDto {

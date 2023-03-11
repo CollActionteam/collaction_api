@@ -13,6 +13,7 @@ import { CountryMustBeValidError } from '@modules/core';
 import { Identifiable } from '@domain/core';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { SchedulerService } from '@modules/scheduler';
+import { BadgeConfig } from '@infrastructure/mongo';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
@@ -51,6 +52,9 @@ export class CreateCrowdActionCommand implements ICommand {
             slug = `${slug}-${Date.now().toString().substring(0, 10)}`;
         }
 
+        const diamondCount = 100; //? Not sure what value to put here
+        const badgeConfig = new BadgeConfig(diamondCount);
+
         const now = new Date();
         const crowdAction = await this.crowdActionRepository.create({
             ...data,
@@ -64,6 +68,7 @@ export class CreateCrowdActionCommand implements ICommand {
                 card: 'crowdaction-cards/placeholder.png',
                 banner: 'crowdaction-banners/placeholder.png',
             },
+            badgeConfig,
         });
 
         if (crowdAction) {

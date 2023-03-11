@@ -7,6 +7,14 @@ import { ICommitment } from '@domain/commitment';
 import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
 import { CommitmentSchema } from './commitment.persistence';
 
+export interface IBadgeConfig {
+    diamondTreshold: number;
+}
+
+export class BadgeConfig implements IBadgeConfig {
+    constructor(public diamondTreshold: number) {}
+}
+
 @Schema({ _id: false, versionKey: false })
 class CrowdActionImages implements ICrowdActionImages {
     @Prop({ required: true })
@@ -67,5 +75,8 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
 
     @Prop({ type: [CrowdActionBadgePersistenceSchema], required: false, array: true })
     readonly badges: IBadge[];
+
+    @Prop({ type: Object, required: true })
+    readonly badgeConfig: IBadgeConfig;
 }
 export const CrowdActionSchema = SchemaFactory.createForClass(CrowdActionPersistence);
