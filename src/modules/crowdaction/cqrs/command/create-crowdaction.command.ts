@@ -54,6 +54,9 @@ export class CreateCrowdActionCommand implements ICommand {
             slug = `${slug}-${Date.now().toString().substring(0, 10)}`;
         }
 
+        const diamondCount = 100; //? Not sure what value to put here
+        const badgeConfig = new BadgeConfig(diamondCount);
+
         const now = new Date();
 
         let badgeConfig: BadgeConfig;

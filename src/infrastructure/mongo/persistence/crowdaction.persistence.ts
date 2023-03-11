@@ -7,6 +7,14 @@ import { CreateCommitment, ICommitment } from '@domain/commitment';
 import { IBadgeConfig } from '@domain/crowdaction/interface/badge-config.interface';
 import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
 
+export interface IBadgeConfig {
+    diamondTreshold: number;
+}
+
+export class BadgeConfig implements IBadgeConfig {
+    constructor(public diamondTreshold: number) {}
+}
+
 @Schema({ _id: false, versionKey: false })
 class CrowdActionImages implements ICrowdActionImages {
     @Prop({ required: true })
