@@ -100,16 +100,14 @@ describe('GetParticipationForCrowdactionQuery', () => {
     describe('getParticipationForCrowdActionQuery', () => {
         it('should find all participations in a crowdaction', async () => {
             const profile = await profileModel.create(CreateProfileStub());
-
-            const commitmentDocument = await CommitmentModel.create(CreateCommitmentStub());
-            const commitment = Commitment.create(commitmentDocument.toObject({ getters: true }));
+            const commitment = CreateCommitmentStub();
 
             const crowdactionDocument = await crowdActionModel.create(CreateCrowdActionStub([commitment]));
             const crowdAction = CrowdAction.create(crowdactionDocument.toObject({ getters: true }));
 
             const participate = await toggleParticipationCommand.execute({
                 userId: profile.userId,
-                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment._id] },
+                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment.id] },
             });
 
             expect(participate).toBeDefined();
@@ -124,7 +122,7 @@ describe('GetParticipationForCrowdactionQuery', () => {
 
             const unparticipate = await toggleParticipationCommand.execute({
                 userId: profile.userId,
-                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment._id] },
+                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment.id] },
             });
 
             expect(unparticipate).toBeDefined();
@@ -164,7 +162,7 @@ const CreateProfileStub = (): any => {
 
 const CreateCommitmentStub = (): any => {
     return {
-        _id: 'test',
+        id: '1234-1234-1234-1234',
         label: 'label',
         points: 10,
         icon: 'accessibility_outline',

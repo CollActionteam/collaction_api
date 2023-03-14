@@ -99,5 +99,19 @@ const CreateCrowdActionStub = (): any => {
                 minimumCheckIns: 12,
             },
         ],
+        commitments: [
+            {
+                label: 'Vegan',
+                tags: [],
+                points: 50,
+                icon: 'magnet_outline',
+            },
+            {
+                label: 'No Dairy',
+                tags: [],
+                points: 25,
+                icon: 'magnet_outline',
+            },
+        ],
     };
 };
