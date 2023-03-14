@@ -9,6 +9,7 @@ export class ListCrowdActionsQuery implements IQuery<IPaginationQueryArgs<FindCr
     constructor(private readonly crowdActionRepository: ICrowdActionRepository) {}
 
     async handle(filter: IPaginationQueryArgs<FindCriteria<QueryCrowdAction>>): Promise<IPaginatedList<ICrowdAction>> {
-        return paginate(filter, this.crowdActionRepository);
+        const filters = { ...filter, sort: { endAt: 'DESC' } };
+        return paginate(filters, this.crowdActionRepository);
     }
 }
