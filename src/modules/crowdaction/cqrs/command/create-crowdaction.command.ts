@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import slugify from 'slugify';
+import { v4 as uuidv4 } from 'uuid';
 import { ICommand } from '@common/cqrs';
 import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
 import {
@@ -13,6 +14,7 @@ import { CountryMustBeValidError } from '@modules/core';
 import { Identifiable } from '@domain/core';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { SchedulerService } from '@modules/scheduler';
+import { Commitment } from '@domain/commitment';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
@@ -52,8 +54,14 @@ export class CreateCrowdActionCommand implements ICommand {
         }
 
         const now = new Date();
+
+        const commitments = data.commitments.map((c) => {
+            return Commitment.create({ ...c, createdAt: now, updatedAt: now, id: uuidv4() });
+        });
+
         const crowdAction = await this.crowdActionRepository.create({
             ...data,
+            commitments,
             participantCount: 0,
             joinEndAt,
             location,

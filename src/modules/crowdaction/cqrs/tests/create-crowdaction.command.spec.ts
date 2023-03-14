@@ -75,27 +75,32 @@ describe('CreateCrowdActionCommand', () => {
             const crowdAction = await createCrowdActionCommand.execute(CreateCrowdActionStub());
             expect(crowdAction).toBeDefined();
         });
+
         it('should throw the CrowdActionMustBeInTheFutureError', async () => {
             const stub = CreateCrowdActionStub();
             stub.startAt = new Date('01/01/2022');
             await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(CrowdActionMustBeInTheFutureError);
         });
+
         it('should throw the MustEndAfterStartError', async () => {
             const stub = CreateCrowdActionStub();
             stub.startAt = new Date('11/01/2025');
             stub.endAt = new Date('10/01/2025');
             await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(MustEndAfterStartError);
         });
+
         it('should throw the MustJoinBeforeEndError', async () => {
             const stub = CreateCrowdActionStub();
             stub.joinEndAt = new Date('09/01/2025');
             await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(MustJoinBeforeEndError);
         });
+
         it('should throw the CategoryAndSubcategoryMustBeDisimilarError', async () => {
             const stub = CreateCrowdActionStub();
             stub.subcategory = 'FOOD';
             await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(CategoryAndSubcategoryMustBeDisimilarError);
         });
+
         it('should throw the CountryMustBeValidError', async () => {
             const stub = CreateCrowdActionStub();
             stub.country = 'AZERT';
@@ -115,6 +120,14 @@ const CreateCrowdActionStub = (): any => {
         startAt: new Date('01/01/2025'),
         endAt: new Date('08/01/2025'),
         joinEndAt: new Date('07/01/2025'),
+        commitments: [
+            {
+                label: 'Vegan',
+                tags: ['FOOD'],
+                points: 10,
+                icon: 'accessibility_outline',
+            },
+        ],
         badges: [
             {
                 tier: BadgeTierEnum.BRONZE,

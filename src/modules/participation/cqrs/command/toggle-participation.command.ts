@@ -40,7 +40,7 @@ export class ToggleParticipationCommand implements ICommand {
         const profile = await this.cqrsHandler.fetch(FindProfileByUserIdQuery, userId);
 
         const crowdAction = await this.cqrsHandler.fetch(FindCrowdActionByIdQuery, toggleParticipation.crowdActionId);
-        const allowedCommitments = crowdAction.commitments.map((option) => option._id);
+        const allowedCommitments = crowdAction.commitments.map((option) => option.id);
 
         this.isCommitmentsAllowed(toggleParticipation.commitments, allowedCommitments);
 

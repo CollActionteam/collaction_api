@@ -47,7 +47,7 @@ export class DelegateBadgesCommand implements ICommand {
                                 continue;
                             }
 
-                            const commitments = crowdAction.commitments.filter((c) => participant.commitments.includes(c._id));
+                            const commitments = crowdAction.commitments.filter((c) => participant.commitments.includes(c.id));
                             const points = commitments.reduce((acc, cur) => acc + cur.points, 0);
 
                             if (badge.tier === BadgeTierEnum.DIAMOND && points >= thresholds.diamondThreshold) {

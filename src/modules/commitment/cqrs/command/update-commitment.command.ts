@@ -17,7 +17,7 @@ export class UpdateCommitmentCommand implements ICommand {
     async execute({ id, updateDto }: IUpdateCommitmentArgs): Promise<Identifiable> {
         if (updateDto.blocks?.length) {
             for (const id of updateDto.blocks) {
-                const [commitment] = await this.commitmentRepository.findAll({ _id: id });
+                const [commitment] = await this.commitmentRepository.findAll({ id });
                 if (!commitment) {
                     throw new CommitmentDoesNotExistError(id);
                 }

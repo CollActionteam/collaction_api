@@ -46,17 +46,16 @@ describe('CreateCommitmentCommand', () => {
     describe('createCommitment', () => {
         it('should create a new commitment option', async () => {
             const commitmentId = await createCommitmentCommand.execute(CreateCommitmentStub());
-            expect(commitmentId).not.toBeUndefined();
+            expect(commitmentId).toBeDefined();
         });
     });
 });
 
 export const CreateCommitmentStub = (): any => {
     return {
-        _id: 'test',
-        tags: ['FOOD'],
         label: 'commitment option label',
         description: 'commitment option description',
+        tags: ['FOOD'],
         points: 10,
         icon: 'accessibility_outline',
     };
