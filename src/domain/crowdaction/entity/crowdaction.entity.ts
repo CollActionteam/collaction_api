@@ -3,7 +3,7 @@ import { Badge } from '@domain/badge/entity';
 import { ICommitment } from '@domain/commitment';
 import { Identifiable } from '@domain/core';
 import { ICrowdAction, ICrowdActionImages, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
-import { IBadgeConfig } from '@infrastructure/mongo';
+import { IBadgeConfig } from '../interface/badge-config.interface';
 
 export class CrowdAction implements ICrowdAction, Identifiable {
     readonly id: string;
