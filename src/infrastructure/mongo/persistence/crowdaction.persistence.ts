@@ -3,7 +3,7 @@ import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdAction, ICrowdA
 import { Country, CountrySchema } from '@infrastructure/mongo/persistence/country.persistence';
 import { IBadge } from '@domain/badge';
 import { CollActionDocument } from '@common/utils/document.utils';
-import { ICommitment } from '@domain/commitment';
+import { CreateCommitment, ICommitment } from '@domain/commitment';
 import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
 
 @Schema({ _id: false, versionKey: false })
@@ -17,7 +17,7 @@ class CrowdActionImages implements ICrowdActionImages {
 export const CrowdActionImagesSchema = SchemaFactory.createForClass(CrowdActionImages);
 
 @Schema({ _id: false, versionKey: false, timestamps: true })
-export class CrowdActionCommitmentPersistence implements Omit<ICommitment, 'id' | 'createdAt' | 'updatedAt'> {
+export class CrowdActionCommitmentPersistence implements CreateCommitment {
     @Prop({ required: true })
     readonly id: string;
 
