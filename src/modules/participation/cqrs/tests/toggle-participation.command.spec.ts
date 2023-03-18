@@ -105,7 +105,7 @@ describe('ToggleParticipationCommand', () => {
 
             const participate = await toggleParticipationCommand.execute({
                 userId: profile.userId,
-                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment._id] },
+                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment.id] },
             });
 
             expect(participate).toBeDefined();
@@ -113,7 +113,7 @@ describe('ToggleParticipationCommand', () => {
 
             const unparticipate = await toggleParticipationCommand.execute({
                 userId: profile.userId,
-                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment._id] },
+                toggleParticipation: { crowdActionId: crowdAction.id, commitments: [commitment.id] },
             });
 
             expect(unparticipate.isParticipating).toEqual(false);
@@ -136,7 +136,7 @@ const CreateProfileStub = (): any => {
 
 const CreateCommitmentStub = (): any => {
     return {
-        _id: 'test',
+        id: '1234-1234-1234-1234',
         tags: ['FOOD'],
         label: 'label',
         points: 10,

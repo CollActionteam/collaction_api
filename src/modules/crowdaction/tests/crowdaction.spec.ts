@@ -78,10 +78,10 @@ const CrowdActionStub = (): CrowdAction => {
         },
         commitments: [
             {
-                _id: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',
-                tags: [],
+                id: '1234-1234-1234-1234',
                 label: 'TheLabel',
                 description: 'TheDescription',
+                tags: [],
                 points: 14,
                 blocks: ['O9pbPDY3s5e5XwzgwKZtZTDPvLS2'],
                 icon: 'accessibility_outline',

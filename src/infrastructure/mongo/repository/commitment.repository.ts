@@ -15,17 +15,16 @@ export class CommitmentRepository implements ICommitmentRepository {
         const document = new this.documentModel(entityLike);
         await document.save();
 
-        return { id: document._id };
+        return { id: document.id };
     }
 
     async patch(id: string, entityLike: PatchCommitment): Promise<void> {
-        await this.findOne({ _id: id });
-        await this.documentModel.updateOne({ _id: id }, entityLike, { upsert: true });
+        await this.documentModel.updateOne({ id }, entityLike);
     }
 
     async delete(id: string): Promise<void> {
-        await this.findOne({ _id: id });
-        await this.documentModel.deleteOne({ _id: id });
+        await this.findOne({ id });
+        await this.documentModel.deleteOne({ id });
     }
 
     async findOne(query: FindCriteria<QueryCommitment>): Promise<Commitment> {
