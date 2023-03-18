@@ -87,7 +87,7 @@ describe('DelegateBadgesCommand', () => {
 
             const crowdAction = CrowdAction.create(crowdactionDocument.toObject({ getters: true }));
 
-            await participationModel.create(CreateParticipationStub(crowdAction.id, [commitment._id]));
+            await participationModel.create(CreateParticipationStub(crowdAction.id, [commitment.id]));
 
             await delegateBadgesCommand.execute(crowdAction);
 
@@ -117,8 +117,9 @@ const CreateProfileStub = (): any => {
 
 const CreateCommitmentStub = (): any => {
     return {
-        _id: 'test',
+        id: '1234-1234-1234-1234',
         label: 'label',
+        tags: ['FOOD'],
         points: 10,
         icon: 'accessibility_outline',
     };

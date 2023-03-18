@@ -1,8 +1,8 @@
 export interface ICommitment {
-    readonly _id: string;
-    readonly tags: string[];
+    readonly id: string;
     readonly label: string;
     readonly description?: string | undefined;
+    readonly tags: string[];
     readonly points: number;
     readonly blocks?: string[]; // IDs of other Commitments to be blocked
     readonly icon: string;

@@ -45,13 +45,16 @@ describe('DeleteCommitmentCommand', () => {
             await collection.deleteMany({});
         }
     });
+
     describe('deleteCommitment', () => {
         it('should delete a commitment', async () => {
             const commitmentId = await createCommitmentCommand.execute(CreateCommitmentStub());
             expect(commitmentId).not.toBeUndefined();
 
             const createdDocuments = await commitmentModel.find({ commitmentId });
-            const commitments = createdDocuments.map((doc) => Commitment.create(doc.toObject({ getters: true })));
+            const commitments = createdDocuments.map((doc) => {
+                Commitment.create(doc.toObject({ getters: true }));
+            });
             expect(commitments.length === 1);
 
             await deleteCommitmentCommand.execute(commitmentId.id);
@@ -65,7 +68,6 @@ describe('DeleteCommitmentCommand', () => {
 
 export const CreateCommitmentStub = (): any => {
     return {
-        _id: 'test',
         tags: ['FOOD'],
         label: 'commitment option label',
         description: 'commitment option description',

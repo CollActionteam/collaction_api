@@ -113,6 +113,16 @@ const CreateCrowdActionStub = (): any => {
         startAt: new Date('01/01/2025'),
         endAt: new Date('08/01/2025'),
         joinEndAt: new Date('07/01/2025'),
+        commitments: [
+            {
+                id: '1234-1234-1234-1234',
+                label: 'commitment option label',
+                description: 'commitment option description',
+                tags: ['FOOD'],
+                points: 10,
+                icon: 'accessibility_outline',
+            },
+        ],
         badges: [
             {
                 tier: BadgeTierEnum.BRONZE,

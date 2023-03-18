@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionImages } from '@domain/crowdaction';
 import { IBadge, Badge } from '@domain/badge';
-import { CreateCommitmentDto } from '@infrastructure/commitment';
+import { CrowdActionCommitmentDto, GetCommitmentDto } from '@infrastructure/commitment';
 import { ICommitment } from '@domain/commitment';
 import { BadgeDto } from './badge.dto';
 
@@ -48,8 +48,8 @@ export class CreateCrowdActionDto {
     @ApiProperty({ name: 'badges', type: BadgeDto, isArray: true, required: false })
     readonly badges?: IBadge[];
 
-    @ApiProperty({ name: 'commitments', isArray: true, type: CreateCommitmentDto })
-    readonly commitments: ICommitment[];
+    @ApiProperty({ name: 'commitments', isArray: true, type: CrowdActionCommitmentDto })
+    readonly commitments: CrowdActionCommitmentDto[];
 }
 
 export class GetCrowdActionDto {
@@ -65,7 +65,7 @@ export class GetCrowdActionDto {
     @ApiProperty({ name: 'subcategory', example: 'FOOD', required: false })
     readonly subcategory?: string;
 
-    @ApiProperty({ name: 'commitments', isArray: true, type: CreateCommitmentDto })
+    @ApiProperty({ name: 'commitments', isArray: true, type: GetCommitmentDto })
     readonly commitments: ICommitment[];
 
     @ApiProperty({ name: 'country', example: 'NL', required: true })

@@ -3,9 +3,8 @@ import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdAction, ICrowdA
 import { Country, CountrySchema } from '@infrastructure/mongo/persistence/country.persistence';
 import { IBadge } from '@domain/badge';
 import { CollActionDocument } from '@common/utils/document.utils';
-import { ICommitment } from '@domain/commitment';
+import { CreateCommitment, ICommitment } from '@domain/commitment';
 import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
-import { CommitmentSchema } from './commitment.persistence';
 
 @Schema({ _id: false, versionKey: false })
 class CrowdActionImages implements ICrowdActionImages {
@@ -16,6 +15,31 @@ class CrowdActionImages implements ICrowdActionImages {
     readonly banner: string;
 }
 export const CrowdActionImagesSchema = SchemaFactory.createForClass(CrowdActionImages);
+
+@Schema({ _id: false, versionKey: false, timestamps: true })
+export class CrowdActionCommitmentPersistence implements CreateCommitment {
+    @Prop({ required: true })
+    readonly id: string;
+
+    @Prop({ array: true, required: true })
+    readonly tags: string[];
+
+    @Prop({ required: true })
+    readonly label: string;
+
+    @Prop({ required: false })
+    readonly description?: string;
+
+    @Prop({ required: true })
+    readonly points: number;
+
+    @Prop({ array: true, required: false })
+    readonly blocks?: string[];
+
+    @Prop({ required: true })
+    readonly icon: string;
+}
+export const CrowdActionCommitmentSchema = SchemaFactory.createForClass(CrowdActionCommitmentPersistence);
 
 export type CrowdActionDocument = CollActionDocument<CrowdActionPersistence>;
 @Schema({ collection: 'crowdactions', autoCreate: true, versionKey: false, timestamps: true })
@@ -62,7 +86,7 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
     @Prop({ type: Date, required: true })
     readonly joinEndAt: Date;
 
-    @Prop({ type: [CommitmentSchema], required: true, array: true })
+    @Prop({ type: [CrowdActionCommitmentSchema], required: true, array: true })
     readonly commitments: ICommitment[];
 
     @Prop({ type: [CrowdActionBadgePersistenceSchema], required: false, array: true })
