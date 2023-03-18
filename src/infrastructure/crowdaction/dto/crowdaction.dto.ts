@@ -2,7 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionImages } from '@domain/crowdaction';
 import { IBadge, Badge } from '@domain/badge';
-import { CreateCommitmentDto } from '@infrastructure/commitment';
+import { CrowdActionCommitmentDto, GetCommitmentDto } from '@infrastructure/commitment';
+import { BadgeConfig } from '@domain/crowdaction/entity/badge-config.entity';
+import { IBadgeConfig } from '@domain/crowdaction/interface/badge-config.interface';
 import { ICommitment } from '@domain/commitment';
 import { BadgeDto } from './badge.dto';
 
@@ -48,8 +50,11 @@ export class CreateCrowdActionDto {
     @ApiProperty({ name: 'badges', type: BadgeDto, isArray: true, required: false })
     readonly badges?: IBadge[];
 
-    @ApiProperty({ name: 'commitments', isArray: true, type: CreateCommitmentDto })
-    readonly commitments: ICommitment[];
+    @ApiProperty({ name: 'commitments', isArray: true, type: CrowdActionCommitmentDto })
+    readonly commitments: CrowdActionCommitmentDto[];
+
+    @ApiProperty({ name: 'badgeConfig', type: BadgeConfig, required: false })
+    readonly diamondThreshold?: IBadgeConfig;
 }
 
 export class GetCrowdActionDto {
