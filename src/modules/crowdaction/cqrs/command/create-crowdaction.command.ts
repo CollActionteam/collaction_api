@@ -54,8 +54,11 @@ export class CreateCrowdActionCommand implements ICommand {
             slug = `${slug}-${Date.now().toString().substring(0, 10)}`;
         }
 
-        const diamondCount = 100; //? Not sure what value to put here
-        const badgeConfig = new BadgeConfig(diamondCount);
+        let badgeConfig = data.badgeConfig;
+        if (!badgeConfig) {
+            const commitments = await this.crowdActionRepository.findAll({ id });
+            badgeConfig = commitments.sort((a, b) => b.points - a.points)[0].points;
+        }
 
         const now = new Date();
 
