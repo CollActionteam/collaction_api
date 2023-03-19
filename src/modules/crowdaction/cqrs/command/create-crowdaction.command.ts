@@ -13,6 +13,7 @@ import { CountryMustBeValidError } from '@modules/core';
 import { Identifiable } from '@domain/core';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { SchedulerService } from '@modules/scheduler';
+import { BadgeConfig } from '@domain/crowdaction/entity/badge-config.entity';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
@@ -51,13 +52,19 @@ export class CreateCrowdActionCommand implements ICommand {
             slug = `${slug}-${Date.now().toString().substring(0, 10)}`;
         }
 
-        let badgeConfig = data.badgeConfig;
-        if (!badgeConfig) {
-            const commitments = await this.crowdActionRepository.findAll({ id });
-            badgeConfig = commitments.sort((a, b) => b.points - a.points)[0].points;
+        const now = new Date();
+
+        let badgeConfig: BadgeConfig;
+        if (data.diamondThreshold) {
+            badgeConfig = {
+                diamondThreshold: data.diamondThreshold,
+            };
+        } else {
+            badgeConfig = {
+                diamondThreshold: commitments.sort((a, b) => b.points - a.points)[0].points,
+            };
         }
 
-        const now = new Date();
         const crowdAction = await this.crowdActionRepository.create({
             ...data,
             participantCount: 0,

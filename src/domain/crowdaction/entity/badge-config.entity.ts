@@ -2,8 +2,8 @@ import { IBadgeConfig } from '../interface/badge-config.interface';
 
 export class BadgeConfig implements IBadgeConfig {
     constructor(config: IBadgeConfig) {
-        this.diamondTreshold = config.diamondTreshold;
+        this.diamondThreshold = config.diamondThreshold;
     }
 
-    readonly diamondTreshold: number;
+    readonly diamondThreshold: number;
 }

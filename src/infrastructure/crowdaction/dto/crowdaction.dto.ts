@@ -54,7 +54,7 @@ export class CreateCrowdActionDto {
     readonly commitments: ICommitment[];
 
     @ApiProperty({ name: 'badgeConfig', type: BadgeConfig, required: false })
-    readonly badgeConfig?: IBadgeConfig;
+    readonly diamondThreshold?: IBadgeConfig;
 }
 
 export class GetCrowdActionDto {
