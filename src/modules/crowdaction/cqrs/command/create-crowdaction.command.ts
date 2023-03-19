@@ -54,10 +54,17 @@ export class CreateCrowdActionCommand implements ICommand {
             slug = `${slug}-${Date.now().toString().substring(0, 10)}`;
         }
 
-        let badgeConfig = data.badgeConfig;
-        if (!badgeConfig) {
-            const commitments = await this.crowdActionRepository.findAll({ id });
-            badgeConfig = commitments.sort((a, b) => b.points - a.points)[0].points;
+        const now = new Date();
+
+        let badgeConfig: BadgeConfig;
+        if (data.diamondThreshold) {
+            badgeConfig = {
+                diamondThreshold: data.diamondThreshold,
+            };
+        } else {
+            badgeConfig = {
+                diamondThreshold: commitments.sort((a, b) => b.points - a.points)[0].points,
+            };
         }
 
         const now = new Date();
