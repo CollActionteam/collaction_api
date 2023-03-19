@@ -3,8 +3,8 @@ import { Type } from 'class-transformer';
 import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionImages } from '@domain/crowdaction';
 import { IBadge, Badge } from '@domain/badge';
 import { CrowdActionCommitmentDto, GetCommitmentDto } from '@infrastructure/commitment';
-import { BadgeConfig } from '@domain/crowdaction/entity/badge-config.entity';
 import { IBadgeConfig } from '@domain/crowdaction/interface/badge-config.interface';
+import { BadgeConfig } from '@domain/crowdaction/entity/badge-config.entity';
 import { ICommitment } from '@domain/commitment';
 import { BadgeDto } from './badge.dto';
 
