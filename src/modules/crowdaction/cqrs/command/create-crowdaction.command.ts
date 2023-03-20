@@ -55,34 +55,13 @@ export class CreateCrowdActionCommand implements ICommand {
 
         const now = new Date();
 
-        let badgeConfig: BadgeConfig;
-        if (data.diamondThreshold) {
-            badgeConfig = {
-                diamondThreshold: data.diamondThreshold,
-            };
-        } else {
-            badgeConfig = {
-                diamondThreshold: commitments.sort((a, b) => b.points - a.points)[0].points,
-            };
-        }
-
-        const now = new Date();
-
-        let badgeConfig: BadgeConfig;
-        if (data.diamondThreshold) {
-            badgeConfig = {
-                diamondThreshold: data.diamondThreshold,
-            };
-        } else {
-            badgeConfig = {
-                diamondThreshold: commitments.sort((a, b) => b.points - a.points)[0].points,
-            };
-        }
-
         const commitments = data.commitments.map((c) => {
             return Commitment.create({ ...c, createdAt: now, updatedAt: now, id: uuidv4() });
         });
 
+        const badgeConfig = new BadgeConfig({
+            diamondThreshold: data.diamondThreshold ?? commitments.sort((a, b) => b.points - a.points)[0].points,
+        });
         const crowdAction = await this.crowdActionRepository.create({
             ...data,
             commitments,
