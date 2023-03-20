@@ -1,4 +1,4 @@
-import { IBadgeConfig } from '../interface/badge-config.interface';
+import { IBadgeConfig } from '../interface';
 
 export class BadgeConfig implements IBadgeConfig {
     constructor(config: IBadgeConfig) {

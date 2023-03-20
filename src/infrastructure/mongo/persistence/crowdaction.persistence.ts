@@ -1,10 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdAction, ICrowdActionImages } from '@domain/crowdaction';
+import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdAction, ICrowdActionImages, IBadgeConfig } from '@domain/crowdaction';
 import { Country, CountrySchema } from '@infrastructure/mongo/persistence/country.persistence';
 import { IBadge } from '@domain/badge';
 import { CollActionDocument } from '@common/utils/document.utils';
 import { CreateCommitment, ICommitment } from '@domain/commitment';
-import { IBadgeConfig } from '@domain/crowdaction/interface/badge-config.interface';
 import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
 
 @Schema({ _id: false, versionKey: false })

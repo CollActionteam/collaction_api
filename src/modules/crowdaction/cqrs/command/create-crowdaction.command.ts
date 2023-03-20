@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import slugify from 'slugify';
 import { v4 as uuidv4 } from 'uuid';
 import { ICommand } from '@common/cqrs';
-import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
+import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository, BadgeConfig } from '@domain/crowdaction';
 import {
     CategoryAndSubcategoryMustBeDisimilarError,
     CrowdActionMustBeInTheFutureError,
@@ -15,7 +15,6 @@ import { Identifiable } from '@domain/core';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { SchedulerService } from '@modules/scheduler';
 import { Commitment } from '@domain/commitment';
-import { BadgeConfig } from '@domain/crowdaction/entity/badge-config.entity';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {

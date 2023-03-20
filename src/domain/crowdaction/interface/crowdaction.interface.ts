@@ -1,8 +1,7 @@
 import { Country } from '@common/country';
 import { Badge } from '@domain/badge/entity';
 import { ICommitment } from '@domain/commitment';
-import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
-import { IBadgeConfig } from '../interface/badge-config.interface';
+import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, IBadgeConfig } from '@domain/crowdaction';
 
 export interface ICrowdActionImages {
     readonly card: string;

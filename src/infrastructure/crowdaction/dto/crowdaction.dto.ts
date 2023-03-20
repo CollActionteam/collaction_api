@@ -1,10 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionImages } from '@domain/crowdaction';
+import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionImages, BadgeConfig, IBadgeConfig } from '@domain/crowdaction';
 import { IBadge, Badge } from '@domain/badge';
 import { CrowdActionCommitmentDto, GetCommitmentDto } from '@infrastructure/commitment';
-import { IBadgeConfig } from '@domain/crowdaction/interface/badge-config.interface';
-import { BadgeConfig } from '@domain/crowdaction/entity/badge-config.entity';
 import { ICommitment } from '@domain/commitment';
 import { BadgeDto } from './badge.dto';
 
