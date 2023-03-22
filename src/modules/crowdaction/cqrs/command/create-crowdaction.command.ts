@@ -15,10 +15,15 @@ import { Identifiable } from '@domain/core';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { SchedulerService } from '@modules/scheduler';
 import { Commitment } from '@domain/commitment';
+import { IForumRepository } from '@domain/forum';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
-    constructor(private readonly crowdActionRepository: ICrowdActionRepository, private readonly schedulerService: SchedulerService) {}
+    constructor(
+        private readonly crowdActionRepository: ICrowdActionRepository,
+        private readonly schedulerService: SchedulerService,
+        private readonly forumRepository: IForumRepository,
+    ) {}
 
     async execute(data: CreateCrowdActionDto): Promise<Identifiable> {
         if (new Date() > data.startAt) {
@@ -62,6 +67,11 @@ export class CreateCrowdActionCommand implements ICommand {
         const badgeConfig = new BadgeConfig({
             diamondThreshold: data.badgeConfig?.diamondThreshold ?? commitments.sort((a, b) => b.points - a.points)[0].points,
         });
+
+        const forum = await this.forumRepository.findOne({ defaultCrowdActionForum: true });
+
+        console.log(forum);
+
         const crowdAction = await this.crowdActionRepository.create({
             ...data,
             commitments,

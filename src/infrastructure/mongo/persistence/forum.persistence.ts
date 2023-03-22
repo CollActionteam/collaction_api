@@ -39,5 +39,8 @@ export class ForumPersistence implements Omit<IForum, 'id'> {
 
     @Prop({ type: LastPostInfoPersistenceSchema, required: false })
     readonly lastPostInfo?: ILastPostInfo;
+
+    @Prop({ required: true })
+    readonly defaultCrowdActionForum: boolean;
 }
 export const ForumSchema = SchemaFactory.createForClass(ForumPersistence);

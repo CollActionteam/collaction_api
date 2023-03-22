@@ -27,6 +27,8 @@ import { IParticipationRepository } from '@domain/participation';
 import { IContactRepository } from '@domain/contact';
 import { ICommitmentRepository } from '@domain/commitment';
 import { ContactPersistence, ContactSchema } from './persistence/contact.persistence';
+import { IForumRepository } from '@domain/forum';
+import { ForumRepository } from './repository/forum.repository';
 
 @Module({
     imports: [
@@ -61,7 +63,11 @@ import { ContactPersistence, ContactSchema } from './persistence/contact.persist
             provide: IContactRepository,
             useClass: ContactRepository,
         },
+        {
+            provide: IForumRepository,
+            useClass: ForumRepository,
+        },
     ],
-    exports: [ICrowdActionRepository, IProfileRepository, IParticipationRepository, ICommitmentRepository, IContactRepository],
+    exports: [ICrowdActionRepository, IProfileRepository, IParticipationRepository, ICommitmentRepository, IContactRepository, IForumRepository],
 })
 export class MongoModule {}
