@@ -8,8 +8,8 @@ import { UserInfoPersistenceSchema } from './user-info.persistence';
 export type ThreadDocument = CollActionDocument<ThreadPersistence>;
 @Schema({ collection: 'threads', autoCreate: true, versionKey: false, timestamps: true })
 export class ThreadPersistence implements Omit<IThread, 'id' | 'createdAt' | 'updatedAt'> {
-    @Prop({ required: true })
-    readonly prefixId: string;
+    @Prop({ required: false })
+    readonly prefixId?: string;
 
     @Prop({ required: true })
     readonly forumId: string;
