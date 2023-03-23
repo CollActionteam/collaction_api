@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import slugify from 'slugify';
 import { v4 as uuidv4 } from 'uuid';
-import { ICommand } from '@common/cqrs';
+import { ICommand, ICQRSHandler } from '@common/cqrs';
 import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository, BadgeConfig } from '@domain/crowdaction';
 import {
     CategoryAndSubcategoryMustBeDisimilarError,
@@ -15,14 +15,15 @@ import { Identifiable } from '@domain/core';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { SchedulerService } from '@modules/scheduler';
 import { Commitment } from '@domain/commitment';
-import { IForumRepository } from '@domain/forum';
+import { CreateThreadCommand } from '@modules/thread/cqrs/command';
+import { FindDefaultForumQuery } from '@modules/forum/cqrs/query/find-default-forum.query';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
     constructor(
         private readonly crowdActionRepository: ICrowdActionRepository,
         private readonly schedulerService: SchedulerService,
-        private readonly forumRepository: IForumRepository,
+        private readonly cqrsHandler: ICQRSHandler,
     ) {}
 
     async execute(data: CreateCrowdActionDto): Promise<Identifiable> {
@@ -68,9 +69,7 @@ export class CreateCrowdActionCommand implements ICommand {
             diamondThreshold: data.badgeConfig?.diamondThreshold ?? commitments.sort((a, b) => b.points - a.points)[0].points,
         });
 
-        const forum = await this.forumRepository.findOne({ defaultCrowdActionForum: true });
-
-        console.log(forum);
+        await this.#createThread(data);
 
         const crowdAction = await this.crowdActionRepository.create({
             ...data,
@@ -97,5 +96,18 @@ export class CreateCrowdActionCommand implements ICommand {
 
     stopAllCrons() {
         this.schedulerService.stopAllCrons();
+    }
+
+    // TODO: Find way to pass userId and what is preficID suppoised to be?
+    async #createThread(data: CreateCrowdActionDto) {
+        const forum = await this.cqrsHandler.fetch(FindDefaultForumQuery, true);
+
+        this.cqrsHandler.execute(CreateThreadCommand, {
+            userId: '',
+            forumId: forum.id,
+            prefixId: '',
+            subject: data.title,
+            message: data.description,
+        });
     }
 }
