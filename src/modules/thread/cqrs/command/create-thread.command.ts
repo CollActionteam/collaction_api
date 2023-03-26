@@ -1,20 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { ICommand } from '@common/cqrs';
+import { ICommand, ICQRSHandler } from '@common/cqrs';
 import { IThreadRepository } from '@domain/thread';
 import { CreateThreadDto } from '@infrastructure/thread';
-import { Identifiable, UserInfo } from '@domain/core';
+import { Identifiable } from '@domain/core';
+import { FindProfileByUserIdQuery } from '@modules/profile/cqrs';
+import { UserInfo } from '@domain/user-info';
 
 @Injectable()
 export class CreateThreadCommand implements ICommand {
-    constructor(private readonly threadRepository: IThreadRepository) {}
+    constructor(private readonly threadRepository: IThreadRepository, private readonly cqrsHandler: ICQRSHandler) {}
 
     async execute(data: CreateThreadDto): Promise<Identifiable> {
-        // TODO: Create actual user info. Either get info from profile or create repo specifically for user info
-        const userInfo = new UserInfo();
+        const profile = await this.cqrsHandler.fetch(FindProfileByUserIdQuery, data.userId);
+        const userInfo = new UserInfo(profile);
+
+        // TODO: Make Create Post command here for the first post in the new thread.
+        // Issue https://github.com/CollActionteam/collaction_api/issues/90
 
         return await this.threadRepository.create({
             ...data,
-            // TODO: What is firstPost? The first post id?
             firstPost: '',
             author: userInfo,
             closed: false,

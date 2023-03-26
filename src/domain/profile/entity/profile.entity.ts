@@ -11,6 +11,8 @@ export class Profile implements IProfile {
     readonly bio?: string | undefined;
     readonly avatar?: string | undefined;
     readonly badges?: Badge[] | undefined;
+    readonly threadCount: number;
+    readonly postCount: number;
 
     constructor(entityLike: IProfile) {
         this.id = entityLike.id;
@@ -21,6 +23,8 @@ export class Profile implements IProfile {
         this.bio = entityLike.bio;
         this.avatar = entityLike.avatar;
         this.badges = entityLike.badges;
+        this.threadCount = entityLike.threadCount;
+        this.postCount = entityLike.postCount;
     }
 
     static create(entityLike: IProfile): Profile {

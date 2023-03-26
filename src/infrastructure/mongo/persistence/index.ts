@@ -8,3 +8,4 @@ export * from './forum.persistence';
 export * from './last-post-info.persistence';
 export * from './user-info.persistence';
 export * from './thread.persistence';
+export * from './forum-permission.persistence';

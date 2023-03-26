@@ -16,7 +16,15 @@ import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { SchedulerService } from '@modules/scheduler';
 import { Commitment } from '@domain/commitment';
 import { CreateThreadCommand } from '@modules/thread/cqrs/command';
-import { FindDefaultForumQuery } from '@modules/forum/cqrs/query/find-default-forum.query';
+import { UserRole } from '@domain/auth/enum';
+import { FindDefaultForumQuery, FindForumPermissionByIdQuery } from '@modules/forum';
+import { UserCannotCreateThreadInForumError } from '@modules/thread/errors';
+
+export interface ICreateCrowdActionArgs {
+    userId: string;
+    userRole: UserRole;
+    crowdActionDto: CreateCrowdActionDto;
+}
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
@@ -26,7 +34,11 @@ export class CreateCrowdActionCommand implements ICommand {
         private readonly cqrsHandler: ICQRSHandler,
     ) {}
 
-    async execute(data: CreateCrowdActionDto): Promise<Identifiable> {
+    async execute(args: ICreateCrowdActionArgs): Promise<Identifiable> {
+        const uid = args.userId;
+        const userRole = args.userRole;
+        const data = args.crowdActionDto;
+
         if (new Date() > data.startAt) {
             throw new CrowdActionMustBeInTheFutureError();
         }
@@ -69,7 +81,7 @@ export class CreateCrowdActionCommand implements ICommand {
             diamondThreshold: data.badgeConfig?.diamondThreshold ?? commitments.sort((a, b) => b.points - a.points)[0].points,
         });
 
-        await this.#createThread(data);
+        await this.#createThread(uid, userRole, data);
 
         const crowdAction = await this.crowdActionRepository.create({
             ...data,
@@ -98,16 +110,20 @@ export class CreateCrowdActionCommand implements ICommand {
         this.schedulerService.stopAllCrons();
     }
 
-    // TODO: Find way to pass userId and what is preficID suppoised to be?
-    async #createThread(data: CreateCrowdActionDto) {
+    async #createThread(userId: string, userRole: UserRole, data: CreateCrowdActionDto) {
         const forum = await this.cqrsHandler.fetch(FindDefaultForumQuery, true);
+        const forumPermission = await this.cqrsHandler.fetch(FindForumPermissionByIdQuery, { forumId: forum.id, role: userRole });
 
-        this.cqrsHandler.execute(CreateThreadCommand, {
-            userId: '',
-            forumId: forum.id,
-            prefixId: '',
-            subject: data.title,
-            message: data.description,
-        });
+        if (forumPermission?.role !== userRole) throw new UserCannotCreateThreadInForumError();
+
+        if (forum) {
+            this.cqrsHandler.execute(CreateThreadCommand, {
+                userId: userId,
+                forumId: forum.id,
+                prefixId: undefined,
+                subject: data.title,
+                message: data.description,
+            });
+        }
     }
 }

@@ -29,5 +29,11 @@ export class ProfilePersistence implements Omit<IProfile, 'id' | 'createdAt' | '
 
     @Prop({ type: [CrowdActionBadgePersistenceSchema], array: true, required: false })
     readonly badges?: Badge[];
+
+    @Prop({ required: true })
+    readonly threadCount: number;
+
+    @Prop({ required: true })
+    readonly postCount: number;
 }
 export const ProfileSchema = SchemaFactory.createForClass(ProfilePersistence);

@@ -24,6 +24,8 @@ import {
 } from '@modules/crowdaction/errors';
 import { CountryMustBeValidError } from '@modules/core';
 import { SchedulerService } from '@modules/scheduler';
+import { UserRole } from '@domain/auth/enum';
+import { FindDefaultForumQuery, FindForumPermissionByIdQuery } from '@modules/forum';
 
 describe('CreateCrowdActionCommand', () => {
     let createCrowdActionCommand: CreateCrowdActionCommand;
@@ -43,6 +45,8 @@ describe('CreateCrowdActionCommand', () => {
             imports: [CQRSModule],
             providers: [
                 CreateCrowdActionCommand,
+                FindDefaultForumQuery,
+                FindForumPermissionByIdQuery,
                 SchedulerService,
                 SchedulerRegistry,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
@@ -72,38 +76,39 @@ describe('CreateCrowdActionCommand', () => {
 
     describe('createCrowdAction', () => {
         it('should create a new crowdAction', async () => {
-            const crowdAction = await createCrowdActionCommand.execute(CreateCrowdActionStub());
+            const stub = CreateCrowdActionStub();
+            const crowdAction = await createCrowdActionCommand.execute(stub);
             expect(crowdAction).toBeDefined();
         });
 
         it('should throw the CrowdActionMustBeInTheFutureError', async () => {
             const stub = CreateCrowdActionStub();
-            stub.startAt = new Date('01/01/2022');
+            stub.crowdActionDto.startAt = new Date('01/01/2022');
             await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(CrowdActionMustBeInTheFutureError);
         });
 
         it('should throw the MustEndAfterStartError', async () => {
             const stub = CreateCrowdActionStub();
-            stub.startAt = new Date('11/01/2025');
-            stub.endAt = new Date('10/01/2025');
+            stub.crowdActionDto.startAt = new Date('11/01/2025');
+            stub.crowdActionDto.endAt = new Date('10/01/2025');
             await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(MustEndAfterStartError);
         });
 
         it('should throw the MustJoinBeforeEndError', async () => {
             const stub = CreateCrowdActionStub();
-            stub.joinEndAt = new Date('09/01/2025');
+            stub.crowdActionDto.joinEndAt = new Date('09/01/2025');
             await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(MustJoinBeforeEndError);
         });
 
         it('should throw the CategoryAndSubcategoryMustBeDisimilarError', async () => {
             const stub = CreateCrowdActionStub();
-            stub.subcategory = 'FOOD';
+            stub.crowdActionDto.subcategory = 'FOOD';
             await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(CategoryAndSubcategoryMustBeDisimilarError);
         });
 
         it('should throw the CountryMustBeValidError', async () => {
             const stub = CreateCrowdActionStub();
-            stub.country = 'AZERT';
+            stub.crowdActionDto.country = 'AZERT';
             await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(CountryMustBeValidError);
         });
     });
@@ -111,29 +116,33 @@ describe('CreateCrowdActionCommand', () => {
 
 const CreateCrowdActionStub = (): any => {
     return {
-        title: 'Crowdaction title',
-        description: 'Crowdaction description',
-        category: 'FOOD',
-        subcategory: 'SUSTAINABILITY',
-        country: 'TG',
-        password: 'pa$$w0rd',
-        startAt: new Date('01/01/2025'),
-        endAt: new Date('08/01/2025'),
-        joinEndAt: new Date('07/01/2025'),
-        commitments: [
-            {
-                label: 'Vegan',
-                tags: ['FOOD'],
-                points: 10,
-                icon: 'accessibility_outline',
-            },
-        ],
-        badges: [
-            {
-                tier: BadgeTierEnum.BRONZE,
-                awardType: AwardTypeEnum.ALL,
-                minimumCheckIns: 12,
-            },
-        ],
+        userId: '1234',
+        userRole: UserRole.ADMIN,
+        crowdActionDto: {
+            title: 'Crowdaction title',
+            description: 'Crowdaction description',
+            category: 'FOOD',
+            subcategory: 'SUSTAINABILITY',
+            country: 'TG',
+            password: 'pa$$w0rd',
+            startAt: new Date('01/01/2025'),
+            endAt: new Date('08/01/2025'),
+            joinEndAt: new Date('07/01/2025'),
+            commitments: [
+                {
+                    label: 'Vegan',
+                    tags: ['FOOD'],
+                    points: 10,
+                    icon: 'accessibility_outline',
+                },
+            ],
+            badges: [
+                {
+                    tier: BadgeTierEnum.BRONZE,
+                    awardType: AwardTypeEnum.ALL,
+                    minimumCheckIns: 12,
+                },
+            ],
+        }
     };
 };

@@ -8,6 +8,7 @@ export class FindDefaultForumQuery implements IQuery<boolean> {
     constructor(private readonly forumRepository: ForumRepository) {}
 
     handle(isDefaultForum: boolean): Promise<Forum> {
-        return this.forumRepository.findOne({ defaultCrowdActionForum: isDefaultForum });
+        const forum = this.forumRepository.findOne({ defaultCrowdActionForum: isDefaultForum });
+        return forum;
     }
 }

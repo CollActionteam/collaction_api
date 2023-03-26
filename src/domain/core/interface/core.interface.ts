@@ -24,17 +24,9 @@ export interface IPostInfo {
 export interface IUserInfo {
     readonly userId: string;
     readonly fullName: string;
-    readonly avatar: string;
+    readonly avatar?: string;
     readonly threadCount: number;
     readonly postCount: number;
-}
-
-export class UserInfo implements IUserInfo {
-    userId: string;
-    fullName: string;
-    avatar: string;
-    threadCount: number;
-    postCount: number;
 }
 
 export interface ILastPostInfo {

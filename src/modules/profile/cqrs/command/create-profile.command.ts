@@ -20,6 +20,8 @@ export class CreateProfileCommand implements ICommand {
             location,
             userId: data.userId,
             avatar: `profiles/${data.userId}.png`,
+            threadCount: 0,
+            postCount: 0,
         });
         return id;
     }
