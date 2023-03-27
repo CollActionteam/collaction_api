@@ -103,6 +103,9 @@ const CrowdActionStub = (): CrowdAction => {
                 minimumCheckIns: 12,
             },
         ],
+        badgeConfig: {
+            diamondThreshold: 70,
+        },
     };
     return CrowdAction.create(crowdActionStubData);
 };

@@ -133,4 +133,7 @@ const CrowdActionStub: CreateCrowdActionDto = {
         },
     ],
     commitments: [],
+    badgeConfig: {
+        diamondThreshold: 90,
+    },
 };

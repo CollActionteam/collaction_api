@@ -154,6 +154,9 @@ const CreateCrowdActionStub = (commitments: Commitment[]): any => {
                 minimumCheckIns: 10,
             },
         ],
+        badgeConfig: {
+            diamondThreshold: 90,
+        },
     };
 };
 

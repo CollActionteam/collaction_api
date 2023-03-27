@@ -99,6 +99,9 @@ describe('ListParticipationsForCrowdActionQuery ', () => {
                     card: 'card-image',
                     banner: 'banner-image',
                 },
+                badgeConfig: {
+                    diamondThreshold: 90,
+                },
             });
 
             expect(startedCrowdAction.status).toBe(CrowdActionStatusEnum.STARTED);
@@ -122,6 +125,9 @@ describe('ListParticipationsForCrowdActionQuery ', () => {
                     card: 'card-image',
                     banner: 'banner-image',
                 },
+                badgeConfig: {
+                    diamondThreshold: 90,
+                },
             });
 
             expect(waitingCrowdAction.status).toBe(CrowdActionStatusEnum.WAITING);
@@ -144,6 +150,9 @@ describe('ListParticipationsForCrowdActionQuery ', () => {
                 images: {
                     card: 'card-image',
                     banner: 'banner-image',
+                },
+                badgeConfig: {
+                    diamondThreshold: 90,
                 },
             });
 
