@@ -1,3 +1,3 @@
 export interface IBadgeConfig {
-    readonly diamondThreshold: number | IBadgeConfig;
+    readonly diamondThreshold: number;
 }

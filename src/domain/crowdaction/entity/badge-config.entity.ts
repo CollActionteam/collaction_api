@@ -5,5 +5,5 @@ export class BadgeConfig implements IBadgeConfig {
         this.diamondThreshold = config.diamondThreshold;
     }
 
-    readonly diamondThreshold: number | IBadgeConfig;
+    readonly diamondThreshold: number;
 }
