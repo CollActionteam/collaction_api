@@ -1,10 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdAction, ICrowdActionImages } from '@domain/crowdaction';
+import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdAction, ICrowdActionImages, IBadgeConfig } from '@domain/crowdaction';
 import { Country, CountrySchema } from '@infrastructure/mongo/persistence/country.persistence';
 import { IBadge } from '@domain/badge';
 import { CollActionDocument } from '@common/utils/document.utils';
 import { CreateCommitment, ICommitment } from '@domain/commitment';
 import { CrowdActionBadgePersistenceSchema } from './badge.persistence';
+import { BadgeConfigSchema } from './badge-config.persistence';
 
 @Schema({ _id: false, versionKey: false })
 class CrowdActionImages implements ICrowdActionImages {
@@ -91,5 +92,8 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
 
     @Prop({ type: [CrowdActionBadgePersistenceSchema], required: false, array: true })
     readonly badges: IBadge[];
+
+    @Prop({ type: [BadgeConfigSchema], required: true })
+    readonly badgeConfig: IBadgeConfig;
 }
 export const CrowdActionSchema = SchemaFactory.createForClass(CrowdActionPersistence);

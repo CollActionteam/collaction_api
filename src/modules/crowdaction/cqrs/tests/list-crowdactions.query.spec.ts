@@ -172,6 +172,9 @@ const CrowdActionStub: CreateCrowdActionDto = {
         },
     ],
     commitments: [],
+    badgeConfig: {
+        diamondThreshold: 90,
+    },
 };
 
 const CrowdActionStub2: CreateCrowdActionDto = {
@@ -192,4 +195,7 @@ const CrowdActionStub2: CreateCrowdActionDto = {
         },
     ],
     commitments: [],
+    badgeConfig: {
+        diamondThreshold: 90,
+    },
 };

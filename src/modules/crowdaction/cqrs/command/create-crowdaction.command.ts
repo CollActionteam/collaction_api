@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import slugify from 'slugify';
 import { v4 as uuidv4 } from 'uuid';
 import { ICommand } from '@common/cqrs';
-import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
+import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository, BadgeConfig } from '@domain/crowdaction';
 import {
     CategoryAndSubcategoryMustBeDisimilarError,
     CrowdActionMustBeInTheFutureError,
@@ -59,6 +59,9 @@ export class CreateCrowdActionCommand implements ICommand {
             return Commitment.create({ ...c, createdAt: now, updatedAt: now, id: uuidv4() });
         });
 
+        const badgeConfig = new BadgeConfig({
+            diamondThreshold: data.badgeConfig?.diamondThreshold ?? commitments.sort((a, b) => b.points - a.points)[0].points,
+        });
         const crowdAction = await this.crowdActionRepository.create({
             ...data,
             commitments,
@@ -72,6 +75,7 @@ export class CreateCrowdActionCommand implements ICommand {
                 card: 'crowdaction-cards/placeholder.png',
                 banner: 'crowdaction-banners/placeholder.png',
             },
+            badgeConfig,
         });
 
         if (crowdAction) {

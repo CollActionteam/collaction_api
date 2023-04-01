@@ -4,7 +4,6 @@ import { ICrowdAction } from '@domain/crowdaction';
 import { AwardTypeEnum, Badge, BadgeTierEnum } from '@domain/badge';
 import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
 import { AwardBadgesCommand } from '@modules/profile/cqrs';
-import { Commitment } from '@domain/commitment';
 
 interface AwardThreshold {
     readonly diamondThreshold: number;
@@ -20,7 +19,7 @@ export class DelegateBadgesCommand implements ICommand {
     async execute(crowdAction: ICrowdAction): Promise<any> {
         if (crowdAction.badges?.length) {
             // Get Thresholds for the CrowdAction
-            const thresholds: AwardThreshold = getThresholds(crowdAction.commitments);
+            const thresholds: AwardThreshold = getThresholds(crowdAction.badgeConfig.diamondThreshold);
 
             const participantList = await this.cqrsHandler.fetch(ListParticipationsForCrowdActionQuery, {
                 filter: { crowdActionId: crowdAction.id },
@@ -84,8 +83,7 @@ export class DelegateBadgesCommand implements ICommand {
     }
 }
 
-function getThresholds(options: Commitment[]): AwardThreshold {
-    const diamondThreshold = options.sort((a, b) => b.points - a.points)[0].points; // 100%
+function getThresholds(diamondThreshold: number): AwardThreshold {
     const goldThreshold = (diamondThreshold / 100) * 75; // 75%
     const silverThreshold = (diamondThreshold / 100) * 50; // 50%
     const bronzeThreshold = (diamondThreshold / 100) * 25; // 25%

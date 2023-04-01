@@ -3,6 +3,7 @@ import { Badge } from '@domain/badge/entity';
 import { ICommitment } from '@domain/commitment';
 import { Identifiable } from '@domain/core';
 import { ICrowdAction, ICrowdActionImages, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
+import { IBadgeConfig } from '../interface/badge-config.interface';
 
 export class CrowdAction implements ICrowdAction, Identifiable {
     readonly id: string;
@@ -16,6 +17,7 @@ export class CrowdAction implements ICrowdAction, Identifiable {
     readonly participantCount: number;
     readonly images: ICrowdActionImages;
     readonly commitments: ICommitment[];
+    readonly badgeConfig: IBadgeConfig;
     status: CrowdActionStatusEnum;
     joinStatus: CrowdActionJoinStatusEnum;
 
@@ -55,6 +57,8 @@ export class CrowdAction implements ICrowdAction, Identifiable {
         this.updatedAt = entityLike.updatedAt;
 
         this.badges = entityLike.badges;
+
+        this.badgeConfig = entityLike.badgeConfig;
     }
 
     static create(entityLike: ICrowdAction): CrowdAction {

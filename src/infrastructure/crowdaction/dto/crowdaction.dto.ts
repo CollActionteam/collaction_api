@@ -6,6 +6,11 @@ import { CrowdActionCommitmentDto, GetCommitmentDto } from '@infrastructure/comm
 import { ICommitment } from '@domain/commitment';
 import { BadgeDto } from './badge.dto';
 
+export class BadgeConfigDto {
+    @ApiProperty({ name: 'diamondThreshold', example: 100, required: true })
+    readonly diamondThreshold: number;
+}
+
 export class CrowdActionImagesDto implements ICrowdActionImages {
     @ApiProperty({ example: 'https://www.example.com/image.png' })
     readonly card: string;
@@ -50,6 +55,9 @@ export class CreateCrowdActionDto {
 
     @ApiProperty({ name: 'commitments', isArray: true, type: CrowdActionCommitmentDto })
     readonly commitments: CrowdActionCommitmentDto[];
+
+    @ApiProperty({ name: 'badgeConfig', type: BadgeConfigDto, required: false })
+    readonly badgeConfig?: BadgeConfigDto;
 }
 
 export class GetCrowdActionDto {
