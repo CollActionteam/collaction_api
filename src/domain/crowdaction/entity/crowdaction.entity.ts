@@ -57,6 +57,8 @@ export class CrowdAction implements ICrowdAction, Identifiable {
         this.updatedAt = entityLike.updatedAt;
 
         this.badges = entityLike.badges;
+
+        this.badgeConfig = entityLike.badgeConfig;
     }
 
     static create(entityLike: ICrowdAction): CrowdAction {
