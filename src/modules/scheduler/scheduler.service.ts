@@ -83,9 +83,13 @@ export class SchedulerService extends Initialized {
 
     stopAllCrons() {
         const cronJobs = this.schedulerRegistry.getCronJobs();
+        const cronKeys = cronJobs.keys();
 
-        for (const job of cronJobs.values()) {
-            job.stop();
+        for (const key of cronKeys) {
+            const job = cronJobs.get(key);
+
+            job?.stop();
+            this.schedulerRegistry.deleteCronJob(key);
         }
     }
 }

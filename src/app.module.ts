@@ -8,14 +8,14 @@ import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 
 @Module({
     imports: [
-        ApiModule,
-        AuthModule,
         ConfigModule.forRoot({
             isGlobal: true,
         }),
+        ScheduleModule.forRoot(),
+        ApiModule,
+        AuthModule,
         InfrastructureModule,
         ModulesModule,
-        ScheduleModule.forRoot(),
     ],
     exports: [AuthModule],
 })
