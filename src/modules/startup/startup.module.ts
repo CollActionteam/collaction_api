@@ -1,10 +1,8 @@
 import { Global, Module } from '@nestjs/common';
-import { SchedulerService } from '@modules/scheduler';
-import { CQRSModule } from '@common/cqrs';
+import { SchedulerModule } from '@modules/scheduler';
 
 @Global()
 @Module({
-    imports: [CQRSModule],
-    providers: [SchedulerService],
+    imports: [SchedulerModule],
 })
 export class StartupModule {}
