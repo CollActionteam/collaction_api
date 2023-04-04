@@ -24,7 +24,7 @@
         "sourceMap": true,
         "strictBindCallApply": false,
         "strictNullChecks": true,
-        "lib": ["es2019"],
+        "lib": ["es2020"],
         "target": "es2019",
         "typeRoots": ["node_modules/@types"],
         "paths": {
