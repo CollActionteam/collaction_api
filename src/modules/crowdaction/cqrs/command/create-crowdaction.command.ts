@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import slugify from 'slugify';
-import { ICQRSHandler, ICommand } from '@common/cqrs';
-import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
+import { v4 as uuidv4 } from 'uuid';
+import { ICommand } from '@common/cqrs';
+import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository, BadgeConfig } from '@domain/crowdaction';
 import {
     CategoryAndSubcategoryMustBeDisimilarError,
     CrowdActionMustBeInTheFutureError,
@@ -12,17 +13,12 @@ import { getCountryByCode } from '@domain/country/country.utils';
 import { CountryMustBeValidError } from '@modules/core';
 import { Identifiable } from '@domain/core';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
-import { GetCommitmentOptionsByType } from '@modules/commitmentoption';
-import { CommitmentOption } from '@domain/commitmentoption';
 import { SchedulerService } from '@modules/scheduler';
+import { Commitment } from '@domain/commitment';
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
-    constructor(
-        private readonly crowdActionRepository: ICrowdActionRepository,
-        private readonly CQRSHandler: ICQRSHandler,
-        private readonly schedulerService: SchedulerService,
-    ) {}
+    constructor(private readonly crowdActionRepository: ICrowdActionRepository, private readonly schedulerService: SchedulerService) {}
 
     async execute(data: CreateCrowdActionDto): Promise<Identifiable> {
         if (new Date() > data.startAt) {
@@ -51,8 +47,6 @@ export class CreateCrowdActionCommand implements ICommand {
             throw new CountryMustBeValidError(data.country);
         }
 
-        const commitmentOptions: CommitmentOption[] = await this.CQRSHandler.fetch(GetCommitmentOptionsByType, data.type);
-
         let slug = slugify(data.title, { lower: true, strict: true });
         const [crowdActionBySlug] = await this.crowdActionRepository.findAll({ slug });
         if (crowdActionBySlug) {
@@ -60,9 +54,17 @@ export class CreateCrowdActionCommand implements ICommand {
         }
 
         const now = new Date();
+
+        const commitments = data.commitments.map((c) => {
+            return Commitment.create({ ...c, createdAt: now, updatedAt: now, id: uuidv4() });
+        });
+
+        const badgeConfig = new BadgeConfig({
+            diamondThreshold: data.badgeConfig?.diamondThreshold ?? commitments.sort((a, b) => b.points - a.points)[0].points,
+        });
         const crowdAction = await this.crowdActionRepository.create({
             ...data,
-            commitmentOptions,
+            commitments,
             participantCount: 0,
             joinEndAt,
             location,
@@ -73,6 +75,7 @@ export class CreateCrowdActionCommand implements ICommand {
                 card: 'crowdaction-cards/placeholder.png',
                 banner: 'crowdaction-banners/placeholder.png',
             },
+            badgeConfig,
         });
 
         if (crowdAction) {

@@ -4,7 +4,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Identifiable, IPaginatedList } from '@domain/core';
 import { CrowdActionStatusEnum, ICrowdAction } from '@domain/crowdaction';
 import { ICQRSHandler } from '@common/cqrs';
-import { CreateCrowdActionDto, GetCrowdActionDto, PaginatedCrowdActionResponse } from '@infrastructure/crowdaction';
+import { CreateCrowdActionDto, FilterCrowdActionDto, GetCrowdActionDto, PaginatedCrowdActionResponse } from '@infrastructure/crowdaction';
 import {
     FindCrowdActionByIdQuery,
     CreateCrowdActionCommand,
@@ -31,14 +31,24 @@ export class CrowdActionController {
         description: 'Returns the found CrowdActions and Pagination Information',
         type: PaginatedCrowdActionResponse,
     })
-    @ApiQuery({ name: 'status', enum: CrowdActionStatusEnum, type: [String], isArray: true, required: false })
     async getAllCrowdActions(
         @Query() { page, pageSize }: PaginationDto,
-        @Query('status') status: CrowdActionStatusEnum[],
+        @Query() { id, status, joinStatus, startAt, joinEndAt, endAt, category, subcategory, slug }: FilterCrowdActionDto,
     ): Promise<IPaginatedList<ICrowdAction>> {
-        let filter: any;
-        if (status) {
-            filter = { status: { in: status } };
+        const filter: any = {
+            id: id !== undefined ? { in: id } : undefined,
+            status: status !== undefined ? { in: status } : undefined,
+            joinStatus: joinStatus !== undefined ? { in: joinStatus } : undefined,
+            startAt: startAt !== undefined ? { in: startAt } : undefined,
+            joinEndAt: joinEndAt !== undefined ? { in: joinEndAt } : undefined,
+            endAt: endAt !== undefined ? { in: endAt } : undefined,
+            category: category !== undefined ? { in: category } : undefined,
+            subcategory: subcategory !== undefined ? { in: subcategory } : undefined,
+            slug: slug !== undefined ? { in: slug } : undefined,
+        };
+
+        for (const param in filter) {
+            if (filter[param] === undefined) delete filter[param];
         }
 
         return this.cqrsHandler.fetch(ListCrowdActionsQuery, { page, pageSize, filter });

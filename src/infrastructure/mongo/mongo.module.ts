@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
-    CommitmentOptionPersistence,
-    CommitmentOptionSchema,
+    CommitmentPersistence,
+    CommitmentSchema,
     CrowdActionPersistence,
     CrowdActionSchema,
     ParticipationPersistence,
@@ -15,7 +15,7 @@ import {
     ThreadPersistenceSchema,
 } from '@infrastructure/mongo/persistence';
 import {
-    CommitmentOptionRepository,
+    CommitmentRepository,
     CrowdActionRepository,
     ParticipationRepository,
     ProfileRepository,
@@ -24,8 +24,8 @@ import {
 import { ICrowdActionRepository } from '@domain/crowdaction';
 import { IProfileRepository } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
-import { ICommitmentOptionRepository } from '@domain/commitmentoption';
 import { IContactRepository } from '@domain/contact';
+import { ICommitmentRepository } from '@domain/commitment';
 import { ContactPersistence, ContactSchema } from './persistence/contact.persistence';
 
 @Module({
@@ -34,7 +34,7 @@ import { ContactPersistence, ContactSchema } from './persistence/contact.persist
             { name: CrowdActionPersistence.name, schema: CrowdActionSchema },
             { name: ProfilePersistence.name, schema: ProfileSchema },
             { name: ParticipationPersistence.name, schema: ParticipationSchema },
-            { name: CommitmentOptionPersistence.name, schema: CommitmentOptionSchema },
+            { name: CommitmentPersistence.name, schema: CommitmentSchema },
             { name: ContactPersistence.name, schema: ContactSchema },
             { name: ForumPersistence.name, schema: ForumSchema },
             { name: ThreadPersistence.name, schema: ThreadPersistenceSchema },
@@ -54,14 +54,14 @@ import { ContactPersistence, ContactSchema } from './persistence/contact.persist
             useClass: ParticipationRepository,
         },
         {
-            provide: ICommitmentOptionRepository,
-            useClass: CommitmentOptionRepository,
+            provide: ICommitmentRepository,
+            useClass: CommitmentRepository,
         },
         {
             provide: IContactRepository,
             useClass: ContactRepository,
         },
     ],
-    exports: [ICrowdActionRepository, IProfileRepository, IParticipationRepository, ICommitmentOptionRepository, IContactRepository],
+    exports: [ICrowdActionRepository, IProfileRepository, IParticipationRepository, ICommitmentRepository, IContactRepository],
 })
 export class MongoModule {}

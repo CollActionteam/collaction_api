@@ -2,17 +2,9 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Connection, connect, Model } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import {
-    CrowdAction,
-    ICrowdActionRepository,
-    CrowdActionTypeEnum,
-    CrowdActionCategoryEnum,
-    CrowdActionStatusEnum,
-    CrowdActionJoinStatusEnum,
-} from '@domain/crowdaction';
+import { CrowdAction, ICrowdActionRepository, CrowdActionStatusEnum, CrowdActionJoinStatusEnum } from '@domain/crowdaction';
 import { CrowdActionPersistence, CrowdActionRepository, CrowdActionSchema } from '@infrastructure/mongo';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
-import { CommitmentOptionIconEnum } from '@domain/commitmentoption/enum/commitmentoption.enum';
 import { CrowdActionService } from '../service';
 import { CrowdActionDoesNotExist } from '../errors';
 
@@ -69,12 +61,11 @@ describe('CrowdActionService', () => {
 const CrowdActionStub = (): CrowdAction => {
     const crowdActionStubData = {
         id: '628cdea92e19fd912f0d520e',
-        type: CrowdActionTypeEnum.FOOD,
         title: 'Crowdaction title',
         slug: 'crowdaction-title',
         description: 'Crowdaction description',
-        category: CrowdActionCategoryEnum.FOOD,
-        subcategory: CrowdActionCategoryEnum.FOOD,
+        category: 'FOOD',
+        subcategory: 'FOOD',
         location: {
             name: 'Togo',
             code: 'TG',
@@ -85,15 +76,15 @@ const CrowdActionStub = (): CrowdAction => {
             card: 'TheCard',
             banner: 'TheBanner',
         },
-        commitmentOptions: [
+        commitments: [
             {
-                id: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',
-                type: CrowdActionTypeEnum.FOOD,
+                id: '1234-1234-1234-1234',
                 label: 'TheLabel',
                 description: 'TheDescription',
+                tags: [],
                 points: 14,
                 blocks: ['O9pbPDY3s5e5XwzgwKZtZTDPvLS2'],
-                icon: CommitmentOptionIconEnum.no_beef,
+                icon: 'accessibility_outline',
                 createdAt: new Date(1 - 1 - 2020),
                 updatedAt: new Date(1 - 1 - 2020),
             },
@@ -112,6 +103,9 @@ const CrowdActionStub = (): CrowdAction => {
                 minimumCheckIns: 12,
             },
         ],
+        badgeConfig: {
+            diamondThreshold: 70,
+        },
     };
     return CrowdAction.create(crowdActionStubData);
 };

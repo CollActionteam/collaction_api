@@ -6,7 +6,7 @@ export class Participation implements IParticipation {
     readonly userId: string;
     readonly fullName: string;
     readonly avatar?: string | undefined;
-    readonly commitmentOptions: string[];
+    readonly commitments: string[];
     readonly joinDate: Date;
     readonly dailyCheckIns: number;
 
@@ -16,7 +16,7 @@ export class Participation implements IParticipation {
         this.userId = entityLike.userId;
         this.fullName = entityLike.fullName;
         this.avatar = entityLike.avatar;
-        this.commitmentOptions = entityLike.commitmentOptions;
+        this.commitments = entityLike.commitments;
         this.joinDate = entityLike.joinDate;
         this.dailyCheckIns = entityLike.dailyCheckIns;
     }

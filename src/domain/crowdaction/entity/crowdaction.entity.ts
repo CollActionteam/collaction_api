@@ -1,29 +1,23 @@
 import { Country } from '@common/country';
 import { Badge } from '@domain/badge/entity';
-import { ICommitmentOption } from '@domain/commitmentoption';
+import { ICommitment } from '@domain/commitment';
 import { Identifiable } from '@domain/core';
-import {
-    ICrowdAction,
-    ICrowdActionImages,
-    CrowdActionCategoryEnum,
-    CrowdActionTypeEnum,
-    CrowdActionJoinStatusEnum,
-    CrowdActionStatusEnum,
-} from '@domain/crowdaction';
+import { ICrowdAction, ICrowdActionImages, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
+import { IBadgeConfig } from '../interface/badge-config.interface';
 
 export class CrowdAction implements ICrowdAction, Identifiable {
     readonly id: string;
-    readonly type: CrowdActionTypeEnum;
     readonly title: string;
     readonly description: string;
-    readonly category: CrowdActionCategoryEnum;
-    readonly subcategory?: CrowdActionCategoryEnum;
+    readonly category: string;
+    readonly subcategory?: string;
     readonly location: Country;
     readonly slug: string;
     readonly password?: string;
     readonly participantCount: number;
     readonly images: ICrowdActionImages;
-    readonly commitmentOptions: ICommitmentOption[];
+    readonly commitments: ICommitment[];
+    readonly badgeConfig: IBadgeConfig;
     status: CrowdActionStatusEnum;
     joinStatus: CrowdActionJoinStatusEnum;
 
@@ -41,7 +35,6 @@ export class CrowdAction implements ICrowdAction, Identifiable {
 
     constructor(entityLike: ICrowdAction) {
         this.id = entityLike.id;
-        this.type = entityLike.type;
         this.title = entityLike.title;
         this.description = entityLike.description;
         this.category = entityLike.category;
@@ -51,7 +44,7 @@ export class CrowdAction implements ICrowdAction, Identifiable {
         this.password = entityLike.password;
         this.participantCount = entityLike.participantCount;
         this.images = entityLike.images;
-        this.commitmentOptions = entityLike.commitmentOptions;
+        this.commitments = entityLike.commitments;
 
         // TODO: Remove from Entity, move to response and pseudo the variables with logic
         this.status = entityLike.status;
@@ -64,6 +57,8 @@ export class CrowdAction implements ICrowdAction, Identifiable {
         this.updatedAt = entityLike.updatedAt;
 
         this.badges = entityLike.badges;
+
+        this.badgeConfig = entityLike.badgeConfig;
     }
 
     static create(entityLike: ICrowdAction): CrowdAction {
