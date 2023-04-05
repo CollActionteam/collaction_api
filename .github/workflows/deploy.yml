@@ -2,7 +2,7 @@ name: Deploy to Azure
 
 on:
     push:
-        branches: [development, master]
+        branches: [development, master, azure]
 
 env:
     CURRENT_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
@@ -36,7 +36,7 @@ jobs:
               run: |
                   echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
                   echo $ENV_FILE | base64 --decode > .env
-                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }} .
+                  docker build --target production -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }} .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }}
 
             - name: Deploy to Azure Container Instances
