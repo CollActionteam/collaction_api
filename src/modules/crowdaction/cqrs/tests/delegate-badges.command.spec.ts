@@ -155,7 +155,7 @@ const CreateCrowdActionStub = (commitments: Commitment[]): any => {
         ],
         badgeConfig: {
             diamondThreshold: 90,
-        }
+        },
         images: {
             card: 'card-image',
             banner: 'banner-image',

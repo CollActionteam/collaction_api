@@ -1,8 +1,8 @@
-import { ICommand } from "@common/cqrs";
-import { Identifiable } from "@domain/core";
-import { IForumRepository } from "@domain/forum";
-import { ForumDto } from "@infrastructure/forum";
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
+import { ICommand } from '@common/cqrs';
+import { Identifiable } from '@domain/core';
+import { IForumRepository } from '@domain/forum';
+import { ForumDto } from '@infrastructure/forum';
 
 @Injectable()
 export class CreateForumCommand implements ICommand {
@@ -11,7 +11,7 @@ export class CreateForumCommand implements ICommand {
     async execute(data: ForumDto): Promise<Identifiable> {
         const forumId = await this.forumRepository.create({
             ...data,
-             defaultCrowdActionForum: true
+            defaultCrowdActionForum: true,
         });
         return forumId;
     }

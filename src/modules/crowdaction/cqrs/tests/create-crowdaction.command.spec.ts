@@ -132,42 +132,32 @@ describe('CreateCrowdActionCommand', () => {
         it('should throw the CrowdActionMustBeInTheFutureError', async () => {
             const stub = CreateCrowdActionStub('1234');
             stub.crowdActionDto.startAt = new Date('01/01/2022');
-            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(
-                CrowdActionMustBeInTheFutureError,
-            );
+            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(CrowdActionMustBeInTheFutureError);
         });
 
         it('should throw the MustEndAfterStartError', async () => {
             const stub = CreateCrowdActionStub('1234');
             stub.crowdActionDto.startAt = new Date('11/01/2025');
             stub.crowdActionDto.endAt = new Date('10/01/2025');
-            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(
-                MustEndAfterStartError,
-            );
+            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(MustEndAfterStartError);
         });
 
         it('should throw the MustJoinBeforeEndError', async () => {
             const stub = CreateCrowdActionStub('1234');
             stub.crowdActionDto.joinEndAt = new Date('09/01/2025');
-            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(
-                MustJoinBeforeEndError,
-            );
+            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(MustJoinBeforeEndError);
         });
 
         it('should throw the CategoryAndSubcategoryMustBeDisimilarError', async () => {
             const stub = CreateCrowdActionStub('1234');
             stub.crowdActionDto.subcategory = 'FOOD';
-            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(
-                CategoryAndSubcategoryMustBeDisimilarError,
-            );
+            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(CategoryAndSubcategoryMustBeDisimilarError);
         });
 
         it('should throw the CountryMustBeValidError', async () => {
             const stub = CreateCrowdActionStub('1234');
             stub.crowdActionDto.country = 'AZERT';
-            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(
-                CountryMustBeValidError,
-            );
+            await expect(createCrowdActionCommand.execute(stub)).rejects.toThrow(CountryMustBeValidError);
         });
     });
 });
@@ -220,7 +210,7 @@ const CreateForumStub = (): any => {
         visible: true,
         lastPostInfo: undefined,
     };
-}
+};
 export const CreateProfileStub = (): CreateProfileDto => {
     return {
         userId: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { InfrastructureModule } from '@infrastructure/infrastructure.module';
-import { CreateForumCommand, FindDefaultForumQuery, FindForumPermissionByIdQuery } from './cqrs';
 import { CQRSModule } from '@common/cqrs';
+import { CreateForumCommand, FindDefaultForumQuery, FindForumPermissionByIdQuery } from './cqrs';
 
 @Module({
     imports: [InfrastructureModule, CQRSModule],

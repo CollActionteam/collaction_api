@@ -95,7 +95,11 @@ describe('ListCrowdActionsQuery', () => {
                 if (i % 2 == 1) stub = { ...CrowdActionStub2 };
                 stub.title = stub.title + '_' + i;
 
-                const createResponse = await createCrowdActionCommand.execute({ userId: '1234', userRole: UserRole.ADMIN, crowdActionDto: stub});
+                const createResponse = await createCrowdActionCommand.execute({
+                    userId: '1234',
+                    userRole: UserRole.ADMIN,
+                    crowdActionDto: stub,
+                });
                 createdCrowdActions.push(createResponse);
             }
             expect(createdCrowdActions.length).toEqual(10);

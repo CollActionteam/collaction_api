@@ -134,10 +134,9 @@ const CreateCrowdActionStub: any = {
             minimumCheckIns: 12,
         },
     ],
-    commitments: [],
     badgeConfig: {
         diamondThreshold: 90,
-    }
+    },
     images: {
         card: 'card-image',
         banner: 'banner-image',

@@ -13,8 +13,6 @@ export class ProfileDto {
 
     @ApiProperty({ name: 'bio', example: 'I am a cool guy', required: false })
     readonly bio?: string;
-
-    
 }
 
 export class ProfileResponseDto {
