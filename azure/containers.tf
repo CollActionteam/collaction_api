@@ -1,5 +1,5 @@
 resource "azurerm_container_group" "collaction_api_development" {
-  name                = "collaction_api_development"
+  name                = "collaction-api-development"
   location            = azurerm_resource_group.collaction_api.location
   resource_group_name = azurerm_resource_group.collaction_api.name
   ip_address_type     = "Public"
@@ -42,7 +42,7 @@ resource "azurerm_container_group" "collaction_api_development" {
 }
 
 resource "azurerm_container_group" "collaction_api_production" {
-  name                = "collaction_api_production"
+  name                = "collaction-api-production"
   location            = azurerm_resource_group.collaction_api.location
   resource_group_name = azurerm_resource_group.collaction_api.name
   ip_address_type     = "Public"
