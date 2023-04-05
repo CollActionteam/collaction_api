@@ -3,14 +3,12 @@ name: Deploy to ECR
 on:
     push:
         branches: [development, master]
-    workflow_dispatch:
 
 env:
     CURRENT_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
 
 jobs:
     build:
-        if: ${{ github.ref == 'refs/heads/development' || github.ref == 'refs/heads/master' }}
         environment: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
         name: Build and Push Docker Image
         runs-on: ubuntu-latest
@@ -31,23 +29,25 @@ jobs:
 
             - name: Build, tag, and push image to Amazon ECR
               env:
-                  ENV: ${{ secrets.ENV }}
+                  ENV_FILE: ${{ secrets.ENV }}
                   SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                   ECR_REPOSITORY: collaction-api
                   IMAGE_TAG: ${{ env.CURRENT_ENV }}
               run: |
-                  echo ${{ secrets.ENV }} | base64 -d > .env
-                  echo $SERVICE_ACCOUNT_KEY | base64 -d > serviceAccountKey.json
+                  echo $ENV_FILE | base64 --decode > .env
+                  echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
             - name: Run pending migrations
               env:
+                  ENV_FILE: ${{ secrets.ENV }}
+                  SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
                   MONGO_URL: ${{ secrets.MONGO_URL}}
               run: |
-                  echo ${{ secrets.SERVICE_ACCOUNT_KEY }} | base64 -d > serviceAccountKey.json
-                  echo  ${{ secrets.ENV }} | base64 -d > .env
+                  echo $ENV_FILE | base64 --decode > .env
+                  echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
                   npm ci
                   npm run build
                   npm run migration:run
