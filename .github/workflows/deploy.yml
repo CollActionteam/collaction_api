@@ -29,17 +29,17 @@ jobs:
                   username: ${{ secrets.AZ_REGISTRY_USERNAME }}
                   password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
-            - name: Build, tag, and push image to Azure Container Instances
-              env:
-                  SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
-                  ENV_FILE: ${{ secrets.ENV }}
-                  ECR_REGISTRY: ${{ secrets.AZ_REGISTRY_URL }}
-                  ECR_REPOSITORY: collaction-api-${{ env.CURRENT_ENV }}
-              run: |
-                  echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
-                  echo $ENV_FILE | base64 --decode > .env
-                  docker build --target production -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} .
-                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+            # - name: Build, tag, and push image to Azure Container Instances
+            #   env:
+            #       SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+            #       ENV_FILE: ${{ secrets.ENV }}
+            #       ECR_REGISTRY: ${{ secrets.AZ_REGISTRY_URL }}
+            #       ECR_REPOSITORY: collaction-api-${{ env.CURRENT_ENV }}
+            #   run: |
+            #       echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
+            #       echo $ENV_FILE | base64 --decode > .env
+            #       docker build --target production -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} .
+            #       docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
 
             - name: Deploy to Azure Container Instances
               uses: azure/aci-deploy@v1
@@ -48,7 +48,7 @@ jobs:
               with:
                   resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
                   dns-name-label: api-${{ env.CURRENT_ENV }}
-                  image: ${{ secrets.AZ_REGISTRY_URL }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+                  image: ${{ secrets.AZ_REGISTRY_URL }}/${{ env.ECR_REPOSITORY }}:testv1 #${{ github.sha }}
                   registry-login-server: ${{ secrets.AZ_REGISTRY_URL }}
                   registry-username: ${{ secrets.AZ_REGISTRY_USERNAME }}
                   registry-password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
