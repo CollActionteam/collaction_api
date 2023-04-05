@@ -65,3 +65,4 @@ dist/
 test-coverage/
 serviceAccountKey.json
 serviceAccountKey-prod.json
+package-lock.json
