@@ -8,7 +8,7 @@ resource "azurerm_container_group" "collaction_api_development" {
 
   diagnostics {
     log_analytics {
-      workspace_id = var.workspace_id
+      workspace_id  = var.workspace_id
       workspace_key = var.workspace_key
     }
   }
@@ -20,7 +20,7 @@ resource "azurerm_container_group" "collaction_api_development" {
   }
 
   container {
-    name = "backend"
+    name   = "backend"
     image  = "collaction.azurecr.io/collaction-api-development:development"
     cpu    = "1.0"
     memory = "1.5"
@@ -51,7 +51,7 @@ resource "azurerm_container_group" "collaction_api_production" {
 
   diagnostics {
     log_analytics {
-      workspace_id = var.workspace_id
+      workspace_id  = var.workspace_id
       workspace_key = var.workspace_key
     }
   }
@@ -63,7 +63,7 @@ resource "azurerm_container_group" "collaction_api_production" {
   }
 
   container {
-    name = "backend"
+    name   = "backend"
     image  = "collaction.azurecr.io/collaction-api-production:production"
     cpu    = "1.0"
     memory = "1.5"
