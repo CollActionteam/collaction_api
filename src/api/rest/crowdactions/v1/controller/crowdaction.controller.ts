@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Query, UploadedFiles, UseIntercepto
 import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Identifiable, IPaginatedList } from '@domain/core';
-import { CrowdActionStatusEnum, ICrowdAction } from '@domain/crowdaction';
+import { CrowdAction, CrowdActionStatusEnum, ICrowdAction } from '@domain/crowdaction';
 import { ICQRSHandler } from '@common/cqrs';
 import { CreateCrowdActionDto, FilterCrowdActionDto, GetCrowdActionDto, PaginatedCrowdActionResponse } from '@infrastructure/crowdaction';
 import {
@@ -34,7 +34,7 @@ export class CrowdActionController {
     async getAllCrowdActions(
         @Query() { page, pageSize }: PaginationDto,
         @Query() { id, status, joinStatus, startAt, joinEndAt, endAt, category, subcategory, slug }: FilterCrowdActionDto,
-    ): Promise<IPaginatedList<ICrowdAction>> {
+    ): Promise<IPaginatedList<GetCrowdActionDto>> {
         const filter: any = {
             id: id !== undefined ? { in: id } : undefined,
             status: status !== undefined ? { in: status } : undefined,
@@ -51,7 +51,10 @@ export class CrowdActionController {
             if (filter[param] === undefined) delete filter[param];
         }
 
-        return this.cqrsHandler.fetch(ListCrowdActionsQuery, { page, pageSize, filter });
+        const foundCrowdActions = await this.cqrsHandler.fetch(ListCrowdActionsQuery, { page, pageSize, filter });
+        const items = foundCrowdActions.items.map((crowdAction) => CrowdAction.create(crowdAction).withStatuses());
+
+        return { pageInfo: foundCrowdActions.pageInfo, items };
     }
 
     @Get('/me')
@@ -84,8 +87,10 @@ export class CrowdActionController {
     })
     @ApiOperation({ summary: 'Retrieves a specific CrowdAction by ID' })
     @ApiParam({ name: 'id', required: true })
-    async getCrowdAction(@Param('id') id: string): Promise<Omit<ICrowdAction, 'joinEndAt'>> {
-        return await this.cqrsHandler.fetch(FindCrowdActionByIdQuery, id);
+    async getCrowdAction(@Param('id') id: string): Promise<GetCrowdActionDto> {
+        let crowdAction = await this.cqrsHandler.fetch(FindCrowdActionByIdQuery, id);
+
+        return crowdAction.withStatuses();
     }
 
     @Get('/slug/:slug')

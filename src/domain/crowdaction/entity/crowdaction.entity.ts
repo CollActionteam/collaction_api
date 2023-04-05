@@ -2,7 +2,7 @@ import { Country } from '@common/country';
 import { Badge } from '@domain/badge/entity';
 import { ICommitment } from '@domain/commitment';
 import { Identifiable } from '@domain/core';
-import { ICrowdAction, ICrowdActionImages, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
+import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdAction, ICrowdActionImages } from '@domain/crowdaction';
 import { IBadgeConfig } from '../interface/badge-config.interface';
 
 export class CrowdAction implements ICrowdAction, Identifiable {
@@ -18,8 +18,6 @@ export class CrowdAction implements ICrowdAction, Identifiable {
     readonly images: ICrowdActionImages;
     readonly commitments: ICommitment[];
     readonly badgeConfig: IBadgeConfig;
-    status: CrowdActionStatusEnum;
-    joinStatus: CrowdActionJoinStatusEnum;
 
     readonly startAt: Date;
     readonly endAt: Date;
@@ -48,10 +46,6 @@ export class CrowdAction implements ICrowdAction, Identifiable {
         this.images = entityLike.images;
         this.commitments = entityLike.commitments;
 
-        // TODO: Remove from Entity, move to response and pseudo the variables with logic
-        this.status = entityLike.status;
-        this.joinStatus = entityLike.joinStatus;
-
         this.startAt = entityLike.startAt;
         this.endAt = entityLike.endAt;
         this.joinEndAt = entityLike.joinEndAt;
@@ -68,15 +62,16 @@ export class CrowdAction implements ICrowdAction, Identifiable {
         return new CrowdAction(entityLike);
     }
 
-    updateStatuses(): CrowdAction {
+    withStatuses(): CrowdAction & { readonly status: CrowdActionStatusEnum; readonly joinStatus: CrowdActionJoinStatusEnum } {
         const now = new Date();
-        this.status =
+        const status =
             this.endAt < now
                 ? CrowdActionStatusEnum.ENDED
                 : this.startAt > now
                 ? CrowdActionStatusEnum.WAITING
                 : CrowdActionStatusEnum.STARTED;
-        this.joinStatus = this.joinEndAt < now ? CrowdActionJoinStatusEnum.CLOSED : CrowdActionJoinStatusEnum.OPEN;
-        return this;
+        const joinStatus = this.joinEndAt < now ? CrowdActionJoinStatusEnum.CLOSED : CrowdActionJoinStatusEnum.OPEN;
+
+        return { ...this, status, joinStatus };
     }
 }

@@ -2,13 +2,11 @@ import { Module } from '@nestjs/common';
 import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 import { CQRSModule } from '@common/cqrs';
 import { S3Module } from '@modules/core/s3';
-import { SchedulerModule } from '@modules/scheduler';
 import {
     CreateCrowdActionCommand,
     FindCrowdActionByIdQuery,
     ListCrowdActionsQuery,
     UpdateCrowdActionImagesCommand,
-    UpdateCrowdActionStatusesCommand,
     IncrementParticipantCountCommand,
     ListCrowdActionsForUserQuery,
     FindCrowdActionBySlugQuery,
@@ -16,7 +14,7 @@ import {
 import { CrowdActionService } from './service';
 
 @Module({
-    imports: [InfrastructureModule, CQRSModule, S3Module, SchedulerModule],
+    imports: [InfrastructureModule, CQRSModule, S3Module],
     providers: [
         IncrementParticipantCountCommand,
         CreateCrowdActionCommand,
@@ -24,7 +22,6 @@ import { CrowdActionService } from './service';
         FindCrowdActionByIdQuery,
         FindCrowdActionBySlugQuery,
         UpdateCrowdActionImagesCommand,
-        UpdateCrowdActionStatusesCommand,
         {
             provide: 'CrowdActionService',
             useClass: CrowdActionService,
@@ -38,7 +35,6 @@ import { CrowdActionService } from './service';
         FindCrowdActionByIdQuery,
         FindCrowdActionBySlugQuery,
         UpdateCrowdActionImagesCommand,
-        UpdateCrowdActionStatusesCommand,
         ListCrowdActionsForUserQuery,
     ],
 })

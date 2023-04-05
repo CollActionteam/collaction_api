@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import slugify from 'slugify';
 import { v4 as uuidv4 } from 'uuid';
 import { ICommand, ICQRSHandler } from '@common/cqrs';
-import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository, BadgeConfig } from '@domain/crowdaction';
+import { ICrowdActionRepository, BadgeConfig } from '@domain/crowdaction';
 import {
     CategoryAndSubcategoryMustBeDisimilarError,
     CrowdActionMustBeInTheFutureError,
@@ -13,7 +13,6 @@ import { getCountryByCode } from '@domain/country/country.utils';
 import { CountryMustBeValidError } from '@modules/core';
 import { Identifiable } from '@domain/core';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
-import { SchedulerService } from '@modules/scheduler';
 import { Commitment } from '@domain/commitment';
 import { CreateThreadCommand } from '@modules/thread/cqrs/command';
 import { UserRole } from '@domain/auth/enum';
@@ -27,11 +26,7 @@ export interface ICreateCrowdActionArgs {
 
 @Injectable()
 export class CreateCrowdActionCommand implements ICommand {
-    constructor(
-        private readonly crowdActionRepository: ICrowdActionRepository,
-        private readonly schedulerService: SchedulerService,
-        private readonly cqrsHandler: ICQRSHandler,
-    ) {}
+    constructor(private readonly crowdActionRepository: ICrowdActionRepository, private readonly cqrsHandler: ICQRSHandler) {}
 
     async execute(args: ICreateCrowdActionArgs): Promise<Identifiable> {
         const uid = args.userId;
@@ -89,8 +84,6 @@ export class CreateCrowdActionCommand implements ICommand {
             joinEndAt,
             location,
             slug,
-            joinStatus: joinEndAt < now ? CrowdActionJoinStatusEnum.CLOSED : CrowdActionJoinStatusEnum.OPEN,
-            status: data.startAt < now ? CrowdActionStatusEnum.STARTED : CrowdActionStatusEnum.WAITING,
             images: {
                 card: 'crowdaction-cards/placeholder.png',
                 banner: 'crowdaction-banners/placeholder.png',
@@ -98,20 +91,12 @@ export class CreateCrowdActionCommand implements ICommand {
             badgeConfig,
         });
 
-        if (crowdAction) {
-            this.schedulerService.createCron(crowdAction);
-        }
-
         return crowdAction;
-    }
-
-    stopAllCrons() {
-        this.schedulerService.stopAllCrons();
     }
 
     async #createThread(userId: string, userRole: UserRole, data: CreateCrowdActionDto) {
         const forum = await this.cqrsHandler.fetch(FindDefaultForumQuery, true);
-        // Todo: Implement forum permission. Create forum permission if doesn't exi
+        // TODO: Implement forum permission. Create forum permission if doesn't exi
         // const forumPermission = await this.cqrsHandler.fetch(FindForumPermissionByIdQuery, { forumId: forum.id, role: userRole });
         // if (forumPermission?.role !== userRole) throw new UserCannotCreateThreadInForumError();
 
