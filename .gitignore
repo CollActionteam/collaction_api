@@ -64,3 +64,4 @@ node_modules/
 dist/
 test-coverage/
 serviceAccountKey.json
+serviceAccountKey-prod.json
