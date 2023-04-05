@@ -13,29 +13,29 @@ export class ForumDto {
     readonly icon: string;
 
     @ApiProperty({ name: 'name', type: String, required: true })
-    name: string;
+    readonly name: string;
 
     @ApiProperty({ name: 'description', type: String, required: true })
-    description: string;
+    readonly description: string;
 
     @ApiProperty({ name: 'parentId', type: String, required: false })
-    parentId?: string | undefined;
+    readonly parentId?: string | undefined;
 
     @ApiProperty({ name: 'parentList', type: [String], isArray: true, required: false })
-    parentList?: [string] | undefined;
+    readonly parentList?: [string] | undefined;
 
     @ApiProperty({ name: 'displayOrder', type: Number, required: true })
-    displayOrder: number;
+    readonly displayOrder: number;
 
     @ApiProperty({ name: 'threadCount', type: Number, required: true })
-    threadCount: number;
+    readonly threadCount: number;
 
     @ApiProperty({ name: 'postCount', type: Number, required: true })
-    postCount: number;
+    readonly postCount: number;
 
     @ApiProperty({ name: 'visible', type: Boolean, required: true })
-    visible: boolean;
+    readonly visible: boolean;
 
     @ApiProperty({ name: 'lastPostInfo', type: LastPostInfoDto, required: false })
-    lastPostInfo: LastPostInfoDto | undefined;
+    readonly lastPostInfo: LastPostInfoDto | undefined;
 }

@@ -95,5 +95,8 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
 
     @Prop({ type: [BadgeConfigSchema], required: true })
     readonly badgeConfig: IBadgeConfig;
+
+    @Prop({ required: false })
+    readonly threadId?: string;
 }
 export const CrowdActionSchema = SchemaFactory.createForClass(CrowdActionPersistence);

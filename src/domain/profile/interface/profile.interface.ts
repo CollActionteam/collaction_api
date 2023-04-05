@@ -10,4 +10,6 @@ export interface IProfile {
     readonly bio?: string | undefined;
     readonly avatar?: string | undefined;
     readonly badges?: Badge[] | undefined;
+    readonly threadCount: number;
+    readonly postCount: number;
 }

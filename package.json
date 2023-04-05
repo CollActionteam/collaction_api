@@ -21,7 +21,7 @@
         "test": "jest",
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage",
-        "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+        "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --detectOpenHandles",
         "typeorm:cli": "ts-node -T -r dotenv/config -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
         "migration:create": "npm run typeorm:cli -- migration:create",
         "migration:run": "npm run typeorm:cli -- migration:run -d src/ormconfig.ts",

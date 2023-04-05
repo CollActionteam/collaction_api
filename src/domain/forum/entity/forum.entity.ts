@@ -15,6 +15,7 @@ export class Forum implements IForum {
     readonly postCount: number;
     readonly visible: boolean;
     readonly lastPostInfo?: ILastPostInfo;
+    readonly defaultCrowdActionForum: boolean;
 
     constructor(entityLike: IForum) {
         this.id = entityLike.id;
@@ -28,6 +29,7 @@ export class Forum implements IForum {
         this.postCount = entityLike.postCount;
         this.visible = entityLike.visible;
         this.lastPostInfo = entityLike.lastPostInfo;
+        this.defaultCrowdActionForum = entityLike.defaultCrowdActionForum;
     }
 
     static create(entityLike: IForum): Forum {
