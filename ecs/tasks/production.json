@@ -14,9 +14,9 @@
             ]
         }
     ],
-    "cpu": "256",
+    "cpu": "512",
     "family": "collaction-api-production-task",
-    "memory": "512",
+    "memory": "1024",
     "runtimePlatform": {
         "operatingSystemFamily": "LINUX"
     },
