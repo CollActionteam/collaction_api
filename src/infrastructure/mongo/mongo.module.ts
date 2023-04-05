@@ -12,7 +12,7 @@ import {
     ForumPersistence,
     ForumSchema,
     ThreadPersistence,
-    ThreadPersistenceSchema,
+    ThreadSchema,
     ForumPermissionSchema,
     ForumPermissionPersistence,
 } from '@infrastructure/mongo/persistence';
@@ -24,6 +24,7 @@ import {
     ContactRepository,
     ThreadRepository,
     ForumPermissionRepository,
+    ForumRepository,
 } from '@infrastructure/mongo/repository';
 import { ICrowdActionRepository } from '@domain/crowdaction';
 import { IProfileRepository } from '@domain/profile';
@@ -31,9 +32,8 @@ import { IParticipationRepository } from '@domain/participation';
 import { IContactRepository } from '@domain/contact';
 import { ICommitmentRepository } from '@domain/commitment';
 import { IForumPermissionRepository, IForumRepository } from '@domain/forum';
-import { ContactPersistence, ContactSchema } from './persistence/contact.persistence';
-import { ForumRepository } from './repository/forum.repository';
 import { IThreadRepository } from '@domain/thread';
+import { ContactPersistence, ContactSchema } from './persistence/contact.persistence';
 
 @Module({
     imports: [
@@ -44,7 +44,7 @@ import { IThreadRepository } from '@domain/thread';
             { name: CommitmentPersistence.name, schema: CommitmentSchema },
             { name: ContactPersistence.name, schema: ContactSchema },
             { name: ForumPersistence.name, schema: ForumSchema },
-            { name: ThreadPersistence.name, schema: ThreadPersistenceSchema },
+            { name: ThreadPersistence.name, schema: ThreadSchema },
             { name: ForumPermissionPersistence.name, schema: ForumPermissionSchema },
         ]),
     ],

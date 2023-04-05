@@ -19,14 +19,14 @@ export class CreateThreadCommand implements ICommand {
 
         return await this.threadRepository.create({
             ...data,
-            firstPost: '',
+            firstPost: 'oj3rbgtbr2ojeuir2vdq',
             author: userInfo,
             closed: false,
             stickied: false,
             visible: true,
             replyCount: 0,
             lastPostInfo: {
-                postInfo: { postId: '', title: '', createdAt: new Date(), updatedAt: new Date() },
+                postInfo: { postId: 'jojewngovnorw', title: 'Last Post Title', createdAt: new Date(), updatedAt: new Date() },
                 userInfo: userInfo,
             },
             createdAt: new Date(),

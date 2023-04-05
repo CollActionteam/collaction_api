@@ -21,9 +21,9 @@ import { ListParticipationsForCrowdActionQuery } from '@modules/participation';
 import { IProfileRepository, Profile } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
 import { CrowdAction, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
-import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { Commitment, ICommitmentRepository } from '@domain/commitment';
 import { AwardBadgesCommand } from '@modules/profile/cqrs';
+import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
 
 describe('DelegateBadgesCommand', () => {
     let delegateBadgesCommand: DelegateBadgesCommand;
@@ -112,6 +112,8 @@ const CreateProfileStub = (): any => {
         firstName: 'John',
         lastName: 'Doe',
         badges: [],
+        postCount: 0,
+        threadCount: 0,
     };
 };
 
@@ -128,14 +130,15 @@ const CreateCommitmentStub = (): any => {
 const CreateCrowdActionStub = (commitments: Commitment[]): any => {
     return {
         title: 'Crowdaction title',
-        slug: 'crowdaction-title',
         description: 'Crowdaction description',
+        category: 'FOOD',
+        subcategory: 'SUSTAINABILITY',
         location: {
             code: 'NL',
             name: 'Netherlands',
         },
-        category: 'FOOD',
         password: 'pa$$w0rd',
+        slug: 'crowdaction-title',
         startAt: new Date('01/01/2025'),
         endAt: new Date('08/01/2025'),
         joinEndAt: new Date('07/07/2025'),
@@ -143,19 +146,19 @@ const CreateCrowdActionStub = (commitments: Commitment[]): any => {
         status: CrowdActionStatusEnum.STARTED,
         participantCount: 0,
         commitments: commitments,
-        images: {
-            card: 'card-image',
-            banner: 'banner-image',
-        },
         badges: [
             {
                 tier: BadgeTierEnum.BRONZE,
                 awardType: AwardTypeEnum.ALL,
-                minimumCheckIns: 10,
+                minimumCheckIns: 12,
             },
         ],
         badgeConfig: {
             diamondThreshold: 90,
+        }
+        images: {
+            card: 'card-image',
+            banner: 'banner-image',
         },
     };
 };

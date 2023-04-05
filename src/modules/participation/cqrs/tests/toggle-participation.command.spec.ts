@@ -28,6 +28,7 @@ import { ProfileService } from '@modules/profile';
 import { FindProfileByUserIdQuery } from '@modules/profile/cqrs';
 import { CrowdActionService } from '@modules/crowdaction';
 import { Commitment, ICommitmentRepository } from '@domain/commitment';
+import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
 
 describe('ToggleParticipationCommand', () => {
     let toggleParticipationCommand: ToggleParticipationCommand;
@@ -131,6 +132,8 @@ const CreateProfileStub = (): any => {
         firstName: 'John',
         lastName: 'Doe',
         badges: [],
+        postCount: 0,
+        threadCount: 0,
     };
 };
 
@@ -144,7 +147,7 @@ const CreateCommitmentStub = (): any => {
     };
 };
 
-const CreateCrowdActionStub = (commitments: Commitment[]): any => {
+const CreateCrowdActionStub = (commitments: any): any => {
     return {
         title: 'Crowdaction title',
         description: 'Crowdaction description',
@@ -158,7 +161,7 @@ const CreateCrowdActionStub = (commitments: Commitment[]): any => {
         slug: 'crowdaction-title',
         startAt: new Date('01/01/2025'),
         endAt: new Date('08/01/2025'),
-        joinEndAt: new Date('07/07/2025'),
+        joinEndAt: new Date('07/01/2025'),
         joinStatus: CrowdActionJoinStatusEnum.OPEN,
         status: CrowdActionStatusEnum.STARTED,
         participantCount: 0,
@@ -170,5 +173,12 @@ const CreateCrowdActionStub = (commitments: Commitment[]): any => {
         badgeConfig: {
             diamondThreshold: 90,
         },
+        badges: [
+            {
+                tier: BadgeTierEnum.BRONZE,
+                awardType: AwardTypeEnum.ALL,
+                minimumCheckIns: 12,
+            },
+        ],
     };
 };

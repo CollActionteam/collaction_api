@@ -6,7 +6,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { ICommitmentRepository } from '@domain/commitment';
 import { GetCommitmentsByTag } from '@modules/commitment';
 import { CQRSModule } from '@common/cqrs';
-import { ICrowdActionRepository } from '@domain/crowdaction';
+import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
 import { CrowdActionService } from '@modules/crowdaction/service';
 import {
     CommitmentPersistence,
@@ -17,17 +17,15 @@ import {
     CrowdActionSchema,
 } from '@infrastructure/mongo';
 import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
-import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { CrowdActionDoesNotExist } from '@modules/crowdaction/errors';
-import { CreateCrowdActionCommand, FindCrowdActionByIdQuery } from '@modules/crowdaction/cqrs';
+import { FindCrowdActionByIdQuery } from '@modules/crowdaction/cqrs';
 import { SchedulerService } from '@modules/scheduler';
 
 describe('FindCrowdActionByIdQuery', () => {
     let findCrowdActionByIdQuery: FindCrowdActionByIdQuery;
-    let createCrowdActionCommand: CreateCrowdActionCommand;
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
-    let crowdactionModel: Model<CrowdActionPersistence>;
+    let crowdActionModel: Model<CrowdActionPersistence>;
     let commitmentModel: Model<CommitmentPersistence>;
 
     beforeAll(async () => {
@@ -35,28 +33,25 @@ describe('FindCrowdActionByIdQuery', () => {
         const uri = mongod.getUri();
         mongoConnection = (await connect(uri)).connection;
 
-        crowdactionModel = mongoConnection.model<CrowdActionPersistence>(CrowdActionPersistence.name, CrowdActionSchema);
+        crowdActionModel = mongoConnection.model<CrowdActionPersistence>(CrowdActionPersistence.name, CrowdActionSchema);
         commitmentModel = mongoConnection.model<CommitmentPersistence>(CommitmentPersistence.name, CommitmentSchema);
         const moduleRef = await Test.createTestingModule({
             imports: [CQRSModule],
             providers: [
                 FindCrowdActionByIdQuery,
-                CreateCrowdActionCommand,
                 SchedulerService,
                 SchedulerRegistry,
                 GetCommitmentsByTag,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentRepository, useClass: CommitmentRepository },
-                { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdactionModel },
+                { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdActionModel },
                 { provide: getModelToken(CommitmentPersistence.name), useValue: commitmentModel },
                 { provide: CrowdActionService.name, useClass: CrowdActionService },
             ],
         }).compile();
         findCrowdActionByIdQuery = moduleRef.get<FindCrowdActionByIdQuery>(FindCrowdActionByIdQuery);
-        createCrowdActionCommand = moduleRef.get<CreateCrowdActionCommand>(CreateCrowdActionCommand);
     });
     afterAll(async () => {
-        createCrowdActionCommand.stopAllCrons();
         await mongoConnection.dropDatabase();
         await mongoConnection.close();
         await mongod.stop();
@@ -71,18 +66,16 @@ describe('FindCrowdActionByIdQuery', () => {
     });
     it('should be defined', () => {
         expect(findCrowdActionByIdQuery).toBeDefined();
-        expect(createCrowdActionCommand).toBeDefined();
     });
     describe('handle', () => {
         it('should return a crowdaction by Id', async () => {
-            const crowdAction = await createCrowdActionCommand.execute(CrowdActionStub);
-            expect(crowdAction).toBeDefined();
+            const crowdactionDocument = await crowdActionModel.create(CreateCrowdActionStub);
 
-            const response = await findCrowdActionByIdQuery.handle(crowdAction.id);
+            const response = await findCrowdActionByIdQuery.handle(crowdactionDocument.id);
             expect(response).toBeDefined();
             expect(response.commitments).toBeDefined();
 
-            expect(response.id).toEqual(crowdAction.id);
+            expect(response.id).toEqual(crowdactionDocument.id);
             expect({
                 title: response.title,
                 description: response.description,
@@ -91,15 +84,15 @@ describe('FindCrowdActionByIdQuery', () => {
                 country: response.location?.code,
                 password: response.password,
             }).toEqual({
-                title: CrowdActionStub.title,
-                description: CrowdActionStub.description,
-                category: CrowdActionStub.category,
-                subcategory: CrowdActionStub.subcategory,
-                country: CrowdActionStub.country.toUpperCase(),
-                password: CrowdActionStub.password,
+                title: CreateCrowdActionStub.title,
+                description: CreateCrowdActionStub.description,
+                category: CreateCrowdActionStub.category,
+                subcategory: CreateCrowdActionStub.subcategory,
+                country: CreateCrowdActionStub.country.toUpperCase(),
+                password: CreateCrowdActionStub.password,
             });
 
-            expect(response.badges).toEqual(CrowdActionStub.badges);
+            expect(response.badges).toEqual(CreateCrowdActionStub.badges);
         });
 
         it('should throw an error if crowdaction not found', async () => {
@@ -115,16 +108,25 @@ describe('FindCrowdActionByIdQuery', () => {
     });
 });
 
-const CrowdActionStub: CreateCrowdActionDto = {
+const CreateCrowdActionStub: any = {
     title: 'Crowdaction title',
     description: 'Crowdaction description',
     category: 'FOOD',
     subcategory: 'SUSTAINABILITY',
-    country: 'TG',
+    country: 'NL',
+    location: {
+        code: 'NL',
+        name: 'Netherlands',
+    },
     password: 'pa$$w0rd',
+    slug: 'crowdaction-title',
     startAt: new Date('01/01/2025'),
     endAt: new Date('08/01/2025'),
-    joinEndAt: new Date('07/01/2025'),
+    joinEndAt: new Date('07/07/2025'),
+    joinStatus: CrowdActionJoinStatusEnum.OPEN,
+    status: CrowdActionStatusEnum.STARTED,
+    participantCount: 0,
+    commitments: [],
     badges: [
         {
             tier: BadgeTierEnum.BRONZE,
@@ -135,5 +137,9 @@ const CrowdActionStub: CreateCrowdActionDto = {
     commitments: [],
     badgeConfig: {
         diamondThreshold: 90,
+    }
+    images: {
+        card: 'card-image',
+        banner: 'banner-image',
     },
 };

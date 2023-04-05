@@ -11,7 +11,7 @@ import {
     UpdateCrowdActionStatusesCommand,
     IncrementParticipantCountCommand,
     ListCrowdActionsForUserQuery,
-    FindCrowdActionBySlugQuery
+    FindCrowdActionBySlugQuery,
 } from './cqrs';
 import { CrowdActionService } from './service';
 
@@ -39,7 +39,7 @@ import { CrowdActionService } from './service';
         FindCrowdActionBySlugQuery,
         UpdateCrowdActionImagesCommand,
         UpdateCrowdActionStatusesCommand,
-        ListCrowdActionsForUserQuery
+        ListCrowdActionsForUserQuery,
     ],
 })
 export class CrowdActionModule {}

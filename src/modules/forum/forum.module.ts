@@ -1,19 +1,11 @@
-import { CQRSModule } from "@common/cqrs";
-import { InfrastructureModule } from "@infrastructure/infrastructure.module";
-import { Module } from "@nestjs/common";
-import {
-    FindDefaultForumQuery, FindForumPermissionByIdQuery,
-} from './cqrs';
+import { Module } from '@nestjs/common';
+import { InfrastructureModule } from '@infrastructure/infrastructure.module';
+import { CreateForumCommand, FindDefaultForumQuery, FindForumPermissionByIdQuery } from './cqrs';
+import { CQRSModule } from '@common/cqrs';
 
 @Module({
     imports: [InfrastructureModule, CQRSModule],
-    providers: [
-        FindDefaultForumQuery,
-        FindForumPermissionByIdQuery,
-    ],
-    exports: [
-        FindDefaultForumQuery,
-        FindForumPermissionByIdQuery,
-    ]
+    providers: [CreateForumCommand, FindDefaultForumQuery, FindForumPermissionByIdQuery],
+    exports: [CreateForumCommand, FindDefaultForumQuery, FindForumPermissionByIdQuery],
 })
 export class ForumModule {}

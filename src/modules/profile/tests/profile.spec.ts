@@ -81,5 +81,7 @@ export const ProfileStub = (): Profile => {
         lastName: undefined,
         bio: undefined,
         avatar: undefined,
+        threadCount: 0,
+        postCount: 0,
     };
 };

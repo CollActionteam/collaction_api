@@ -44,4 +44,4 @@ export class ThreadPersistence implements Omit<IThread, 'id' | 'createdAt' | 'up
     @Prop({ type: LastPostInfoPersistenceSchema, required: true })
     readonly lastPostInfo: ILastPostInfo;
 }
-export const ThreadPersistenceSchema = SchemaFactory.createForClass(ThreadPersistence);
+export const ThreadSchema = SchemaFactory.createForClass(ThreadPersistence);
