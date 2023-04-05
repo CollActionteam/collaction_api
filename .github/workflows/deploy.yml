@@ -1,4 +1,4 @@
-name: Deploy to ECR
+name: Deploy to Azure
 
 on:
     push:
@@ -10,54 +10,46 @@ env:
 jobs:
     build:
         environment: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
-        name: Build and Push Docker Image
+        name: Build and Deploy
         runs-on: ubuntu-latest
         steps:
             - name: Check out code
               uses: actions/checkout@v3
 
-            - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v2
+            - uses: azure/login@v1
               with:
-                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  aws-region: eu-central-1
+                  creds: ${{ secrets.AZ_CREDENTIALS }}
 
-            - name: Login to Amazon ECR
-              id: login-ecr
-              uses: aws-actions/amazon-ecr-login@v1
+            - name: Login to Azure Container Registry
+              uses: docker/login-action@v2
+              with:
+                  registry: ${{ secrets.AZ_REGISTRY_URL }}
+                  username: ${{ secrets.AZ_REGISTRY_USERNAME }}
+                  password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
-            - name: Build, tag, and push image to Amazon ECR
+            - name: Build, tag, and push image to Azure Container Instances
               env:
-                  ENV_FILE: ${{ secrets.ENV }}
                   SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
-                  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-                  ECR_REPOSITORY: collaction-api
-                  IMAGE_TAG: ${{ env.CURRENT_ENV }}
+                  ENV_FILE: ${{ secrets.ENV }}
+                  ECR_REGISTRY: ${{ secrets.AZ_REGISTRY_URL }}
+                  ECR_REPOSITORY: collaction-api-${{ env.CURRENT_ENV }}
               run: |
-                  echo $ENV_FILE | base64 --decode > .env
                   echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
-                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+                  echo $ENV_FILE | base64 --decode > .env
+                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }} .
+                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }}
 
-            # TEMPORARILY DISABLED!
-            # - name: Run pending migrations
-            #   env:
-            #       ENV_FILE: ${{ secrets.ENV }}
-            #       SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
-            #       MONGO_URL: ${{ secrets.MONGO_URL}}
-            #   run: |
-            #       echo $ENV_FILE | base64 --decode > .env
-            #       echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
-            #       npm ci
-            #       npm run build
-            #       npm run migration:run
-
-            - name: Deploy to Amazon ECS
-              uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+            - name: Deploy to Azure Container Instances
+              uses: azure/aci-deploy@v1
+              env:
+                  ECR_REPOSITORY: collaction-api-${{ env.CURRENT_ENV }}
               with:
-                  task-definition: ecs/tasks/${{ env.CURRENT_ENV }}.json
-                  service: collaction-api-${{ env.CURRENT_ENV }}
-                  cluster: ${{ env.CURRENT_ENV }}
-                  wait-for-service-stability: true
-                  force-new-deployment: true
+                  resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
+                  dns-name-label: api-${{ env.CURRENT_ENV }}
+                  image: ${{ secrets.AZ_REGISTRY_URL }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+                  registry-login-server: ${{ secrets.AZ_REGISTRY_URL }}
+                  registry-username: ${{ secrets.AZ_REGISTRY_USERNAME }}
+                  registry-password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
+                  name: ${{ env.ECR_REPOSITORY }}
+                  location: 'west europe'
+                  ports: '80 443 3000'
