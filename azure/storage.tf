@@ -10,18 +10,10 @@ resource "azurerm_storage_container" "collaction_api_dev" {
   name = "collaction-api-dev"
   storage_account_name = azurerm_storage_account.collaction.name
   container_access_type = "blob"
-
-  tags = {
-    environment = "development"
-  }
 }
 
 resource "azurerm_storage_container" "collaction_api_production" {
   name = "collaction-api-production"
   storage_account_name = azurerm_storage_account.collaction.name
   container_access_type = "blob"
-
-  tags = {
-    environment = "production"
-  }
 }
