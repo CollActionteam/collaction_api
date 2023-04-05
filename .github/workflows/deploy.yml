@@ -33,10 +33,11 @@ jobs:
                   ENV_FILE: ${{ secrets.ENV }}
                   ECR_REGISTRY: ${{ secrets.AZ_REGISTRY_URL }}
                   ECR_REPOSITORY: collaction-api-${{ env.CURRENT_ENV }}
+                  DOCKER_FILE: ${{ env.CURRENT_ENV == 'production' && 'Dockerfile.prod' || 'Dockerfile'  }}
               run: |
                   echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
                   echo $ENV_FILE | base64 --decode > .env
-                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }} .
+                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }} -f $DOCKER_FILE .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }}
 
             - name: Deploy to Azure Container Instances
