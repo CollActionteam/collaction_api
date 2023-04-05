@@ -2,18 +2,24 @@ name: Deploy to ECR (Development)
 
 on:
     push:
-        branches: [development]
+        branches: [development, master]
+    workflow_dispatch:
+
+env:
+    CURRENT_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
 
 jobs:
     build:
+        if: ${{ github.ref == 'refs/heads/development' || github.ref == 'refs/heads/master' }}
+        environment: ${{ env.CURRENT_ENV }}
         name: Build and Push Docker Image
         runs-on: ubuntu-latest
         steps:
             - name: Check out code
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v1
+              uses: aws-actions/configure-aws-credentials@v2
               with:
                   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -25,11 +31,11 @@ jobs:
 
             - name: Build, tag, and push image to Amazon ECR
               env:
-                  SERVICE_ACCOUNT_KEY_DEV: ${{ secrets.SERVICE_ACCOUNT_KEY_DEV }}
-                  DEV_ENV_FILE: ${{ secrets.DEV_ENV }}
+                  SERVICE_ACCOUNT_KEY_DEV: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+                  DEV_ENV_FILE: ${{ secrets.ENV }}
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                   ECR_REPOSITORY: collaction-api
-                  IMAGE_TAG: development
+                  IMAGE_TAG: ${{ env.CURRENT_ENV }}
               run: |
                   echo $SERVICE_ACCOUNT_KEY_DEV | base64 --decode > serviceAccountKey.json
                   echo $DEV_ENV_FILE | base64 --decode > .env
@@ -38,9 +44,9 @@ jobs:
 
             - name: Run pending migrations
               env:
-                  SERVICE_ACCOUNT_KEY_DEV: ${{ secrets.SERVICE_ACCOUNT_KEY_DEV }}
-                  DEV_ENV_FILE: ${{ secrets.DEV_ENV }}
-                  MONGO_URL: ${{ secrets.DEV_MONGO_URL}}
+                  SERVICE_ACCOUNT_KEY_DEV: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+                  DEV_ENV_FILE: ${{ secrets.ENV }}
+                  MONGO_URL: ${{ secrets.MONGO_URL}}
               run: |
                   echo $SERVICE_ACCOUNT_KEY_DEV | base64 --decode > serviceAccountKey.json
                   echo $DEV_ENV_FILE | base64 --decode > .env
@@ -51,8 +57,8 @@ jobs:
             - name: Deploy to Amazon ECS
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
               with:
-                  task-definition: ecs/tasks/development.json
-                  service: collaction-api-development
-                  cluster: development
+                  task-definition: ecs/tasks/${{ env.CURRENT_ENV }}.json
+                  service: collaction-api-${{ env.CURRENT_ENV }}
+                  cluster: ${{ env.CURRENT_ENV }}
                   wait-for-service-stability: true
                   force-new-deployment: true
