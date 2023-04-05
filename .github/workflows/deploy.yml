@@ -11,7 +11,7 @@ env:
 jobs:
     build:
         if: ${{ github.ref == 'refs/heads/development' || github.ref == 'refs/heads/master' }}
-        environment: ${{ env.CURRENT_ENV }}
+        environment: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
         name: Build and Push Docker Image
         runs-on: ubuntu-latest
         steps:
