@@ -1,4 +1,4 @@
-name: Deploy to ECR (Development)
+name: Deploy to ECR
 
 on:
     push:
@@ -13,7 +13,7 @@ jobs:
         if: ${{ github.ref == 'refs/heads/development' || github.ref == 'refs/heads/master' }}
         environment: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
         name: Build and Push Docker Image
-        runs-on: ubuntu-latest
+        runs-on: macos-latest
         steps:
             - name: Check out code
               uses: actions/checkout@v3
@@ -37,7 +37,7 @@ jobs:
                   ECR_REPOSITORY: collaction-api
                   IMAGE_TAG: ${{ env.CURRENT_ENV }}
               run: |
-                  echo $ENV | base64 -d > .env
+                  echo ${{ secrets.ENV }} | base64 -d > .env
                   echo $SERVICE_ACCOUNT_KEY | base64 -d > serviceAccountKey.json
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
