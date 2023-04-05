@@ -5,11 +5,13 @@ on:
         branches: [development, master, azure]
 
 env:
-    CURRENT_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
+    CURRENT_ENV: production
+    #CURRENT_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
 
 jobs:
     build:
-        environment: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
+        environment: production
+        #environment: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
         name: Build and Deploy
         runs-on: ubuntu-latest
         steps:
@@ -37,7 +39,7 @@ jobs:
                   echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
                   echo $ENV_FILE | base64 --decode > .env
                   docker build --target production -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} .
-                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }}
+                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
 
             - name: Deploy to Azure Container Instances
               uses: azure/aci-deploy@v1
