@@ -23,7 +23,7 @@ import {
 import { CrowdAction, ICrowdActionRepository, CrowdActionJoinStatusEnum, CrowdActionStatusEnum } from '@domain/crowdaction';
 import { IProfileRepository } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
-import { CreateCrowdActionCommand, FindCrowdActionByIdQuery, IncrementParticipantCountCommand } from '@modules/crowdaction/cqrs';
+import { FindCrowdActionByIdQuery, IncrementParticipantCountCommand } from '@modules/crowdaction/cqrs';
 import { SchedulerService } from '@modules/scheduler';
 import { ProfileService } from '@modules/profile';
 import { GetParticipationForCrowdactionQuery } from '@modules/participation';
@@ -55,7 +55,6 @@ describe('GetParticipationForCrowdactionQuery', () => {
             imports: [CQRSModule],
             providers: [
                 ToggleParticipationCommand,
-                CreateCrowdActionCommand,
                 IncrementParticipantCountCommand,
                 SchedulerService,
                 SchedulerRegistry,
@@ -157,6 +156,8 @@ const CreateProfileStub = (): any => {
         firstName: 'John',
         lastName: 'Doe',
         badges: [],
+        postCount: 0,
+        threadCount: 0,
     };
 };
 

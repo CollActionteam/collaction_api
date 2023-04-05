@@ -32,4 +32,6 @@ export interface ICrowdAction {
     readonly updatedAt: Date;
 
     readonly badges?: Badge[];
+
+    readonly threadId?: string;
 }

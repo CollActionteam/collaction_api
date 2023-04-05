@@ -78,5 +78,7 @@ const CreateProfileStub = (): any => {
         firstName: 'John',
         lastName: 'Doe',
         badges: [],
+        threadCount: 0,
+        postCount: 0,
     };
 };

@@ -14,11 +14,20 @@ import {
     CrowdActionPersistence,
     CrowdActionRepository,
     CrowdActionSchema,
+    ForumPermissionPersistence,
+    ForumPermissionRepository,
+    ForumPermissionSchema,
+    ForumPersistence,
+    ForumRepository,
+    ForumSchema,
 } from '@infrastructure/mongo';
 import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { CreateCrowdActionCommand, ListCrowdActionsQuery } from '@modules/crowdaction/cqrs';
 import { SchedulerService } from '@modules/scheduler';
+import { UserRole } from '@domain/auth/enum';
+import { FindDefaultForumQuery, FindForumPermissionByIdQuery } from '@modules/forum';
+import { IForumPermissionRepository, IForumRepository } from '@domain/forum';
 
 describe('ListCrowdActionsQuery', () => {
     let listCrowdActionsQuery: ListCrowdActionsQuery;
@@ -27,6 +36,8 @@ describe('ListCrowdActionsQuery', () => {
     let mongoConnection: Connection;
     let crowdactionModel: Model<CrowdActionPersistence>;
     let commitmentModel: Model<CommitmentPersistence>;
+    let forumPersistenceModel: Model<ForumPersistence>;
+    let forumPermissionPersistenceModel: Model<ForumPermissionPersistence>;
 
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
@@ -35,18 +46,27 @@ describe('ListCrowdActionsQuery', () => {
 
         crowdactionModel = mongoConnection.model<CrowdActionPersistence>(CrowdActionPersistence.name, CrowdActionSchema);
         commitmentModel = mongoConnection.model<CommitmentPersistence>(CommitmentPersistence.name, CommitmentSchema);
+        forumPersistenceModel = mongoConnection.model(ForumPersistence.name, ForumSchema);
+        forumPermissionPersistenceModel = mongoConnection.model(ForumPermissionPersistence.name, ForumPermissionSchema);
+
         const moduleRef = await Test.createTestingModule({
             imports: [CQRSModule],
             providers: [
                 ListCrowdActionsQuery,
                 CreateCrowdActionCommand,
+                FindForumPermissionByIdQuery,
+                FindDefaultForumQuery,
                 SchedulerService,
                 SchedulerRegistry,
                 GetCommitmentsByTag,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentRepository, useClass: CommitmentRepository },
+                { provide: IForumRepository, useClass: ForumRepository },
+                { provide: IForumPermissionRepository, useClass: ForumPermissionRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdactionModel },
                 { provide: getModelToken(CommitmentPersistence.name), useValue: commitmentModel },
+                { provide: getModelToken(ForumPersistence.name), useValue: forumPersistenceModel },
+                { provide: getModelToken(ForumPermissionPersistence.name), useValue: forumPermissionPersistenceModel },
             ],
         }).compile();
         listCrowdActionsQuery = moduleRef.get<ListCrowdActionsQuery>(ListCrowdActionsQuery);
@@ -75,7 +95,11 @@ describe('ListCrowdActionsQuery', () => {
                 if (i % 2 == 1) stub = { ...CrowdActionStub2 };
                 stub.title = stub.title + '_' + i;
 
-                const createResponse = await createCrowdActionCommand.execute(stub);
+                const createResponse = await createCrowdActionCommand.execute({
+                    userId: '1234',
+                    userRole: UserRole.ADMIN,
+                    crowdActionDto: stub,
+                });
                 createdCrowdActions.push(createResponse);
             }
             expect(createdCrowdActions.length).toEqual(10);

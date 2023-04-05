@@ -46,7 +46,7 @@ jobs:
               with:
                   resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
                   dns-name-label: api-${{ env.CURRENT_ENV }}
-                  image: ${{ secrets.AZ_REGISTRY_URL }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+                  image: ${{ secrets.AZ_REGISTRY_URL }}/${{ env.ECR_REPOSITORY }}:${{ env.CURRENT_ENV }}
                   registry-login-server: ${{ secrets.AZ_REGISTRY_URL }}
                   registry-username: ${{ secrets.AZ_REGISTRY_USERNAME }}
                   registry-password: ${{ secrets.AZ_REGISTRY_PASSWORD }}

@@ -2,7 +2,7 @@ import { ILastPostInfo, IUserInfo } from '@domain/core';
 
 export interface IThread {
     readonly id: string;
-    readonly prefixId: string;
+    readonly prefixId?: string;
     readonly forumId: string;
     readonly firstPost: string;
     readonly pollId?: string;
