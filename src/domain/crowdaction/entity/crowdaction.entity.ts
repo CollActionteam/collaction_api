@@ -33,6 +33,8 @@ export class CrowdAction implements ICrowdAction, Identifiable {
 
     readonly badges?: Badge[];
 
+    readonly threadId?: string;
+
     constructor(entityLike: ICrowdAction) {
         this.id = entityLike.id;
         this.title = entityLike.title;
@@ -59,6 +61,7 @@ export class CrowdAction implements ICrowdAction, Identifiable {
         this.badges = entityLike.badges;
 
         this.badgeConfig = entityLike.badgeConfig;
+        this.threadId = entityLike.threadId;
     }
 
     static create(entityLike: ICrowdAction): CrowdAction {

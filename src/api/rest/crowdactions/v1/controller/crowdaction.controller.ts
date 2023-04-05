@@ -109,8 +109,12 @@ export class CrowdActionController {
         type: IdentifiableResponse,
     })
     @ApiBody({ type: CreateCrowdActionDto, description: 'Creates a new CrowdAction' })
-    async createCrowdAction(@Body() createCrowdActionBody: CreateCrowdActionDto): Promise<Identifiable> {
-        return await this.cqrsHandler.execute(CreateCrowdActionCommand, createCrowdActionBody);
+    async createCrowdAction(@CurrentUser() authUser: AuthUser, @Body() createCrowdActionBody: CreateCrowdActionDto): Promise<Identifiable> {
+        return await this.cqrsHandler.execute(CreateCrowdActionCommand, {
+            userId: authUser.uid,
+            userRole: UserRole.ADMIN,
+            crowdActionDto: createCrowdActionBody,
+        });
     }
 
     @Post(':id/images')
