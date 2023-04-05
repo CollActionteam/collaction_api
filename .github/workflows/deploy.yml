@@ -40,17 +40,18 @@ jobs:
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-            - name: Run pending migrations
-              env:
-                  ENV_FILE: ${{ secrets.ENV }}
-                  SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
-                  MONGO_URL: ${{ secrets.MONGO_URL}}
-              run: |
-                  echo $ENV_FILE | base64 --decode > .env
-                  echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
-                  npm ci
-                  npm run build
-                  npm run migration:run
+            # TEMPORARILY DISABLED!
+            # - name: Run pending migrations
+            #   env:
+            #       ENV_FILE: ${{ secrets.ENV }}
+            #       SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+            #       MONGO_URL: ${{ secrets.MONGO_URL}}
+            #   run: |
+            #       echo $ENV_FILE | base64 --decode > .env
+            #       echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
+            #       npm ci
+            #       npm run build
+            #       npm run migration:run
 
             - name: Deploy to Amazon ECS
               uses: aws-actions/amazon-ecs-deploy-task-definition@v1
