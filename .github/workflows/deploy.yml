@@ -47,7 +47,7 @@ jobs:
                   ECR_REPOSITORY: collaction-api-${{ env.CURRENT_ENV }}
               with:
                   resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
-                  dns-name-label: api-${{ env.CURRENT_ENV }}
+                  #dns-name-label: api-${{ env.CURRENT_ENV }}
                   image: ${{ secrets.AZ_REGISTRY_URL }}/${{ env.ECR_REPOSITORY }}:testv1 #${{ github.sha }}
                   registry-login-server: ${{ secrets.AZ_REGISTRY_URL }}
                   registry-username: ${{ secrets.AZ_REGISTRY_USERNAME }}
