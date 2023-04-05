@@ -31,25 +31,21 @@ jobs:
 
             - name: Build, tag, and push image to Amazon ECR
               env:
-                  ENV_FILE: ${{ secrets.ENV }}
-                  SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
                   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                   ECR_REPOSITORY: collaction-api
                   IMAGE_TAG: ${{ env.CURRENT_ENV }}
               run: |
-                  echo $ENV_FILE | base64 --decode > .env
-                  echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
+                  echo ${{ secrets.ENV }} | base64 -d > .env
+                  echo ${{ secrets.SERVICE_ACCOUNT_KEY }} | base64 -d > serviceAccountKey.json
                   docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
             - name: Run pending migrations
               env:
-                  SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
-                  ENV_FILE: ${{ secrets.ENV }}
                   MONGO_URL: ${{ secrets.MONGO_URL}}
               run: |
-                  echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
-                  echo $ENV_FILE | base64 --decode > .env
+                  echo ${{ secrets.SERVICE_ACCOUNT_KEY }} | base64 -d > serviceAccountKey.json
+                  echo  ${{ secrets.ENV }} | base64 -d > .env
                   npm ci
                   npm run build
                   npm run migration:run
