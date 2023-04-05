@@ -10,7 +10,7 @@ export class UserInfo implements IUserInfo {
 
     constructor(profile: IProfile) {
         this.userId = profile.id;
-        this.fullName = profile.firstName + ' ' + profile.lastName;
+        this.fullName = '${profile.firstName} ${profile.lastName}';
         this.avatar = profile.avatar;
         this.threadCount = profile.threadCount;
         this.postCount = profile.postCount;
