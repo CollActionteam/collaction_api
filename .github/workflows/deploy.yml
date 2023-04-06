@@ -33,12 +33,11 @@ jobs:
                   ENV_FILE: ${{ secrets.ENV }}
                   ECR_REGISTRY: ${{ secrets.AZ_REGISTRY_URL }}
                   ECR_REPOSITORY: collaction-api-${{ env.CURRENT_ENV }}
-                  DOCKER_FILE: ${{ env.CURRENT_ENV == 'production' && 'Dockerfile.prod' || 'Dockerfile'  }}
               run: |
                   echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
                   echo $ENV_FILE | base64 --decode > .env
-                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }} -f $DOCKER_FILE .
-                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }}
+                  docker build --target production -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} .
+                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
 
             - name: Deploy to Azure Container Instances
               uses: azure/aci-deploy@v1
@@ -46,11 +45,12 @@ jobs:
                   ECR_REPOSITORY: collaction-api-${{ env.CURRENT_ENV }}
               with:
                   resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
-                  dns-name-label: api-${{ env.CURRENT_ENV }}
-                  image: ${{ secrets.AZ_REGISTRY_URL }}/${{ env.ECR_REPOSITORY }}:${{ env.CURRENT_ENV }}
+                  image: ${{ secrets.AZ_REGISTRY_URL }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
                   registry-login-server: ${{ secrets.AZ_REGISTRY_URL }}
                   registry-username: ${{ secrets.AZ_REGISTRY_USERNAME }}
                   registry-password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
+                  cpu: 1
+                  memory: 2.0
                   name: ${{ env.ECR_REPOSITORY }}
                   location: 'west europe'
                   ports: '80 443 3000'

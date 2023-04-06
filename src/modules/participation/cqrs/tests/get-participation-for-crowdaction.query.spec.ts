@@ -1,7 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { getModelToken } from '@nestjs/mongoose';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import { connect, Connection, Model } from 'mongoose';
 import { Commitment, ICommitmentRepository } from '@domain/commitment';
 import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
@@ -24,7 +23,6 @@ import { CrowdAction, ICrowdActionRepository, CrowdActionJoinStatusEnum, CrowdAc
 import { IProfileRepository } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
 import { FindCrowdActionByIdQuery, IncrementParticipantCountCommand } from '@modules/crowdaction/cqrs';
-import { SchedulerService } from '@modules/scheduler';
 import { ProfileService } from '@modules/profile';
 import { GetParticipationForCrowdactionQuery } from '@modules/participation';
 import { FindProfileByUserIdQuery } from '@modules/profile/cqrs';
@@ -56,8 +54,6 @@ describe('GetParticipationForCrowdactionQuery', () => {
             providers: [
                 ToggleParticipationCommand,
                 IncrementParticipantCountCommand,
-                SchedulerService,
-                SchedulerRegistry,
                 FindProfileByUserIdQuery,
                 ProfileService,
                 FindCrowdActionByIdQuery,

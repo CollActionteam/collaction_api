@@ -4,6 +4,7 @@ import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionImages } 
 import { IBadge, Badge } from '@domain/badge';
 import { CrowdActionCommitmentDto, GetCommitmentDto } from '@infrastructure/commitment';
 import { ICommitment } from '@domain/commitment';
+import { Country } from '@common/country';
 import { BadgeDto } from './badge.dto';
 
 export class BadgeConfigDto {
@@ -76,8 +77,8 @@ export class GetCrowdActionDto {
     @ApiProperty({ name: 'commitments', isArray: true, type: GetCommitmentDto })
     readonly commitments: ICommitment[];
 
-    @ApiProperty({ name: 'country', example: 'NL', required: true })
-    readonly country: string;
+    @ApiProperty({ name: 'location', required: true })
+    readonly location: Country;
 
     @ApiProperty({ name: 'slug', example: 'veganuary', required: true })
     readonly slug: string;
@@ -94,8 +95,11 @@ export class GetCrowdActionDto {
     @ApiProperty({ name: 'endAt', type: Date, example: '2025-12-22T15:00:00.000Z', required: true })
     readonly endAt: Date;
 
-    @ApiProperty({ name: 'joinEndAt', type: Date, example: '2024-12-22T15:00:00.000Z', required: false })
-    readonly joinEndAt?: Date;
+    @ApiProperty({ name: 'joinStatus', enum: CrowdActionJoinStatusEnum, example: CrowdActionJoinStatusEnum.OPEN, required: true })
+    readonly joinStatus: string;
+
+    @ApiProperty({ name: 'status', enum: CrowdActionStatusEnum, example: CrowdActionStatusEnum.STARTED, required: true })
+    readonly status: string;
 
     @ApiProperty({ name: 'badges', type: [Badge], isArray: true, required: false })
     readonly badges?: Badge[];

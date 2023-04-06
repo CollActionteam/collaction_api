@@ -2,7 +2,6 @@ import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import { ICrowdActionRepository } from '@domain/crowdaction';
 import { CreateCrowdActionCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
@@ -35,7 +34,6 @@ import {
     CategoryAndSubcategoryMustBeDisimilarError,
 } from '@modules/crowdaction/errors';
 import { CountryMustBeValidError } from '@modules/core';
-import { SchedulerService } from '@modules/scheduler';
 import { UserRole } from '@domain/auth/enum';
 import { CreateForumCommand, FindDefaultForumQuery, FindForumPermissionByIdQuery } from '@modules/forum';
 import { ForumTypeEnum, IForumPermissionRepository, IForumRepository } from '@domain/forum';
@@ -80,8 +78,6 @@ describe('CreateCrowdActionCommand', () => {
                 FindDefaultForumQuery,
                 FindProfileByUserIdQuery,
                 CreateProfileCommand,
-                SchedulerService,
-                SchedulerRegistry,
                 ProfileService,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentRepository, useClass: CommitmentRepository },
@@ -107,7 +103,6 @@ describe('CreateCrowdActionCommand', () => {
     });
 
     afterAll(async () => {
-        createCrowdActionCommand.stopAllCrons();
         await mongoConnection.dropDatabase();
         await mongoConnection.close();
         await mongod.stop();

@@ -1,6 +1,5 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Connection, Model, connect } from 'mongoose';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { ICommitmentRepository } from '@domain/commitment';
@@ -19,7 +18,6 @@ import {
 import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
 import { CrowdActionDoesNotExist } from '@modules/crowdaction/errors';
 import { FindCrowdActionByIdQuery } from '@modules/crowdaction/cqrs';
-import { SchedulerService } from '@modules/scheduler';
 
 describe('FindCrowdActionByIdQuery', () => {
     let findCrowdActionByIdQuery: FindCrowdActionByIdQuery;
@@ -39,8 +37,6 @@ describe('FindCrowdActionByIdQuery', () => {
             imports: [CQRSModule],
             providers: [
                 FindCrowdActionByIdQuery,
-                SchedulerService,
-                SchedulerRegistry,
                 GetCommitmentsByTag,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentRepository, useClass: CommitmentRepository },

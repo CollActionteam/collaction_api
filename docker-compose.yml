@@ -1,17 +1,21 @@
-version: '3.7'
+version: '3.9'
 
 services:
-    collaction-api:
-        container_name: collaction-api
-        build:
-            context: .
-            dockerfile: Dockerfile
-        env_file:
-            - .env
-        volumes:
-            - ./src:/home/node/app/src
-        expose:
-            - ${PORT}
-        ports:
-            - ${PORT}:${PORT}
-        command: npm run start:dev
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    env_file:
+      - .env
+    volumes:
+      - ./src:/home/node/app/src
+    ports:
+      - 3535:3000
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - 27017:27017

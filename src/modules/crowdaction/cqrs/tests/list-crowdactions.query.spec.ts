@@ -1,12 +1,11 @@
 import { getModelToken } from '@nestjs/mongoose';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Connection, Model, connect } from 'mongoose';
 import { ICommitmentRepository } from '@domain/commitment';
 import { GetCommitmentsByTag } from '@modules/commitment';
 import { CQRSModule } from '@common/cqrs';
-import { CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
+import { CrowdAction, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
 import {
     CommitmentPersistence,
     CommitmentRepository,
@@ -24,7 +23,6 @@ import {
 import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { CreateCrowdActionCommand, ListCrowdActionsQuery } from '@modules/crowdaction/cqrs';
-import { SchedulerService } from '@modules/scheduler';
 import { UserRole } from '@domain/auth/enum';
 import { FindDefaultForumQuery, FindForumPermissionByIdQuery } from '@modules/forum';
 import { IForumPermissionRepository, IForumRepository } from '@domain/forum';
@@ -56,8 +54,6 @@ describe('ListCrowdActionsQuery', () => {
                 CreateCrowdActionCommand,
                 FindForumPermissionByIdQuery,
                 FindDefaultForumQuery,
-                SchedulerService,
-                SchedulerRegistry,
                 GetCommitmentsByTag,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentRepository, useClass: CommitmentRepository },
@@ -73,7 +69,6 @@ describe('ListCrowdActionsQuery', () => {
         createCrowdActionCommand = moduleRef.get<CreateCrowdActionCommand>(CreateCrowdActionCommand);
     });
     afterAll(async () => {
-        createCrowdActionCommand.stopAllCrons();
         await mongoConnection.dropDatabase();
         await mongoConnection.close();
         await mongod.stop();
@@ -91,8 +86,7 @@ describe('ListCrowdActionsQuery', () => {
         beforeAll(async () => {
             /****Inserts  a number of crowdActions based so it can be later filtered */
             for (let i = 0; i < numberOfInserts; i++) {
-                let stub = { ...CrowdActionStub };
-                if (i % 2 == 1) stub = { ...CrowdActionStub2 };
+                const stub = { ...(i % 2 == 1 ? CrowdActionStub2 : CrowdActionStub) };
                 stub.title = stub.title + '_' + i;
 
                 const createResponse = await createCrowdActionCommand.execute({
@@ -104,14 +98,14 @@ describe('ListCrowdActionsQuery', () => {
             }
             expect(createdCrowdActions.length).toEqual(10);
         });
-        it('should return a number of crowdactions from page 1 based on the limet set ', async () => {
+        it('should return a number of crowdactions from page 1 based on the limit set ', async () => {
             const response = await listCrowdActionsQuery.handle({ page: 1, pageSize: numberOfShownItems });
             expect(response).toBeDefined();
             expect(response.pageInfo.pageSize).toEqual(numberOfShownItems);
             expect(response.items.length).toEqual(numberOfShownItems);
             expect(response.pageInfo.totalItems).toEqual(numberOfInserts);
         });
-        it('should return a number of crowdactions from page 2 based on the limet set', async () => {
+        it('should return a number of crowdactions from page 2 based on the limit set', async () => {
             const response = await listCrowdActionsQuery.handle({ page: 2, pageSize: numberOfShownItems });
             expect(response.items.length).toEqual(numberOfShownItems);
 
@@ -119,23 +113,30 @@ describe('ListCrowdActionsQuery', () => {
                 expect(Number(item.title.split('_')[1])).toBeGreaterThanOrEqual(numberOfShownItems);
             }
         });
+
         it('should filter crowdactions By Status', async () => {
             const response = await listCrowdActionsQuery.handle({
                 page: 1,
-                pageSize: numberOfInserts,
-                filter: { status: { in: [CrowdActionStatusEnum.WAITING] } },
+                pageSize: 5,
+                filter: { startAt: { gte: new Date('01/01/2029') } },
             });
-            expect(response.items.length).toEqual(numberOfInserts);
+
+            expect(response.items.length).toEqual(5);
+
             for (const item of response.items) {
-                expect(item.status).toEqual(CrowdActionStatusEnum.WAITING);
+                const crowdAction = CrowdAction.create(item).withStatuses();
+                expect(crowdAction.status).toEqual(CrowdActionStatusEnum.WAITING);
             }
+
             const response2 = await listCrowdActionsQuery.handle({
                 page: 1,
                 pageSize: numberOfInserts,
-                filter: { status: { in: [CrowdActionStatusEnum.STARTED] } },
+                filter: { startAt: { gte: new Date('01/01/2040') } },
             });
+
             expect(response2.items.length).toEqual(0);
         });
+
         it('should filter the crowdactions by subCategory', async () => {
             const response = await listCrowdActionsQuery.handle({
                 page: 1,
@@ -208,9 +209,9 @@ const CrowdActionStub2: CreateCrowdActionDto = {
     subcategory: 'ELECTIRICITY',
     country: 'TG',
     password: 'pa$$w0rd',
-    startAt: new Date('01/01/2025'),
-    endAt: new Date('08/01/2025'),
-    joinEndAt: new Date('07/01/2025'),
+    startAt: new Date('01/01/2030'),
+    endAt: new Date('08/01/2035'),
+    joinEndAt: new Date('07/01/2035'),
     badges: [
         {
             tier: BadgeTierEnum.DIAMOND,
