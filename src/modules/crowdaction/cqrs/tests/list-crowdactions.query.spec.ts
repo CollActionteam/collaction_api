@@ -86,8 +86,7 @@ describe('ListCrowdActionsQuery', () => {
         beforeAll(async () => {
             /****Inserts  a number of crowdActions based so it can be later filtered */
             for (let i = 0; i < numberOfInserts; i++) {
-                let stub = { ...CrowdActionStub };
-                if (i % 2 == 1) stub = { ...CrowdActionStub2 };
+                const stub = { ...(i % 2 == 1 ? CrowdActionStub2 : CrowdActionStub) };
                 stub.title = stub.title + '_' + i;
 
                 const createResponse = await createCrowdActionCommand.execute({
@@ -99,14 +98,14 @@ describe('ListCrowdActionsQuery', () => {
             }
             expect(createdCrowdActions.length).toEqual(10);
         });
-        it('should return a number of crowdactions from page 1 based on the limet set ', async () => {
+        it('should return a number of crowdactions from page 1 based on the limit set ', async () => {
             const response = await listCrowdActionsQuery.handle({ page: 1, pageSize: numberOfShownItems });
             expect(response).toBeDefined();
             expect(response.pageInfo.pageSize).toEqual(numberOfShownItems);
             expect(response.items.length).toEqual(numberOfShownItems);
             expect(response.pageInfo.totalItems).toEqual(numberOfInserts);
         });
-        it('should return a number of crowdactions from page 2 based on the limet set', async () => {
+        it('should return a number of crowdactions from page 2 based on the limit set', async () => {
             const response = await listCrowdActionsQuery.handle({ page: 2, pageSize: numberOfShownItems });
             expect(response.items.length).toEqual(numberOfShownItems);
 
@@ -114,14 +113,15 @@ describe('ListCrowdActionsQuery', () => {
                 expect(Number(item.title.split('_')[1])).toBeGreaterThanOrEqual(numberOfShownItems);
             }
         });
+
         it('should filter crowdactions By Status', async () => {
             const response = await listCrowdActionsQuery.handle({
                 page: 1,
-                pageSize: numberOfInserts,
-                filter: { startAt: { gte: new Date() } },
+                pageSize: 5,
+                filter: { startAt: { gte: new Date('01/01/2029') } },
             });
 
-            expect(response.items.length).toEqual(numberOfInserts);
+            expect(response.items.length).toEqual(5);
 
             for (const item of response.items) {
                 const crowdAction = CrowdAction.create(item).withStatuses();
@@ -131,10 +131,12 @@ describe('ListCrowdActionsQuery', () => {
             const response2 = await listCrowdActionsQuery.handle({
                 page: 1,
                 pageSize: numberOfInserts,
-                filter: { startAt: { gte: new Date() } },
+                filter: { startAt: { gte: new Date('01/01/2040') } },
             });
+
             expect(response2.items.length).toEqual(0);
         });
+
         it('should filter the crowdactions by subCategory', async () => {
             const response = await listCrowdActionsQuery.handle({
                 page: 1,
@@ -207,9 +209,9 @@ const CrowdActionStub2: CreateCrowdActionDto = {
     subcategory: 'ELECTIRICITY',
     country: 'TG',
     password: 'pa$$w0rd',
-    startAt: new Date('01/01/2025'),
-    endAt: new Date('08/01/2025'),
-    joinEndAt: new Date('07/01/2025'),
+    startAt: new Date('01/01/2030'),
+    endAt: new Date('08/01/2035'),
+    joinEndAt: new Date('07/01/2035'),
     badges: [
         {
             tier: BadgeTierEnum.DIAMOND,
