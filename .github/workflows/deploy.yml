@@ -6,11 +6,11 @@ on:
 
 env:
     #CURRENT_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
-    CURRENT_ENV: development
+    CURRENT_ENV: production
 
 jobs:
     build:
-        environment: development
+        environment: production
         name: Build and Deploy
         runs-on: ubuntu-latest
         steps:
