@@ -4,8 +4,8 @@ import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdActionImages } 
 import { IBadge, Badge } from '@domain/badge';
 import { CrowdActionCommitmentDto, GetCommitmentDto } from '@infrastructure/commitment';
 import { ICommitment } from '@domain/commitment';
-import { BadgeDto } from './badge.dto';
 import { Country } from '@common/country';
+import { BadgeDto } from './badge.dto';
 
 export class BadgeConfigDto {
     @ApiProperty({ name: 'diamondThreshold', example: 100, required: true })

@@ -88,8 +88,7 @@ export class CrowdActionController {
     @ApiOperation({ summary: 'Retrieves a specific CrowdAction by ID' })
     @ApiParam({ name: 'id', required: true })
     async getCrowdAction(@Param('id') id: string): Promise<GetCrowdActionDto> {
-        let crowdAction = await this.cqrsHandler.fetch(FindCrowdActionByIdQuery, id);
-
+        const crowdAction = await this.cqrsHandler.fetch(FindCrowdActionByIdQuery, id);
         return crowdAction.withStatuses();
     }
 
