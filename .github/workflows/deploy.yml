@@ -2,14 +2,15 @@ name: Deploy to Azure
 
 on:
     push:
-        branches: [development, master]
+        branches: [development, master, azure]
 
 env:
-    CURRENT_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
+    #CURRENT_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
+    CURRENT_ENV: development
 
 jobs:
     build:
-        environment: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
+        environment: development
         name: Build and Deploy
         runs-on: ubuntu-latest
         steps:
