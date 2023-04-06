@@ -1,7 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { getModelToken } from '@nestjs/mongoose';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import { connect, Connection, Model } from 'mongoose';
 import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
 import { ToggleParticipationCommand } from '@modules/participation/cqrs/command/toggle-participation.command';
@@ -23,7 +22,6 @@ import { ICrowdActionRepository, CrowdAction, CrowdActionJoinStatusEnum, CrowdAc
 import { IProfileRepository } from '@domain/profile';
 import { IParticipationRepository } from '@domain/participation';
 import { CreateCrowdActionCommand, FindCrowdActionByIdQuery, IncrementParticipantCountCommand } from '@modules/crowdaction/cqrs';
-import { SchedulerService } from '@modules/scheduler';
 import { ProfileService } from '@modules/profile';
 import { FindProfileByUserIdQuery } from '@modules/profile/cqrs';
 import { CrowdActionService } from '@modules/crowdaction';
@@ -55,8 +53,6 @@ describe('ToggleParticipationCommand', () => {
                 ToggleParticipationCommand,
                 CreateCrowdActionCommand,
                 IncrementParticipantCountCommand,
-                SchedulerService,
-                SchedulerRegistry,
                 FindProfileByUserIdQuery,
                 ProfileService,
                 FindCrowdActionByIdQuery,

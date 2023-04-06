@@ -1,12 +1,11 @@
 import { getModelToken } from '@nestjs/mongoose';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Connection, Model, connect } from 'mongoose';
 import { ICommitmentRepository } from '@domain/commitment';
 import { GetCommitmentsByTag } from '@modules/commitment';
 import { CQRSModule } from '@common/cqrs';
-import { CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
+import { CrowdAction, CrowdActionStatusEnum, ICrowdActionRepository } from '@domain/crowdaction';
 import {
     CommitmentPersistence,
     CommitmentRepository,
@@ -24,7 +23,6 @@ import {
 import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { CreateCrowdActionCommand, ListCrowdActionsQuery } from '@modules/crowdaction/cqrs';
-import { SchedulerService } from '@modules/scheduler';
 import { UserRole } from '@domain/auth/enum';
 import { FindDefaultForumQuery, FindForumPermissionByIdQuery } from '@modules/forum';
 import { IForumPermissionRepository, IForumRepository } from '@domain/forum';
@@ -56,8 +54,6 @@ describe('ListCrowdActionsQuery', () => {
                 CreateCrowdActionCommand,
                 FindForumPermissionByIdQuery,
                 FindDefaultForumQuery,
-                SchedulerService,
-                SchedulerRegistry,
                 GetCommitmentsByTag,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentRepository, useClass: CommitmentRepository },
@@ -73,7 +69,6 @@ describe('ListCrowdActionsQuery', () => {
         createCrowdActionCommand = moduleRef.get<CreateCrowdActionCommand>(CreateCrowdActionCommand);
     });
     afterAll(async () => {
-        createCrowdActionCommand.stopAllCrons();
         await mongoConnection.dropDatabase();
         await mongoConnection.close();
         await mongod.stop();
@@ -123,16 +118,20 @@ describe('ListCrowdActionsQuery', () => {
             const response = await listCrowdActionsQuery.handle({
                 page: 1,
                 pageSize: numberOfInserts,
-                filter: { status: { in: [CrowdActionStatusEnum.WAITING] } },
+                filter: { startAt: { gte: new Date() } },
             });
+
             expect(response.items.length).toEqual(numberOfInserts);
+
             for (const item of response.items) {
-                expect(item.status).toEqual(CrowdActionStatusEnum.WAITING);
+                const crowdAction = CrowdAction.create(item).withStatuses();
+                expect(crowdAction.status).toEqual(CrowdActionStatusEnum.WAITING);
             }
+
             const response2 = await listCrowdActionsQuery.handle({
                 page: 1,
                 pageSize: numberOfInserts,
-                filter: { status: { in: [CrowdActionStatusEnum.STARTED] } },
+                filter: { startAt: { gte: new Date() } },
             });
             expect(response2.items.length).toEqual(0);
         });

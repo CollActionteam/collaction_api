@@ -3,7 +3,7 @@ import { CrowdAction, ICrowdAction } from '@domain/crowdaction';
 
 export type CreateCrowdAction = Omit<ICrowdAction, 'id' | 'createdAt' | 'updatedAt'>;
 export type PatchCrowdAction = Partial<ICrowdAction>;
-export type QueryCrowdAction = Partial<Pick<ICrowdAction, 'id' | 'category' | 'subcategory' | 'endAt' | 'slug'>>;
+export type QueryCrowdAction = Partial<Pick<ICrowdAction, 'id' | 'category' | 'subcategory' | 'endAt' | 'startAt' | 'slug'>>;
 
 export abstract class ICrowdActionRepository implements IRepository<CrowdAction, CreateCrowdAction, PatchCrowdAction, QueryCrowdAction> {
     abstract create(entityLike: CreateCrowdAction): Promise<CrowdAction>;
