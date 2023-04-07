@@ -5,9 +5,13 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm ci
+RUN npm i
 
 COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "run", "start:dev"]
 
 # Production (multi-stage build)
 FROM node:16-alpine AS build
