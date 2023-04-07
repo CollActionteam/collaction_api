@@ -45,4 +45,6 @@ jobs:
               uses: azure/webapps-deploy@v2
               with:
                 app-name: 'collaction-api-${{ env.CURRENT_ENV }}'
+                publish-profile: ${{ secrets.AZ_PUBLISH_PROFILE }}
                 images: '${{ secrets.AZ_REGISTRY_URL }}/collaction-api-${{ env.CURRENT_ENV }}:${{ github.sha }}'
+
