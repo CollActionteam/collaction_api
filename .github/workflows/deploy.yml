@@ -6,21 +6,16 @@ on:
 
 env:
     #CURRENT_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
-    CURRENT_ENV: development
+    CURRENT_ENV: production
 
 jobs:
     build:
-        environment: development
+        environment: production
         name: Build and Deploy
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
               uses: actions/checkout@v3
-
-            - name: Azure CLI login
-              uses: azure/login@v1
-              with:
-                  creds: ${{ secrets.AZ_CREDENTIALS }}
 
             - name: Azure Container Registry login
               uses: docker/login-action@v2
@@ -47,4 +42,3 @@ jobs:
                 app-name: 'collaction-api-${{ env.CURRENT_ENV }}'
                 publish-profile: ${{ secrets.AZ_PUBLISH_PROFILE }}
                 images: '${{ secrets.AZ_REGISTRY_URL }}/collaction-api-${{ env.CURRENT_ENV }}:${{ github.sha }}'
-
