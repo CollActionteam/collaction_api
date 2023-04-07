@@ -6,29 +6,30 @@ on:
 
 env:
     #CURRENT_ENV: ${{ github.ref == 'refs/heads/master' && 'production' || 'development' }}
-    CURRENT_ENV: production
+    CURRENT_ENV: development
 
 jobs:
     build:
-        environment: production
+        environment: development
         name: Build and Deploy
         runs-on: ubuntu-latest
         steps:
-            - name: Check out code
+            - name: Checkout code
               uses: actions/checkout@v3
 
-            - uses: azure/login@v1
+            - name: Azure CLI login
+              uses: azure/login@v1
               with:
                   creds: ${{ secrets.AZ_CREDENTIALS }}
 
-            - name: Login to Azure Container Registry
+            - name: Azure Container Registry login
               uses: docker/login-action@v2
               with:
                   registry: ${{ secrets.AZ_REGISTRY_URL }}
                   username: ${{ secrets.AZ_REGISTRY_USERNAME }}
                   password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
-            - name: Build, tag, and push image to Azure Container Instances
+            - name: Build, tag and push image to Azure Container Registry
               env:
                   SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
                   ENV_FILE: ${{ secrets.ENV }}
@@ -40,19 +41,8 @@ jobs:
                   docker build --target production -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} .
                   docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
 
-            - name: Deploy to Azure Container Instances
-              uses: azure/aci-deploy@v1
-              env:
-                  ECR_REPOSITORY: collaction-api-${{ env.CURRENT_ENV }}
+            - name: Deploy to Azure App Service
+              uses: azure/webapps-deploy@v2
               with:
-                  resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
-                  dns-name-label: ${{ env.CURRENT_ENV }}-api
-                  image: ${{ secrets.AZ_REGISTRY_URL }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-                  registry-login-server: ${{ secrets.AZ_REGISTRY_URL }}
-                  registry-username: ${{ secrets.AZ_REGISTRY_USERNAME }}
-                  registry-password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
-                  cpu: 1
-                  memory: 2.0
-                  name: ${{ env.ECR_REPOSITORY }}
-                  location: 'west europe'
-                  ports: '80 443 3000'
+                app-name: 'collaction-api-${{ env.CURRENT_ENV }}'
+                images: '${{ secrets.AZ_REGISTRY_URL }}/collaction-api-${{ env.CURRENT_ENV }}:${{ github.sha }}'
