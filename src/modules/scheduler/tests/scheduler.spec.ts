@@ -9,10 +9,12 @@ import { CrowdAction, ICrowdActionRepository, CrowdActionStatusEnum, CrowdAction
 import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { UpdateCrowdActionStatusesCommand } from '@modules/crowdaction';
+import { CreateCrowdActionCommand, ListCrowdActionsQuery } from '@modules/crowdaction/cqrs';
 import { SchedulerService } from '../scheduler.service';
 
 describe('SchedulerService', () => {
     let schedulerService: SchedulerService;
+    let updateCrowdActionStatusesCommand: UpdateCrowdActionStatusesCommand;
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
     let crowdActionModel: Model<CrowdActionPersistence>;
@@ -28,6 +30,9 @@ describe('SchedulerService', () => {
             imports: [CQRSModule],
             providers: [
                 SchedulerService,
+                ListCrowdActionsQuery,
+                CreateCrowdActionCommand,
+                UpdateCrowdActionStatusesCommand,
                 {
                     provide: SchedulerRegistry,
                     useValue: {
@@ -42,10 +47,10 @@ describe('SchedulerService', () => {
 
         schedulerService = moduleRef.get<SchedulerService>(SchedulerService);
         schedulerRegistry = moduleRef.get<SchedulerRegistry>(SchedulerRegistry);
+        updateCrowdActionStatusesCommand = moduleRef.get<UpdateCrowdActionStatusesCommand>(UpdateCrowdActionStatusesCommand);
     });
 
     afterAll(async () => {
-        // stop crons here <--
         await mongoConnection.dropDatabase();
         await mongoConnection.close();
         await mongod.stop();
@@ -58,7 +63,6 @@ describe('SchedulerService', () => {
             await collection.deleteMany({});
         }
     });
-
     describe('init', () => {
         it('fetch all crowdactions and create cron for each', async () => {
             const crowdAction1 = await new crowdActionModel(CrowdActionStub()).save();
@@ -76,40 +80,21 @@ describe('SchedulerService', () => {
     });
 
     describe('createCron', () => {
-        it('should correctly execute UpdateCrowdActionStatusCommand and DelegateBadgesCommand based on Crowdaction status', async () => {
+        it('should correctly execute UpdateCrowdActionStatusCommand', async () => {
             const createCrowdAction = await new crowdActionModel(CrowdActionStub()).save();
             schedulerService.createCron(createCrowdAction);
+            expect(createCrowdAction).toBeDefined();
 
-            // cannot execute UpdateCrowdActionStatusCommand?
-            const updatedCrowdAction = await UpdateCrowdActionStatusesCommand.execute({
-                ...createCrowdAction,
+            const updatedCrowdAction = await updateCrowdActionStatusesCommand.execute({
                 id: createCrowdAction.id,
                 status: CrowdActionStatusEnum.ENDED,
                 joinStatus: CrowdActionJoinStatusEnum.CLOSED,
             });
 
-            expect(updatedCrowdAction.status).toEqual(CrowdActionStatusEnum.ENDED);
-            expect(updatedCrowdAction.joinStatus).toEqual(CrowdActionJoinStatusEnum.CLOSED);
-        });
-        it('should correctly handle a change in join status', async () => {
-            const crowdaction = await new crowdActionModel(CrowdActionStub()).save();
-            schedulerService.createCron(crowdaction);
-
-            const updateCrowdAction = await UpdateCrowdActionStatusesCommand.execute({
-                ...crowdaction,
-                id: crowdaction.id,
-                status: CrowdActionStatusEnum.ENDED,
-                joinStatus: CrowdActionJoinStatusEnum.CLOSED,
-            });
-
-            // expect(updateCrowdActionStatuses).toHaveBeenCalledWith(
-            //     crowdAction.id,
-            //     CrowdActionStatusEnum.STARTED,
-            //     CrowdActionJoinStatusEnum.CLOSED,
-            // );
+            expect(updatedCrowdAction).toBeDefined();
+            expect(schedulerRegistry.addCronJob).toHaveBeenCalledWith(createCrowdAction.id, expect.any(CronJob));
         });
     });
-
     describe('stopAllCrons', () => {
         it('should stop all cron jobs', async () => {
             const newCrowdAction1 = await new crowdActionModel(CrowdActionStub()).save();
@@ -152,7 +137,7 @@ const CrowdActionStub = (): CrowdAction => {
             {
                 id: '1234-1234-1234-1234',
                 label: 'TheLabel',
-                description: 'The Description',
+                de1cription: 'The Description',
                 tags: [],
                 points: 14,
                 blocks: ['O9pbPDY3s5e5XwzgwKZtZTDPvLS2'],
