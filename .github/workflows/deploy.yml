@@ -13,44 +13,31 @@ jobs:
         name: Build and Deploy
         runs-on: ubuntu-latest
         steps:
-            - name: Check out code
+            - name: Checkout code
               uses: actions/checkout@v3
 
-            - uses: azure/login@v1
-              with:
-                  creds: ${{ secrets.AZ_CREDENTIALS }}
-
-            - name: Login to Azure Container Registry
+            - name: Azure Container Registry login
               uses: docker/login-action@v2
               with:
                   registry: ${{ secrets.AZ_REGISTRY_URL }}
                   username: ${{ secrets.AZ_REGISTRY_USERNAME }}
                   password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
 
-            - name: Build, tag, and push image to Azure Container Instances
+            - name: Build, tag and push image to Azure Container Registry
               env:
                   SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
                   ENV_FILE: ${{ secrets.ENV }}
                   ECR_REGISTRY: ${{ secrets.AZ_REGISTRY_URL }}
                   ECR_REPOSITORY: collaction-api-${{ env.CURRENT_ENV }}
-                  DOCKER_FILE: ${{ env.CURRENT_ENV == 'production' && 'Dockerfile.prod' || 'Dockerfile'  }}
               run: |
                   echo $SERVICE_ACCOUNT_KEY | base64 --decode > serviceAccountKey.json
                   echo $ENV_FILE | base64 --decode > .env
-                  docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }} -f $DOCKER_FILE .
-                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ env.CURRENT_ENV }}
+                  docker build --target ${{ env.CURRENT_ENV }} -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} .
+                  docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
 
-            - name: Deploy to Azure Container Instances
-              uses: azure/aci-deploy@v1
-              env:
-                  ECR_REPOSITORY: collaction-api-${{ env.CURRENT_ENV }}
+            - name: Deploy to Azure App Service
+              uses: azure/webapps-deploy@v2
               with:
-                  resource-group: ${{ secrets.AZ_RESOURCE_GROUP }}
-                  dns-name-label: api-${{ env.CURRENT_ENV }}
-                  image: ${{ secrets.AZ_REGISTRY_URL }}/${{ env.ECR_REPOSITORY }}:${{ env.CURRENT_ENV }}
-                  registry-login-server: ${{ secrets.AZ_REGISTRY_URL }}
-                  registry-username: ${{ secrets.AZ_REGISTRY_USERNAME }}
-                  registry-password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
-                  name: ${{ env.ECR_REPOSITORY }}
-                  location: 'west europe'
-                  ports: '80 443 3000'
+                app-name: 'collaction-api-${{ env.CURRENT_ENV }}'
+                publish-profile: ${{ secrets.AZ_PUBLISH_PROFILE }}
+                images: '${{ secrets.AZ_REGISTRY_URL }}/collaction-api-${{ env.CURRENT_ENV }}:${{ github.sha }}'

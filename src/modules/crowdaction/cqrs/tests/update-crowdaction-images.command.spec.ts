@@ -6,7 +6,6 @@ import { Injectable } from '@nestjs/common';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import { CrowdAction, ICrowdActionRepository } from '@domain/crowdaction';
 import { CreateCrowdActionCommand, UpdateCrowdActionImagesCommand } from '@modules/crowdaction/cqrs';
 import { CQRSModule } from '@common/cqrs';
@@ -34,7 +33,6 @@ import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { ICommitmentRepository } from '@domain/commitment';
 import { S3ClientService } from '@modules/core/s3';
 import { IS3ClientRepository } from '@core/s3-client.interface';
-import { SchedulerService } from '@modules/scheduler';
 import { CreateForumCommand, FindDefaultForumQuery, FindForumPermissionByIdQuery } from '@modules/forum';
 import { CreateProfileCommand, FindProfileByUserIdQuery } from '@modules/profile/cqrs';
 import { CreateThreadCommand } from '@modules/thread';
@@ -82,8 +80,6 @@ describe('UpdateCrowdActionImagesCommand', () => {
                 FindProfileByUserIdQuery,
                 CreateProfileCommand,
                 ConfigService,
-                SchedulerService,
-                SchedulerRegistry,
                 ProfileService,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentRepository, useClass: CommitmentRepository },
@@ -118,7 +114,6 @@ describe('UpdateCrowdActionImagesCommand', () => {
     });
 
     afterAll(async () => {
-        createCrowdActionCommand.stopAllCrons();
         await mongoConnection.dropDatabase();
         await mongoConnection.close();
         await mongod.stop();

@@ -1,10 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { ICQRSHandler, CQRSHandler, CQRSModule } from '@common/cqrs';
-import { SchedulerService } from '@modules/scheduler';
 import { ContactDto } from '@infrastructure/contact/dto/';
 import { IContactRepository, Contact } from '@domain/contact';
 import { ContactPersistence, ContactRepository, ContactSchema } from '@infrastructure/mongo';
@@ -30,8 +28,6 @@ describe('SendFormCommand', () => {
             providers: [
                 ContactDto,
                 SendFormCommand,
-                SchedulerService,
-                SchedulerRegistry,
                 ContactService,
                 { provide: ICQRSHandler, useClass: CQRSHandler },
                 { provide: IContactRepository, useClass: ContactRepository },

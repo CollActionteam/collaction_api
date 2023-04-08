@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { CrowdActionJoinStatusEnum, CrowdActionStatusEnum, ICrowdAction, ICrowdActionImages, IBadgeConfig } from '@domain/crowdaction';
+import { ICrowdAction, ICrowdActionImages, IBadgeConfig } from '@domain/crowdaction';
 import { Country, CountrySchema } from '@infrastructure/mongo/persistence/country.persistence';
 import { IBadge } from '@domain/badge';
 import { CollActionDocument } from '@common/utils/document.utils';
@@ -71,12 +71,6 @@ export class CrowdActionPersistence implements Omit<ICrowdAction, 'id' | 'create
 
     @Prop({ type: CrowdActionImagesSchema, required: true })
     readonly images: CrowdActionImages;
-
-    @Prop({ type: String, enum: CrowdActionStatusEnum, required: true })
-    readonly status: CrowdActionStatusEnum;
-
-    @Prop({ type: String, enum: CrowdActionJoinStatusEnum, required: true })
-    readonly joinStatus: CrowdActionJoinStatusEnum;
 
     @Prop({ type: Date, required: true })
     readonly startAt: Date;
