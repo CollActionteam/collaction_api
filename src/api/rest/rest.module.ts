@@ -10,6 +10,7 @@ import { ParticipationController } from './participations';
 import { CommitmentController } from './commitments';
 import { AuthenticationController } from './auth';
 import { ContactController } from './contact';
+import { ThreadController } from './threads';
 
 @Module({
     imports: [InfrastructureModule, CQRSModule],
@@ -19,6 +20,7 @@ import { ContactController } from './contact';
         ProfileController,
         ParticipationController,
         CommitmentController,
+        ThreadController,
         ContactController,
     ],
     providers: [CrowdActionService, ProfileService, AuthService],
