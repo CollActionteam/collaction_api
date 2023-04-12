@@ -14,6 +14,7 @@ import { SchedulerService } from '../scheduler.service';
 
 describe('SchedulerService', () => {
     let schedulerService: SchedulerService;
+    let createCrowdActionCommand: CreateCrowdActionCommand;
     let updateCrowdActionStatusesCommand: UpdateCrowdActionStatusesCommand;
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
@@ -47,10 +48,12 @@ describe('SchedulerService', () => {
 
         schedulerService = moduleRef.get<SchedulerService>(SchedulerService);
         schedulerRegistry = moduleRef.get<SchedulerRegistry>(SchedulerRegistry);
+        createCrowdActionCommand = moduleRef.get<CreateCrowdActionCommand>(CreateCrowdActionCommand);
         updateCrowdActionStatusesCommand = moduleRef.get<UpdateCrowdActionStatusesCommand>(UpdateCrowdActionStatusesCommand);
     });
 
     afterAll(async () => {
+        createCrowdActionCommand.stopAllCrons();
         await mongoConnection.dropDatabase();
         await mongoConnection.close();
         await mongod.stop();
@@ -103,9 +106,9 @@ describe('SchedulerService', () => {
             const newCrowdAction2 = await new crowdActionModel(CrowdActionStub()).save();
             schedulerService.createCron(newCrowdAction2);
 
-            schedulerService.stopAllCrons();
+            createCrowdActionCommand.stopAllCrons();
 
-            //? it telling me that this.schedulerRegistry is not a function??
+            // telling me that getCronJobs() is not a function?
             const cronJobs = schedulerRegistry.getCronJobs();
             expect(cronJobs).toHaveLength(2);
             for (const job of cronJobs.values()) {
