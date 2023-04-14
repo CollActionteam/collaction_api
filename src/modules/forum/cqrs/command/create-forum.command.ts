@@ -1,3 +1,4 @@
+
 import { Injectable } from '@nestjs/common';
 import { ICommand } from '@common/cqrs';
 import { Identifiable } from '@domain/core';
