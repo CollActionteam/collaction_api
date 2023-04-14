@@ -11,6 +11,7 @@ import { CommitmentController } from './commitments';
 import { AuthenticationController } from './auth';
 import { ContactController } from './contact';
 import { ThreadController } from './threads';
+import { ForumController } from './forum/v1/controller';
 
 @Module({
     imports: [InfrastructureModule, CQRSModule],
@@ -22,6 +23,7 @@ import { ThreadController } from './threads';
         CommitmentController,
         ThreadController,
         ContactController,
+        ForumController,
     ],
     providers: [CrowdActionService, ProfileService, AuthService],
     exports: [CrowdActionService, ProfileService, AuthService],
