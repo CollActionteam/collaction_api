@@ -96,7 +96,7 @@ export class CreateCrowdActionCommand implements ICommand {
 
     async #createThread(userId: string, userRole: UserRole, data: CreateCrowdActionDto) {
         const forum = await this.cqrsHandler.fetch(FindDefaultForumQuery, true);
-        // TODO: Implement forum permission. Create forum permission if doesn't exi
+        // TODO: Implement forum permission. Create forum permission if doesn't exist
         // const forumPermission = await this.cqrsHandler.fetch(FindForumPermissionByIdQuery, { forumId: forum.id, role: userRole });
         // if (forumPermission?.role !== userRole) throw new UserCannotCreateThreadInForumError();
 

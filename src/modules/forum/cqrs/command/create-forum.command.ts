@@ -1,18 +1,40 @@
 
 import { Injectable } from '@nestjs/common';
-import { ICommand } from '@common/cqrs';
+import { ICommand, ICQRSHandler } from '@common/cqrs';
 import { Identifiable } from '@domain/core';
 import { IForumRepository } from '@domain/forum';
-import { ForumDto } from '@infrastructure/forum';
+import { CreateForumDto } from '@infrastructure/forum';
+import { FindForumByIdQuery } from '../query';
+
+export interface ICreateForumArgs {
+    data: CreateForumDto;
+    isDefault: boolean;
+}
 
 @Injectable()
 export class CreateForumCommand implements ICommand {
-    constructor(private readonly forumRepository: IForumRepository) {}
+    constructor(private readonly forumRepository: IForumRepository, private readonly cqrsHandler: ICQRSHandler) {}
 
-    async execute(data: ForumDto): Promise<Identifiable> {
+    async execute(args: ICreateForumArgs): Promise<Identifiable> {
+        let parentList: string[] = [];
+        if (args.data.parentId) {
+            const forum = await this.cqrsHandler.fetch(FindForumByIdQuery, args.data.parentId);
+            if (forum.parentList) {
+                parentList = forum.parentList;
+            }
+            parentList.push(args.data.parentId);
+        }
+
+        
+
         const forumId = await this.forumRepository.create({
-            ...data,
-            defaultCrowdActionForum: true,
+            ...args.data,
+            displayOrder: 0,
+            threadCount: 0,
+            postCount: 0,
+            parentList: parentList,
+            visible: true,
+            defaultCrowdActionForum: args.isDefault,
         });
         return forumId;
     }
