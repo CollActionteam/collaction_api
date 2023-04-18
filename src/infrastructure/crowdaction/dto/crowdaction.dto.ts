@@ -127,7 +127,7 @@ export class FilterCrowdActionDto {
     readonly id?: string;
 
     @ApiProperty({ name: 'status', enum: CrowdActionStatusEnum, required: false })
-    readonly status?: CrowdActionStatusEnum;
+    readonly status?: any;
 
     @ApiProperty({ name: 'joinStatus', enum: CrowdActionJoinStatusEnum, required: false })
     readonly joinStatus?: CrowdActionJoinStatusEnum;
@@ -137,15 +137,6 @@ export class FilterCrowdActionDto {
 
     @ApiProperty({ name: 'subcategory', required: false })
     readonly subcategory?: string;
-
-    @ApiProperty({ name: 'startAt', type: Date, required: false })
-    readonly startAt?: Date;
-
-    @ApiProperty({ name: 'endAt', type: Date, required: false })
-    readonly endAt?: Date;
-
-    @ApiProperty({ name: 'joinEndAt', type: Date, required: false })
-    readonly joinEndAt?: Date;
 
     @ApiProperty({ name: 'slug', required: false })
     readonly slug?: string;
