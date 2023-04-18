@@ -2,7 +2,14 @@ import { Body, Controller, Get, Param, Post, Query, UploadedFiles, UseIntercepto
 import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Identifiable, IPaginatedList } from '@domain/core';
-import { CrowdAction, CrowdActionStatusEnum, ICrowdAction } from '@domain/crowdaction';
+import {
+    CrowdAction,
+    CrowdActionStatusEnum,
+    ICrowdAction,
+    joinStatusToFilter,
+    statusToFilter,
+    statusesToFilter,
+} from '@domain/crowdaction';
 import { ICQRSHandler } from '@common/cqrs';
 import { CreateCrowdActionDto, FilterCrowdActionDto, GetCrowdActionDto, PaginatedCrowdActionResponse } from '@infrastructure/crowdaction';
 import {
@@ -33,19 +40,22 @@ export class CrowdActionController {
     })
     async getAllCrowdActions(
         @Query() { page, pageSize }: PaginationDto,
-        @Query() { id, status, joinStatus, startAt, joinEndAt, endAt, category, subcategory, slug }: FilterCrowdActionDto,
+        @Query() { id, status, joinStatus, slug }: FilterCrowdActionDto,
     ): Promise<IPaginatedList<GetCrowdActionDto>> {
-        const filter: any = {
+        let filter: any = {
             id: id !== undefined ? { in: id } : undefined,
-            status: status !== undefined ? { in: status } : undefined,
-            joinStatus: joinStatus !== undefined ? { in: joinStatus } : undefined,
-            startAt: startAt !== undefined ? { in: startAt } : undefined,
-            joinEndAt: joinEndAt !== undefined ? { in: joinEndAt } : undefined,
-            endAt: endAt !== undefined ? { in: endAt } : undefined,
-            category: category !== undefined ? { in: category } : undefined,
-            subcategory: subcategory !== undefined ? { in: subcategory } : undefined,
             slug: slug !== undefined ? { in: slug } : undefined,
         };
+
+        if (status != undefined) {
+            const statusFilter = status instanceof Array ? statusesToFilter(status) : statusToFilter(status);
+            filter = { ...filter, ...statusFilter };
+        }
+
+        if (joinStatus != undefined) {
+            const joinStatusFilter = joinStatusToFilter(joinStatus);
+            filter['joinEndAt'] = joinStatusFilter.joinEndAt;
+        }
 
         for (const param in filter) {
             if (filter[param] === undefined) delete filter[param];
