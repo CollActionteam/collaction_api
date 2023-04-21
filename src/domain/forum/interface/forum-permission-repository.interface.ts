@@ -1,5 +1,4 @@
 import { FindCriteria, FindOptions, FindQuery, IRepository } from '@core/repository.interface';
-import { Identifiable } from '@domain/core';
 import { ForumPermission } from '../entity';
 import { IForumPermission } from './forum-permission.interface';
 
@@ -10,7 +9,7 @@ export type QueryForumPermission = FindQuery<Partial<Pick<IForumPermission, 'id'
 export abstract class IForumPermissionRepository
     implements IRepository<ForumPermission, CreateForumPermission, PatchForumPermission, QueryForumPermission>
 {
-    abstract create(entityLike: CreateForumPermission): Promise<Identifiable>;
+    abstract create(entityLike: CreateForumPermission): Promise<ForumPermission>;
     abstract patch(id: string, entityLike: PatchForumPermission): Promise<void>;
     abstract delete(id: string): Promise<void>;
     abstract findOne(query: FindCriteria<QueryForumPermission>): Promise<ForumPermission>;

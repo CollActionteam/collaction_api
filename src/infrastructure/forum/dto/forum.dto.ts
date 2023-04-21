@@ -54,5 +54,8 @@ export class CreateForumDto {
     readonly description: string;
 
     @ApiProperty({ name: 'parentId', type: String, required: false })
-    readonly parentId?: string | undefined;
+    readonly parentId?: string;
+
+    @ApiProperty({ name: 'visible', type: Boolean, required: true })
+    readonly visible: boolean;
 }
