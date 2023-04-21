@@ -1,13 +1,15 @@
-
 import { Injectable } from '@nestjs/common';
 import { ICommand, ICQRSHandler } from '@common/cqrs';
 import { Identifiable } from '@domain/core';
 import { IForumRepository } from '@domain/forum';
 import { CreateForumDto } from '@infrastructure/forum';
 import { FindForumByIdQuery } from '../query';
+import { UserRole } from '@domain/auth/enum';
+import { CreateForumPermissionCommand } from './create-forum-permission.command';
 
 export interface ICreateForumArgs {
     data: CreateForumDto;
+    userRole: UserRole;
     isDefault: boolean;
 }
 
@@ -18,14 +20,12 @@ export class CreateForumCommand implements ICommand {
     async execute(args: ICreateForumArgs): Promise<Identifiable> {
         let parentList: string[] = [];
         if (args.data.parentId) {
-            const forum = await this.cqrsHandler.fetch(FindForumByIdQuery, args.data.parentId);
-            if (forum.parentList) {
-                parentList = forum.parentList;
+            const parentForum = await this.cqrsHandler.fetch(FindForumByIdQuery, args.data.parentId);
+            if (parentForum.parentList) {
+                parentList = parentForum.parentList;
             }
             parentList.push(args.data.parentId);
         }
-
-        
 
         const forumId = await this.forumRepository.create({
             ...args.data,
@@ -33,9 +33,16 @@ export class CreateForumCommand implements ICommand {
             threadCount: 0,
             postCount: 0,
             parentList: parentList,
-            visible: true,
             defaultCrowdActionForum: args.isDefault,
         });
+
+        await this.cqrsHandler.execute(CreateForumPermissionCommand, {
+            forumId: forumId.id,
+            role: args.userRole,
+            parentId: args.data.parentId,
+            parentList: parentList,
+        });
+
         return forumId;
     }
 }
