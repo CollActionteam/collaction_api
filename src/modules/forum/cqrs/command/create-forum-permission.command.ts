@@ -1,8 +1,8 @@
-import { ICommand } from "@common/cqrs";
-import { UserRole } from "@domain/auth/enum";
-import { ForumPermission, IForumPermissionRepository } from "@domain/forum";
-import { AdminForumPermission, ModeratorForumPermission, UserForumPermission } from "@infrastructure/forum";
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
+import { ICommand } from '@common/cqrs';
+import { UserRole } from '@domain/auth/enum';
+import { ForumPermission, IForumPermissionRepository } from '@domain/forum';
+import { AdminForumPermission, ModeratorForumPermission, UserForumPermission } from '@infrastructure/forum';
 
 export interface CreateForumPermissionArgs {
     readonly forumId: string;

@@ -13,7 +13,7 @@ export class FindForumPermissionByIdQuery implements IQuery<FindForumPermissionB
     constructor(private readonly forumPermissionRepository: IForumPermissionRepository) {}
 
     async handle({ forumId, role }: FindForumPermissionByIdArgs): Promise<ForumPermission> {
-        let forumPermission = await this.forumPermissionRepository.findOne({
+        const forumPermission = await this.forumPermissionRepository.findOne({
             query: { role, forumId },
             orderBy: [{ field: 'createdAt', direction: 'desc' }],
         });

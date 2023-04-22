@@ -3,8 +3,8 @@ import { ICommand, ICQRSHandler } from '@common/cqrs';
 import { Identifiable } from '@domain/core';
 import { IForumRepository } from '@domain/forum';
 import { CreateForumDto } from '@infrastructure/forum';
-import { FindForumByIdQuery } from '../query';
 import { UserRole } from '@domain/auth/enum';
+import { FindForumByIdQuery } from '../query';
 import { CreateForumPermissionCommand } from './create-forum-permission.command';
 
 export interface ICreateForumArgs {
