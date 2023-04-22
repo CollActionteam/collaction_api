@@ -1,5 +1,5 @@
-import { UserRole } from "@domain/auth/enum";
-import { CreateForumPermission } from "@domain/forum";
+import { UserRole } from '@domain/auth/enum';
+import { CreateForumPermission } from '@domain/forum';
 
 export const UserForumPermission = (forumId: string): CreateForumPermission => {
     return {
