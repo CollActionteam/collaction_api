@@ -4,10 +4,11 @@ import { ICQRSHandler } from '@common/cqrs';
 import { Forum } from '@domain/forum';
 import { CreateForumDto, ForumDto, ForumPermissionDto, UpdateForumPermissionDto } from '@infrastructure/forum';
 import { CreateForumCommand, FetchAllForums, GetForumHierarchy, UpdateForumPermissionsCommand } from '@modules/forum';
-import { CurrentUser } from '@modules/auth/decorators';
+import { CurrentUser, FirebaseGuard } from '@modules/auth/decorators';
 import { Identifiable } from '@domain/core';
 import { AuthUser } from '@domain/auth/entity';
 import { IdentifiableResponse } from '@api/rest/core';
+import { UserRole } from '@domain/auth/enum';
 
 @Controller('v1/forum')
 @ApiTags('Forum')
@@ -15,6 +16,7 @@ export class ForumController {
     constructor(private readonly cqrsHandler: ICQRSHandler) {}
 
     @Post()
+    @FirebaseGuard(UserRole.ADMIN)
     @ApiOperation({ summary: 'Create a forum' })
     @ApiResponse({
         status: 201,

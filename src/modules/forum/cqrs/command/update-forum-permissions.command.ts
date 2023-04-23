@@ -16,6 +16,6 @@ export class UpdateForumPermissionsCommand implements ICommand<IUpdateForumPermi
     async execute({ forumId, data }: IUpdateForumPermissionArgs): Promise<Identifiable> {
         const forumPermission = await this.forumPermissionRepository.findOne({ query: { forumId: forumId } });
         await this.forumPermissionRepository.patch(forumPermission.id, { ...data });
-        return forumPermission;
+        return await this.forumPermissionRepository.findOne({ query: { forumId: forumId } });
     }
 }
