@@ -1,0 +1,5 @@
+export enum UploadImageTypeEnum {
+    PROFILE = 'PROFILE',
+    CROWDACTION_BANNER = 'CROWDACTION_BANNER',
+    CROWDACTION_CARD = 'CROWDACTION_CARD',
+}

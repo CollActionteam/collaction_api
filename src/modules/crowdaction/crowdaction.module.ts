@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 import { CQRSModule } from '@common/cqrs';
 import { S3Module } from '@modules/core/s3';
+import { BlobModule } from '@modules/core';
 import {
     CreateCrowdActionCommand,
     FindCrowdActionByIdQuery,
@@ -14,7 +15,7 @@ import {
 import { CrowdActionService } from './service';
 
 @Module({
-    imports: [InfrastructureModule, CQRSModule, S3Module],
+    imports: [InfrastructureModule, CQRSModule, S3Module, BlobModule],
     providers: [
         IncrementParticipantCountCommand,
         CreateCrowdActionCommand,
