@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import * as mime from 'mime';
 import { IBlobClientRepository } from '@core/blob-client.interface';
 import { FileTypeInvalidError } from '../errors';
@@ -9,7 +8,7 @@ const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png'];
 
 @Injectable()
 export class BlobClientService {
-    constructor(private readonly blobClient: IBlobClientRepository, private readonly configService: ConfigService) {}
+    constructor(private readonly blobClient: IBlobClientRepository) {}
 
     async upload(file: any, id: string, type: UploadImageTypeEnum) {
         const directory = this.getDirectory(type);
@@ -19,17 +18,9 @@ export class BlobClientService {
         }
 
         const extension = mime.getExtension(file.mimetype);
-        // TODO: Should all these params still be passed in like the previous implementation?
-        const uploadParams = {
-            Container: this.configService.get('AZURE_CONTAINER'),
-            Key: directory + id + '.' + extension,
-            ContentType: file.mimetype,
-            Body: file.buffer,
-            ACL: 'public-read',
-            ETag: id,
-        };
-        await this.blobClient.upload(uploadParams, id);
-        return uploadParams.Key;
+        const key = directory + id + '.' + extension;
+        await this.blobClient.upload(file.buffer, key);
+        return key;
     }
 
     private getDirectory(type: UploadImageTypeEnum) {

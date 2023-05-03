@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ICommand } from '@common/cqrs';
 import { ICrowdActionRepository } from '@domain/crowdaction';
 import { CardAndOrBannerMissingError, CrowdActionDoesNotExist } from '@modules/crowdaction/errors';
-import { UploadImageTypeEnum } from '@modules/core/s3/enum';
 import { BlobClientService } from '@modules/core/blob/blob-client.service';
+import { UploadImageTypeEnum } from '@modules/core';
 
 interface UpdateCrowdActionImagesArgs {
     id: string;

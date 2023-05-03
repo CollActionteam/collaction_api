@@ -15,7 +15,6 @@ export class BlobClientRepository implements IBlobClientRepository {
     }
 
     async upload(params: any, imageName: string): Promise<BlockBlobUploadResponse> {
-        // TODO: I pass id as the imageName. I presume that should be ok for the name of the file
         const blobClient = this.containerClient.getBlockBlobClient(imageName);
         return await blobClient.upload(params, params.length);
     }
