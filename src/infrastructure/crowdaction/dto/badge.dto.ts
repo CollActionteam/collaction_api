@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AwardTypeEnum, BadgeTierEnum, IBadge, ICrowdActionMetadata } from '@domain/badge';
-export class CrowdActionMetadataDTO implements ICrowdActionMetadata {
+import { AwardTypeEnum, BadgeTierEnum, IBadge, ICrowdActionMetaData } from '@domain/badge';
+export class CrowdActionMetadataDTO implements ICrowdActionMetaData {
     @ApiProperty({ name: 'id', example: '123', required: true })
     readonly id: string;
 
@@ -18,9 +18,9 @@ export class BadgeDto implements IBadge {
     @ApiProperty({ name: 'minimumCheckIns', example: 0, required: true })
     readonly minimumCheckIns: number;
 
-    @ApiProperty({ name: 'accessibilityOutline', example: 'https://www.example.com/badge_image.png', required: false })
+    @ApiProperty({ name: 'icon', example: 'accessibility_outline', required: false })
     readonly accessibilityOutline: string;
 
-    @ApiProperty({ name: 'usedByCrowdActions', type: [CrowdActionMetadataDTO], isArray: true, required: false })
+    @ApiProperty({ name: 'usedByCrowdActions', type: [CrowdActionMetadataDTO], isArray: true, required: true })
     readonly usedByCrowdActions: CrowdActionMetadataDTO[];
 }

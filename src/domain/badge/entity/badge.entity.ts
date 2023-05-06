@@ -1,11 +1,11 @@
 import { AwardTypeEnum, BadgeTierEnum } from '../enum';
-import { IBadge, ICrowdActionMetadata } from '../interface/badge.interface';
+import { IBadge, ICrowdActionMetaData } from '../interface/badge.interface';
 
-export class CrowdActionMetadata implements ICrowdActionMetadata {
+export class CrowdActionMetaData implements ICrowdActionMetaData {
     readonly id: string;
     readonly title: string;
 
-    constructor(entityLike: ICrowdActionMetadata) {
+    constructor(entityLike: ICrowdActionMetaData) {
         this.id = entityLike.id;
         this.title = entityLike.title;
     }
@@ -15,13 +15,13 @@ export class Badge implements IBadge {
     readonly awardType: AwardTypeEnum;
     readonly minimumCheckIns: number;
     readonly accessibilityOutline?: string;
-    readonly usedByCrowdActions?: CrowdActionMetadata[];
+    readonly usedByCrowdActions?: ICrowdActionMetaData;
 
     constructor(entityLike: IBadge) {
         this.tier = entityLike.tier;
         this.awardType = entityLike.awardType;
         this.minimumCheckIns = entityLike.minimumCheckIns;
         this.accessibilityOutline = entityLike.accessibilityOutline;
-        this.usedByCrowdActions = entityLike.usedByCrowdActions;
+        this.usedByCrowdActions = entityLike.metadata;
     }
 }
