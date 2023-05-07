@@ -1,2 +1,2 @@
 export * from './repository.interface';
-export * from './blob-client.interface';
+export * from './s3-client.interface';
