@@ -11,7 +11,7 @@ import { CurrentUser, FirebaseGuard } from '@modules/auth/decorators';
 import { AuthUser } from '@domain/auth/entity';
 import { Profile } from '@domain/profile';
 import { UserRole } from '@domain/auth/enum';
-import { UploadImageTypeEnum } from '@modules/core';
+import { UploadImageTypeEnum } from '@modules/core/s3/enum';
 
 @Controller('v1/profiles')
 @ApiTags('Profiles')

@@ -31,6 +31,8 @@ import {
 } from '@infrastructure/mongo';
 import { BadgeTierEnum, AwardTypeEnum } from '@domain/badge';
 import { ICommitmentRepository } from '@domain/commitment';
+import { S3ClientService } from '@modules/core/s3';
+import { IS3ClientRepository } from '@core/s3-client.interface';
 import { CreateForumCommand, FindDefaultForumQuery, FindForumPermissionByIdQuery } from '@modules/forum';
 import { CreateProfileCommand, FindProfileByUserIdQuery } from '@modules/profile/cqrs';
 import { CreateThreadCommand } from '@modules/thread';
@@ -40,8 +42,6 @@ import { IThreadRepository } from '@domain/thread';
 import { IProfileRepository } from '@domain/profile';
 import { CreateProfileDto } from '@infrastructure/profile';
 import { UserRole } from '@domain/auth/enum';
-import { BlobClientService } from '@modules/core';
-import { IBlobClientRepository } from '@core/blob-client.interface';
 
 describe('UpdateCrowdActionImagesCommand', () => {
     let updateCrowdActionImagesCommand: UpdateCrowdActionImagesCommand;
@@ -94,11 +94,11 @@ describe('UpdateCrowdActionImagesCommand', () => {
                 { provide: getModelToken(ThreadPersistence.name), useValue: threadPersistenceModel },
                 { provide: getModelToken(ProfilePersistence.name), useValue: profileModel },
                 {
-                    provide: BlobClientService,
+                    provide: S3ClientService,
                     inject: [ConfigService],
-                    useFactory: (): BlobClientService => {
-                        const mockBlobClient = new MockBlobClientRepository();
-                        return new BlobClientService(mockBlobClient);
+                    useFactory: (configService: ConfigService): S3ClientService => {
+                        const mockS3Client = new MockS3ClientRepository();
+                        return new S3ClientService(mockS3Client, configService);
                     },
                 },
             ],
@@ -141,10 +141,7 @@ describe('UpdateCrowdActionImagesCommand', () => {
             });
             const documents = await crowdActionModel.find({ id: crowdAction.id });
             const createdCrowdAction = documents.map((doc) => CrowdAction.create(doc.toObject({ getters: true })))[0];
-            expect(createdCrowdAction.images).toStrictEqual({
-                banner: 'crowdaction-banners/' + crowdAction.id + '.png',
-                card: 'crowdaction-cards/' + crowdAction.id + '.png',
-            });
+            expect(createdCrowdAction.images).toStrictEqual({ banner: 'Upload Successful', card: 'Upload Successful' });
         });
     });
 });
@@ -209,11 +206,11 @@ export const CreateProfileStub = (): CreateProfileDto => {
 };
 
 @Injectable()
-class MockBlobClientRepository implements IBlobClientRepository {
-    async upload(params: any, imageName: string): Promise<any> {
-        return new Promise<any>(function (resolve) {
+class MockS3ClientRepository implements IS3ClientRepository {
+    async upload(): Promise<string> {
+        return new Promise<string>(function (resolve) {
             setTimeout(function () {
-                resolve('Upoload successful' + params + imageName);
+                resolve('Upload Successful');
             }, 1000);
         });
     }

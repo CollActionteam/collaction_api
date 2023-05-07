@@ -7,11 +7,11 @@ import {
     UpdateProfileCommand,
     UploadProfileImageCommand,
 } from '@modules/profile/cqrs';
-import { BlobModule } from '@modules/core';
+import { S3Module } from '@modules/core/s3';
 import { ProfileService } from './service';
 
 @Module({
-    imports: [InfrastructureModule, BlobModule],
+    imports: [InfrastructureModule, S3Module],
     providers: [
         CreateProfileCommand,
         UpdateProfileCommand,

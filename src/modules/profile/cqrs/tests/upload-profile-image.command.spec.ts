@@ -7,8 +7,10 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { ProfilePersistence, ProfileRepository, ProfileSchema } from '@infrastructure/mongo';
 import { IProfileRepository, Profile } from '@domain/profile';
 import { CreateProfileCommand, UploadProfileImageCommand, UploadProfileImageCommandArgs } from '@modules/profile/cqrs';
-import { BlobClientService, FileTypeInvalidError, UploadImageTypeEnum } from '@modules/core';
-import { IBlobClientRepository } from '@core/blob-client.interface';
+import { FileTypeInvalidError } from '@modules/core';
+import { S3ClientService } from '@modules/core/s3';
+import { UploadImageTypeEnum } from '@modules/core/s3/enum';
+import { IS3ClientRepository } from '@core/s3-client.interface';
 import { CreateProfileStub } from './create-profile.command.spec';
 
 describe('CreateProfileCommand', () => {
@@ -33,12 +35,12 @@ describe('CreateProfileCommand', () => {
                 { provide: IProfileRepository, useClass: ProfileRepository },
                 { provide: getModelToken(ProfilePersistence.name), useValue: profileModel },
                 {
-                    provide: BlobClientService,
+                    provide: S3ClientService,
                     inject: [ConfigService],
-                    useFactory: (): BlobClientService => {
-                        const mockBlobClient = new MockBlobClientRepository();
+                    useFactory: (configService: ConfigService): S3ClientService => {
+                        const mockS3Client = new MockS3ClientRepository();
 
-                        return new BlobClientService(mockBlobClient);
+                        return new S3ClientService(mockS3Client, configService);
                     },
                 },
             ],
@@ -70,7 +72,7 @@ describe('CreateProfileCommand', () => {
             await uploadProfileImageCommand.execute(UploadProfileImageCommandArgsStub());
             const documents = await profileModel.find({ userId: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2' }, null, { skip: 0, limit: 1 });
             const createdProfile = documents.map((doc) => Profile.create(doc.toObject({ getters: true })))[0];
-            expect(createdProfile.avatar).toBe('profiles/' + createdProfile.userId + '.jpeg');
+            expect(createdProfile.avatar).toBe('Upload Successful');
         });
         it('should create a new profile and then fail to upload due to file type', async () => {
             const profile = await createProfileCommand.execute(CreateProfileStub());
@@ -100,11 +102,11 @@ export const UploadProfileImageCommandArgsStubWithError = (): UploadProfileImage
 };
 
 @Injectable()
-class MockBlobClientRepository implements IBlobClientRepository {
-    async upload(params: any, imageName: string): Promise<any> {
-        return new Promise<any>(function (resolve) {
+class MockS3ClientRepository implements IS3ClientRepository {
+    async upload(): Promise<string> {
+        return new Promise<string>(function (resolve) {
             setTimeout(function () {
-                resolve('Upoload successful' + params + imageName);
+                resolve('Upload Successful');
             }, 1000);
         });
     }
