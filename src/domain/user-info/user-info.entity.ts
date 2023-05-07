@@ -12,7 +12,7 @@ export class UserInfo implements IUserInfo {
         this.userId = profile.id;
         this.fullName = '${profile.firstName} ${profile.lastName}';
         this.avatar = profile.avatar;
-        this.threadCount = profile.threadCount || 0;
-        this.postCount = profile.postCount || 0;
+        this.threadCount = profile.threadCount;
+        this.postCount = profile.postCount;
     }
 }

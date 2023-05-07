@@ -9,7 +9,7 @@ export class Forum implements IForum {
     readonly name: string;
     readonly description: string;
     readonly parentId?: string | undefined;
-    readonly parentList?: string[] | undefined;
+    readonly parentList?: [string] | undefined;
     readonly displayOrder: number;
     readonly threadCount: number;
     readonly postCount: number;
