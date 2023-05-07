@@ -206,9 +206,9 @@ const CreateForumStub = (): ICreateForumArgs => {
             description: 'This is the default forum',
             parentId: undefined,
             visible: true,
+            isDefault: true,
         },
         userRole: UserRole.ADMIN,
-        isDefault: true,
     };
 };
 

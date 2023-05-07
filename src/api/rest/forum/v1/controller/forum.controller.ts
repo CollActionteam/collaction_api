@@ -24,15 +24,10 @@ export class ForumController {
         type: IdentifiableResponse,
     })
     @ApiBody({ type: CreateForumDto, description: "Creates a new forum and it's permissions" })
-    async createForum(
-        @CurrentUser() authUser: AuthUser,
-        @Body() forumDto: CreateForumDto,
-        @Param('isDefault') isDefault: boolean,
-    ): Promise<Identifiable> {
+    async createForum(@CurrentUser() authUser: AuthUser, @Body() forumDto: CreateForumDto): Promise<Identifiable> {
         return await this.cqrsHandler.execute(CreateForumCommand, {
             data: forumDto,
             userRole: authUser.customClaims.role,
-            isDefault: isDefault,
         });
     }
 
