@@ -7,10 +7,9 @@ import { CreateThreadDto, PaginatedThreadResponseDto } from '@infrastructure/thr
 import { PaginationDto } from '@infrastructure/pagination';
 import { AuthUser } from '@domain/auth/entity';
 import { ICQRSHandler } from '@common/cqrs';
-import { Identifiable } from '@domain/core';
+import { Identifiable, IPaginatedList } from '@domain/core';
 import { CreateThreadCommand } from '@modules/thread/cqrs/command';
 import { ListThreadsByForumQuery } from '@modules/thread';
-import { IPaginatedList } from '@domain/core';
 import { IThread } from '@domain/thread';
 
 @Controller('/v1/threads')
