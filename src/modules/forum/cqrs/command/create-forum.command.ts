@@ -10,7 +10,6 @@ import { CreateForumPermissionCommand } from './create-forum-permission.command'
 export interface ICreateForumArgs {
     data: CreateForumDto;
     userRole: UserRole;
-    isDefault: boolean;
 }
 
 @Injectable()
@@ -33,7 +32,7 @@ export class CreateForumCommand implements ICommand {
             threadCount: 0,
             postCount: 0,
             parentList: parentList,
-            defaultCrowdActionForum: args.isDefault,
+            defaultCrowdActionForum: args.data.isDefault,
         });
 
         await this.cqrsHandler.execute(CreateForumPermissionCommand, {

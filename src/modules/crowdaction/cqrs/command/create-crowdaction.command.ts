@@ -96,18 +96,19 @@ export class CreateCrowdActionCommand implements ICommand {
 
     async #createThread(userId: string, userRole: UserRole, data: CreateCrowdActionDto) {
         const forum = await this.cqrsHandler.fetch(FindDefaultForumQuery, true);
-        const forumPermission = await this.cqrsHandler.fetch(FindForumPermissionByIdQuery, { forumId: forum.id, role: userRole });
-
-        if (!forumPermission) {
-            await this.cqrsHandler.execute(CreateForumPermissionCommand, {
-                forumId: forum.id,
-                role: userRole,
-                parentId: forum.parentId,
-                parentList: forum.parentList,
-            });
-        }
 
         if (forum) {
+            const forumPermission = await this.cqrsHandler.fetch(FindForumPermissionByIdQuery, { forumId: forum.id, role: userRole });
+
+            if (!forumPermission) {
+                await this.cqrsHandler.execute(CreateForumPermissionCommand, {
+                    forumId: forum.id,
+                    role: userRole,
+                    parentId: forum.parentId,
+                    parentList: forum.parentList,
+                });
+            }
+
             await this.cqrsHandler.execute(CreateThreadCommand, {
                 userId: userId,
                 forumId: forum.id,

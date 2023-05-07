@@ -58,4 +58,7 @@ export class CreateForumDto {
 
     @ApiProperty({ name: 'visible', type: Boolean, required: true })
     readonly visible: boolean;
+
+    @ApiProperty({ name: 'isDefault', type: Boolean, required: true })
+    readonly isDefault: boolean;
 }
