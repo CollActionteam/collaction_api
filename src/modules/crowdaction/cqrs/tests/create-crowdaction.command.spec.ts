@@ -35,13 +35,7 @@ import {
 } from '@modules/crowdaction/errors';
 import { CountryMustBeValidError } from '@modules/core';
 import { UserRole } from '@domain/auth/enum';
-import {
-    CreateForumCommand,
-    CreateForumPermissionCommand,
-    FindDefaultForumQuery,
-    FindForumPermissionByIdQuery,
-    ICreateForumArgs,
-} from '@modules/forum';
+import { CreateForumCommand, FindDefaultForumQuery, FindForumPermissionByIdQuery } from '@modules/forum';
 import { ForumTypeEnum, IForumPermissionRepository, IForumRepository } from '@domain/forum';
 import { CreateThreadCommand } from '@modules/thread';
 import { IThreadRepository } from '@domain/thread';
@@ -84,7 +78,6 @@ describe('CreateCrowdActionCommand', () => {
                 FindDefaultForumQuery,
                 FindProfileByUserIdQuery,
                 CreateProfileCommand,
-                CreateForumPermissionCommand,
                 ProfileService,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentRepository, useClass: CommitmentRepository },
@@ -197,21 +190,22 @@ const CreateCrowdActionStub = (userId: any): any => {
     };
 };
 
-const CreateForumStub = (): ICreateForumArgs => {
+const CreateForumStub = (): any => {
     return {
-        data: {
-            type: ForumTypeEnum.FORUM,
-            icon: 'accessibility_outline',
-            name: 'Default Forum',
-            description: 'This is the default forum',
-            parentId: undefined,
-            visible: true,
-            isDefault: true,
-        },
-        userRole: UserRole.ADMIN,
+        id: '',
+        type: ForumTypeEnum.FORUM,
+        icon: 'accessibility_outline',
+        name: 'Default Forum',
+        description: 'This is the default forum',
+        parentId: undefined,
+        parentList: undefined,
+        displayOrder: 0,
+        threadCount: 0,
+        postCount: 0,
+        visible: true,
+        lastPostInfo: undefined,
     };
 };
-
 export const CreateProfileStub = (): CreateProfileDto => {
     return {
         userId: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',

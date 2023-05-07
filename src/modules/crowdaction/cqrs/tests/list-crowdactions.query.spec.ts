@@ -19,36 +19,16 @@ import {
     ForumPersistence,
     ForumRepository,
     ForumSchema,
-    ProfilePersistence,
-    ProfileRepository,
-    ProfileSchema,
-    ThreadPersistence,
-    ThreadRepository,
-    ThreadSchema,
 } from '@infrastructure/mongo';
 import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { CreateCrowdActionCommand, ListCrowdActionsQuery } from '@modules/crowdaction/cqrs';
 import { UserRole } from '@domain/auth/enum';
-import {
-    CreateForumCommand,
-    CreateForumPermissionCommand,
-    FindDefaultForumQuery,
-    FindForumPermissionByIdQuery,
-    ICreateForumArgs,
-} from '@modules/forum';
-import { ForumTypeEnum, IForumPermissionRepository, IForumRepository } from '@domain/forum';
-import { CreateThreadCommand } from '@modules/thread';
-import { IThreadRepository } from '@domain/thread';
-import { CreateProfileCommand, FindProfileByUserIdQuery } from '@modules/profile/cqrs';
-import { IProfileRepository } from '@domain/profile';
-import { ProfileService } from '@modules/profile';
-import { CreateProfileDto } from '@infrastructure/profile';
+import { FindDefaultForumQuery, FindForumPermissionByIdQuery } from '@modules/forum';
+import { IForumPermissionRepository, IForumRepository } from '@domain/forum';
 
 describe('ListCrowdActionsQuery', () => {
     let listCrowdActionsQuery: ListCrowdActionsQuery;
-    let createForumCommand: CreateForumCommand;
-    let createProfileCommand: CreateProfileCommand;
     let createCrowdActionCommand: CreateCrowdActionCommand;
     let mongod: MongoMemoryServer;
     let mongoConnection: Connection;
@@ -56,8 +36,6 @@ describe('ListCrowdActionsQuery', () => {
     let commitmentModel: Model<CommitmentPersistence>;
     let forumPersistenceModel: Model<ForumPersistence>;
     let forumPermissionPersistenceModel: Model<ForumPermissionPersistence>;
-    let threadPersistenceModel: Model<ThreadPersistence>;
-    let profileModel: Model<ProfilePersistence>;
 
     beforeAll(async () => {
         mongod = await MongoMemoryServer.create();
@@ -68,44 +46,27 @@ describe('ListCrowdActionsQuery', () => {
         commitmentModel = mongoConnection.model<CommitmentPersistence>(CommitmentPersistence.name, CommitmentSchema);
         forumPersistenceModel = mongoConnection.model(ForumPersistence.name, ForumSchema);
         forumPermissionPersistenceModel = mongoConnection.model(ForumPermissionPersistence.name, ForumPermissionSchema);
-        threadPersistenceModel = mongoConnection.model(ThreadPersistence.name, ThreadSchema);
-        profileModel = mongoConnection.model(ProfilePersistence.name, ProfileSchema);
 
         const moduleRef = await Test.createTestingModule({
             imports: [CQRSModule],
             providers: [
                 ListCrowdActionsQuery,
                 CreateCrowdActionCommand,
-                CreateForumCommand,
-                CreateThreadCommand,
                 FindForumPermissionByIdQuery,
                 FindDefaultForumQuery,
-                CreateForumPermissionCommand,
                 GetCommitmentsByTag,
-                CreateProfileCommand,
-                FindProfileByUserIdQuery,
-                ProfileService,
                 { provide: ICrowdActionRepository, useClass: CrowdActionRepository },
                 { provide: ICommitmentRepository, useClass: CommitmentRepository },
                 { provide: IForumRepository, useClass: ForumRepository },
                 { provide: IForumPermissionRepository, useClass: ForumPermissionRepository },
-                { provide: IThreadRepository, useClass: ThreadRepository },
-                { provide: IProfileRepository, useClass: ProfileRepository },
                 { provide: getModelToken(CrowdActionPersistence.name), useValue: crowdactionModel },
                 { provide: getModelToken(CommitmentPersistence.name), useValue: commitmentModel },
                 { provide: getModelToken(ForumPersistence.name), useValue: forumPersistenceModel },
                 { provide: getModelToken(ForumPermissionPersistence.name), useValue: forumPermissionPersistenceModel },
-                { provide: getModelToken(ThreadPersistence.name), useValue: threadPersistenceModel },
-                { provide: getModelToken(ProfilePersistence.name), useValue: profileModel },
             ],
         }).compile();
         listCrowdActionsQuery = moduleRef.get<ListCrowdActionsQuery>(ListCrowdActionsQuery);
         createCrowdActionCommand = moduleRef.get<CreateCrowdActionCommand>(CreateCrowdActionCommand);
-        createForumCommand = moduleRef.get<CreateForumCommand>(CreateForumCommand);
-        createProfileCommand = moduleRef.get<CreateProfileCommand>(CreateProfileCommand);
-
-        // Create a default forum so create crowdaction works.
-        await createForumCommand.execute(CreateForumStub());
     });
     afterAll(async () => {
         await mongoConnection.dropDatabase();
@@ -123,14 +84,13 @@ describe('ListCrowdActionsQuery', () => {
         const numberOfInserts = 10;
 
         beforeAll(async () => {
-            await createProfileCommand.execute(CreateProfileStub());
             /****Inserts  a number of crowdActions based so it can be later filtered */
             for (let i = 0; i < numberOfInserts; i++) {
                 const stub = { ...(i % 2 == 1 ? CrowdActionStub2 : CrowdActionStub) };
                 stub.title = stub.title + '_' + i;
 
                 const createResponse = await createCrowdActionCommand.execute({
-                    userId: CreateProfileStub().userId,
+                    userId: '1234',
                     userRole: UserRole.ADMIN,
                     crowdActionDto: stub,
                 });
@@ -263,29 +223,4 @@ const CrowdActionStub2: CreateCrowdActionDto = {
     badgeConfig: {
         diamondThreshold: 90,
     },
-};
-
-const CreateForumStub = (): ICreateForumArgs => {
-    return {
-        data: {
-            type: ForumTypeEnum.FORUM,
-            icon: 'accessibility_outline',
-            name: 'Default Forum',
-            description: 'This is the default forum',
-            parentId: undefined,
-            visible: true,
-            isDefault: true,
-        },
-        userRole: UserRole.ADMIN,
-    };
-};
-
-export const CreateProfileStub = (): CreateProfileDto => {
-    return {
-        userId: 'O9pbPDY3s5e5XwzgwKZtZTDPvLS2',
-        country: 'NL',
-        firstName: 'John',
-        lastName: 'Doe',
-        bio: 'I am a cool guy',
-    };
 };
