@@ -30,7 +30,13 @@ import { AwardTypeEnum, BadgeTierEnum } from '@domain/badge';
 import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { CreateCrowdActionCommand, ListCrowdActionsQuery } from '@modules/crowdaction/cqrs';
 import { UserRole } from '@domain/auth/enum';
-import { CreateForumCommand, CreateForumPermissionCommand, FindDefaultForumQuery, FindForumPermissionByIdQuery, ICreateForumArgs } from '@modules/forum';
+import {
+    CreateForumCommand,
+    CreateForumPermissionCommand,
+    FindDefaultForumQuery,
+    FindForumPermissionByIdQuery,
+    ICreateForumArgs,
+} from '@modules/forum';
 import { ForumTypeEnum, IForumPermissionRepository, IForumRepository } from '@domain/forum';
 import { CreateThreadCommand } from '@modules/thread';
 import { IThreadRepository } from '@domain/thread';

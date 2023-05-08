@@ -8,8 +8,8 @@ import { ProfilePersistence, ProfileRepository, ProfileSchema } from '@infrastru
 import { IProfileRepository, Profile } from '@domain/profile';
 import { CreateProfileCommand, UploadProfileImageCommand, UploadProfileImageCommandArgs } from '@modules/profile/cqrs';
 import { BlobClientService, FileTypeInvalidError, UploadImageTypeEnum } from '@modules/core';
-import { CreateProfileStub } from './create-profile.command.spec';
 import { IBlobClientRepository } from '@core/blob-client.interface';
+import { CreateProfileStub } from './create-profile.command.spec';
 
 describe('CreateProfileCommand', () => {
     let uploadProfileImageCommand: UploadProfileImageCommand;
