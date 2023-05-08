@@ -3,9 +3,9 @@ import { Identifiable } from '@domain/core';
 import { Forum } from '../entity';
 import { IForum } from './forum.interface';
 
-export type CreateForum = Omit<Forum, 'id'>;
+export type CreateForum = Omit<IForum, 'id'>;
 export type PatchForum = Partial<IForum>;
-export type QueryForum = Partial<Pick<IForum, 'id' | 'defaultCrowdActionForum'>>;
+export type QueryForum = Partial<Pick<IForum, 'id' | 'defaultCrowdActionForum' | 'parentList'>>;
 
 export abstract class IForumRepository implements IRepository<Forum, CreateForum, PatchForum, QueryForum> {
     abstract create(entityLike: CreateForum): Promise<Identifiable>;
