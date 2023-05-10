@@ -27,7 +27,7 @@ export class CrowdActionMustBeInTheFutureError extends ApiError {
 
 export class CrowdActionDoesNotExist extends ApiError {
     constructor() {
-        super({ message: `Could not find any CrowdAction that fit the criteria`, statusCode: HttpStatus.BAD_REQUEST });
+        super({ message: `Could not find any CrowdAction that fit the criteria`, statusCode: HttpStatus.NOT_FOUND });
     }
 }
 
