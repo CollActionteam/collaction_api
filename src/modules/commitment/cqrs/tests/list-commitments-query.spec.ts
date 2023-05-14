@@ -1,9 +1,9 @@
 import { connect, Connection, Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
-import { ListCommitmentsQuery } from '@modules/commitment/cqrs/query/list-commitments.query';
-import { CommitmentPersistence, CommitmentSchema } from '@infrastructure/mongo';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Test } from '@nestjs/testing';
+import { ListCommitmentsQuery } from '@modules/commitment/cqrs/query/list-commitments.query';
+import { CommitmentPersistence, CommitmentSchema } from '@infrastructure/mongo';
 import { CQRSHandler, CQRSModule, ICQRSHandler } from '@common/cqrs';
 import { CreateCommitmentStub } from '@modules/commitment/cqrs/tests/create-commitment.command.spec';
 import { CreateCommitmentCommand } from '@modules/commitment';
