@@ -1,15 +1,12 @@
-import {ListCommitmentsQuery} from "@modules/commitment/cqrs/query/list-commitments.query";
-import {connect, Connection, Model} from "mongoose";
-import {
-    CommitmentPersistence,
-    CommitmentSchema,
-} from "@infrastructure/mongo";
-import {MongoMemoryServer} from "mongodb-memory-server";
-import {Test} from "@nestjs/testing";
-import {CQRSHandler, CQRSModule, ICQRSHandler} from "@common/cqrs";
-import {getModelToken} from "@nestjs/mongoose";
-import {CreateCommitmentStub} from "@modules/commitment/cqrs/tests/create-commitment.command.spec";
-import {CreateCommitmentCommand} from "@modules/commitment";
+import { ListCommitmentsQuery } from '@modules/commitment/cqrs/query/list-commitments.query';
+import { connect, Connection, Model } from 'mongoose';
+import { CommitmentPersistence, CommitmentSchema } from '@infrastructure/mongo';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { Test } from '@nestjs/testing';
+import { CQRSHandler, CQRSModule, ICQRSHandler } from '@common/cqrs';
+import { getModelToken } from '@nestjs/mongoose';
+import { CreateCommitmentStub } from '@modules/commitment/cqrs/tests/create-commitment.command.spec';
+import { CreateCommitmentCommand } from '@modules/commitment';
 
 describe('ListCommitmentsQuery', () => {
     let listCommitmentsQuery: ListCommitmentsQuery;
@@ -33,7 +30,7 @@ describe('ListCommitmentsQuery', () => {
         }).compile();
         listCommitmentsQuery = moduleRef.get<ListCommitmentsQuery>(ListCommitmentsQuery);
         commitmentCommand = moduleRef.get<CreateCommitmentCommand>(CreateCommitmentCommand);
-    })
+    });
     afterAll(async () => {
         await mongoConnection.dropDatabase();
         await mongoConnection.close();
@@ -51,17 +48,15 @@ describe('ListCommitmentsQuery', () => {
             const commitment = CreateCommitmentStub();
             await commitmentCommand.execute(commitment);
             const result = await listCommitmentsQuery.handle({
-                filter: {tags: ['FOOD']},
+                filter: { tags: ['FOOD'] },
                 page: 1,
-                pageSize: 1
+                pageSize: 1,
             });
             expect(result).toBeDefined();
             expect(result?.items?.length).toEqual(1);
             expect(result?.pageInfo?.pageSize).toEqual(1);
             expect(result?.pageInfo?.totalPages).toEqual(1);
             expect(result?.pageInfo?.totalItems).toEqual(1);
-
-        })
-    })
-
-})
+        });
+    });
+});
