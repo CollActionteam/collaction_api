@@ -41,7 +41,7 @@ export class CommitmentController {
         description: 'Returns the found Commitments if any',
         type: PaginatedCommitmentResponse,
     })
-    @FirebaseGuard(UserRole.ADMIN)
+    @FirebaseGuard(UserRole.MODERATOR, UserRole.ADMIN)
     async getAllCommitments(@Query() pagination: PaginationDto, @Query('tags') tags: string[]): Promise<IPaginatedList<ICommitment>> {
         return this.cqrsHandler.fetch(ListCommitmentsQuery, { ...pagination, filter: { tags } });
     }
