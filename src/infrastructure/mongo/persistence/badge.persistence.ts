@@ -13,7 +13,7 @@ class CrowdActionBadgePersistence implements IBadge {
     readonly minimumCheckIns: number;
 
     @Prop()
-    readonly accessibilityOutline?: string;
+    readonly icon: string;
 
     @Prop({ type: { id: { type: String }, title: { type: String } } })
     readonly usedByCrowdActions?: ICrowdActionMetaData;

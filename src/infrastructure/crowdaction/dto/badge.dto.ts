@@ -19,7 +19,7 @@ export class BadgeDto implements IBadge {
     readonly minimumCheckIns: number;
 
     @ApiProperty({ name: 'icon', example: 'accessibility_outline', required: false })
-    readonly accessibilityOutline: string;
+    readonly icon: string;
 
     @ApiProperty({ name: 'usedByCrowdActions', type: [CrowdActionMetadataDTO], isArray: true, required: true })
     readonly usedByCrowdActions: CrowdActionMetadataDTO[];

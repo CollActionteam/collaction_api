@@ -9,6 +9,6 @@ export interface IBadge {
     readonly tier: BadgeTierEnum;
     readonly awardType: AwardTypeEnum;
     readonly minimumCheckIns: number;
-    readonly accessibilityOutline?: string;
+    readonly icon: string;
     readonly metadata?: ICrowdActionMetaData;
 }

@@ -14,14 +14,14 @@ export class Badge implements IBadge {
     readonly tier: BadgeTierEnum;
     readonly awardType: AwardTypeEnum;
     readonly minimumCheckIns: number;
-    readonly accessibilityOutline?: string;
+    readonly icon: string;
     readonly crowdActionMetaData?: ICrowdActionMetaData;
 
     constructor(entityLike: IBadge) {
         this.tier = entityLike.tier;
         this.awardType = entityLike.awardType;
         this.minimumCheckIns = entityLike.minimumCheckIns;
-        this.accessibilityOutline = entityLike.accessibilityOutline;
+        this.icon = entityLike.icon;
         this.crowdActionMetaData = entityLike.metadata;
     }
 }
