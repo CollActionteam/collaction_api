@@ -101,6 +101,7 @@ const CrowdActionStub = (): CrowdAction => {
             {
                 tier: BadgeTierEnum.BRONZE,
                 awardType: AwardTypeEnum.ALL,
+                icon: 'accessibility_outline',
                 minimumCheckIns: 12,
             },
         ],
