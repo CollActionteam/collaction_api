@@ -102,3 +102,19 @@ export class CrowdActionCommitmentDto implements Omit<ICommitment, 'id' | 'creat
     @ApiProperty({ name: 'blocks', required: false })
     readonly blocks?: string[] | undefined;
 }
+export class PaginatedCommitmentResponse {
+    @ApiProperty({ type: [GetCommitmentDto] })
+    readonly items: GetCommitmentDto[];
+
+    @ApiProperty({ example: 1 })
+    readonly page: number;
+
+    @ApiProperty({ example: 10 })
+    readonly pageSize: number;
+
+    @ApiProperty({ example: 1 })
+    readonly totalPages: number;
+
+    @ApiProperty({ example: 1 })
+    readonly totalItems: number;
+}
