@@ -233,6 +233,7 @@ const CrowdActionStub: CreateCrowdActionDto = {
         {
             tier: BadgeTierEnum.BRONZE,
             awardType: AwardTypeEnum.ALL,
+            icon: 'accessibility_outline',
             minimumCheckIns: 12,
         },
     ],
@@ -256,6 +257,7 @@ const CrowdActionStub2: CreateCrowdActionDto = {
         {
             tier: BadgeTierEnum.DIAMOND,
             awardType: AwardTypeEnum.ALL,
+            icon: 'accessibility_outline',
             minimumCheckIns: 12,
         },
     ],

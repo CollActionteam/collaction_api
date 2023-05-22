@@ -54,6 +54,7 @@ describe('AwardBadgesCommand', () => {
             const badge = {
                 tier: BadgeTierEnum.BRONZE,
                 awardType: AwardTypeEnum.ALL,
+                icon: 'accessibility_icon',
                 minimumCheckIns: 10,
             };
 
