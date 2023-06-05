@@ -6,3 +6,4 @@ export * from './contact.repository';
 export * from './thread.repository';
 export * from './forum-permission.repository';
 export * from './forum.repository';
+export * from './post.repository';

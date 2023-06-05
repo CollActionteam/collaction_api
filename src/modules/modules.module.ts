@@ -6,8 +6,9 @@ import { ForumModule } from './forum';
 import { ParticipationModule } from './participation';
 import { ProfileModule } from './profile';
 import { ThreadModule } from './thread';
+import { PostModule } from './post/post.module';
 
 @Module({
-    imports: [CrowdActionModule, ProfileModule, ParticipationModule, CommitmentModule, ContactModule, ForumModule, ThreadModule],
+    imports: [CrowdActionModule, ProfileModule, ParticipationModule, CommitmentModule, ContactModule, ForumModule, ThreadModule, PostModule],
 })
 export class ModulesModule {}

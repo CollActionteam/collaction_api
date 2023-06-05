@@ -25,6 +25,7 @@ import {
     ThreadRepository,
     ForumPermissionRepository,
     ForumRepository,
+    PostRepsotory,
 } from '@infrastructure/mongo/repository';
 import { ICrowdActionRepository } from '@domain/crowdaction';
 import { IProfileRepository } from '@domain/profile';
@@ -34,6 +35,7 @@ import { ICommitmentRepository } from '@domain/commitment';
 import { IForumPermissionRepository, IForumRepository } from '@domain/forum';
 import { IThreadRepository } from '@domain/thread';
 import { ContactPersistence, ContactSchema } from './persistence/contact.persistence';
+import { IPostRepository } from '@domain/post';
 
 @Module({
     imports: [
@@ -81,6 +83,10 @@ import { ContactPersistence, ContactSchema } from './persistence/contact.persist
             provide: IForumPermissionRepository,
             useClass: ForumPermissionRepository,
         },
+        {
+            provide: IPostRepository,
+            useClass: PostRepsotory
+        }
     ],
     exports: [
         ICrowdActionRepository,
@@ -91,6 +97,7 @@ import { ContactPersistence, ContactSchema } from './persistence/contact.persist
         IForumRepository,
         IThreadRepository,
         IForumPermissionRepository,
+        IPostRepository
     ],
 })
 export class MongoModule {}
