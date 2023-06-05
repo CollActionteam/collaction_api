@@ -12,6 +12,7 @@ import { AuthenticationController } from './auth';
 import { ContactController } from './contact';
 import { ThreadController } from './threads';
 import { ForumController } from './forum/v1/controller';
+import { PostController } from './posts/v1/controller';
 
 @Module({
     imports: [InfrastructureModule, CQRSModule],
@@ -24,6 +25,7 @@ import { ForumController } from './forum/v1/controller';
         ThreadController,
         ContactController,
         ForumController,
+        PostController
     ],
     providers: [CrowdActionService, ProfileService, AuthService],
     exports: [CrowdActionService, ProfileService, AuthService],
