@@ -25,7 +25,7 @@ import { PostController } from './posts/v1/controller';
         ThreadController,
         ContactController,
         ForumController,
-        PostController
+        PostController,
     ],
     providers: [CrowdActionService, ProfileService, AuthService],
     exports: [CrowdActionService, ProfileService, AuthService],

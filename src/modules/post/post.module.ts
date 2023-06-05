@@ -6,6 +6,6 @@ import { ListPostsByThreadQuery } from './cqrs/query/list-posts-by-thread.query'
 @Module({
     imports: [InfrastructureModule, CQRSModule],
     providers: [ListPostsByThreadQuery],
-    exports: [ListPostsByThreadQuery]
+    exports: [ListPostsByThreadQuery],
 })
 export class PostModule {}

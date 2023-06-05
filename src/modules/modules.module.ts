@@ -9,6 +9,15 @@ import { ThreadModule } from './thread';
 import { PostModule } from './post/post.module';
 
 @Module({
-    imports: [CrowdActionModule, ProfileModule, ParticipationModule, CommitmentModule, ContactModule, ForumModule, ThreadModule, PostModule],
+    imports: [
+        CrowdActionModule,
+        ProfileModule,
+        ParticipationModule,
+        CommitmentModule,
+        ContactModule,
+        ForumModule,
+        ThreadModule,
+        PostModule,
+    ],
 })
 export class ModulesModule {}
