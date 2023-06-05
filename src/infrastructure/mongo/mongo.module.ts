@@ -36,6 +36,7 @@ import { IForumPermissionRepository, IForumRepository } from '@domain/forum';
 import { IThreadRepository } from '@domain/thread';
 import { ContactPersistence, ContactSchema } from './persistence/contact.persistence';
 import { IPostRepository } from '@domain/post';
+import { PostPersistence, PostSchema } from './persistence/post.persistence';
 
 @Module({
     imports: [
@@ -48,6 +49,7 @@ import { IPostRepository } from '@domain/post';
             { name: ForumPersistence.name, schema: ForumSchema },
             { name: ThreadPersistence.name, schema: ThreadSchema },
             { name: ForumPermissionPersistence.name, schema: ForumPermissionSchema },
+            { name: PostPersistence.name, schema: PostSchema}
         ]),
     ],
     providers: [
