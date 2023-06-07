@@ -28,5 +28,14 @@ export class ReportedPostPersistence implements Omit<IPost, 'id' | 'createdAt' |
 
     @Prop({ enum: ReportStatusEnum, required: true })
     readonly status: ReportStatusEnum;
+
+    @Prop({ required: false })
+    readonly subject: string;
+
+    @Prop({ required: false })
+    readonly message: string;
+
+    @Prop({ required: false })
+    readonly visible: boolean;
 }
 export const ReportedPostSchema = SchemaFactory.createForClass(ReportedPostPersistence);

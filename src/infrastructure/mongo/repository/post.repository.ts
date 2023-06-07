@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Post } from '@domain/post';
-import { IPostRepository, QueryPost } from '@domain/post/interface/post-repository.interface';
+import { CreatePost, IPostRepository, PatchPost, QueryPost } from '@domain/post/interface/post-repository.interface';
 import { FindCriteria, IPagination } from '@core/repository.interface';
 import { PostDocument, PostPersistence } from '../persistence/post.persistence';
 import { toMongoQuery } from '../utils/mongo.utils';
@@ -16,16 +16,28 @@ export class PostRepsotory implements IPostRepository {
         const documents = await this.documentModel.find(mongoQuery, null, { skip: options?.offset, limit: options?.limit });
         return documents.map((doc) => Post.create(doc.toObject({ getters: true })));
     }
-    create(): Promise<Post> {
-        throw new Error('Method not implemented.');
+
+    async create(entityLike: CreatePost): Promise<Post> {
+        const document = new this.documentModel(entityLike);
+        await document.save();
+
+        const post = Post.create(document.toObject({ getters: true }));
+
+        return post;
     }
-    patch(): Promise<void> {
-        throw new Error('Method not implemented.');
+
+    async patch(id: string, entityLike: PatchPost): Promise<void> {
+        await this.findOne({ id });
+        await this.documentModel.updateOne({ _id: id }, entityLike, { upsert: true });
     }
-    delete(): Promise<void> {
-        throw new Error('Method not implemented.');
+
+    async delete(id: string): Promise<void> {
+        await this.findOne({ id });
+        await this.documentModel.deleteOne({ _id: id });
     }
-    findOne(): Promise<Post> {
-        throw new Error('Method not implemented.');
+
+    async findOne(query: FindCriteria<QueryPost>): Promise<Post> {
+        const [entity] = await this.findAll(query, { offset: 0, limit: 1 });
+        return entity;
     }
 }

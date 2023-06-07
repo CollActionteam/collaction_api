@@ -4,7 +4,7 @@ import { IPost } from './post.interface';
 
 export type CreatePost = Omit<IPost, 'id' | 'createdAt' | 'updatedAt'>;
 export type PatchPost = Partial<IPost>;
-export type QueryPost = Partial<Pick<IPost, 'threadId'>>;
+export type QueryPost = Partial<Pick<IPost, 'id' | 'threadId'>>;
 
 export abstract class IPostRepository implements IRepository<Post, CreatePost, PatchPost, QueryPost> {
     abstract findAll(query: FindCriteria<QueryPost>): Promise<Post[]>;
