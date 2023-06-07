@@ -13,4 +13,20 @@ export class Post implements IPost {
     readonly subject: string;
     readonly message: string;
     readonly visible: boolean;
+
+    constructor(entityLike: IPost) {
+        this.id = entityLike.id;
+        this.threadId = entityLike.threadId;
+        this.forumId = entityLike.forumId;
+        this.author = entityLike.author;
+        this.createdAt = entityLike.createdAt;
+        this.updatedAt = entityLike.updatedAt;
+        this.subject = entityLike.subject;
+        this.message = entityLike.message;
+        this.visible = entityLike.visible;
+    }
+
+    static create(entityLike: Post): Post {
+        return new Post(entityLike);
+    }
 }

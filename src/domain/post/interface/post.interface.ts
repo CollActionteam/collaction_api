@@ -7,4 +7,8 @@ export interface IPost {
     readonly author: IUserInfo;
     readonly createdAt: Date;
     readonly updatedAt: Date;
+
+    readonly subject: string;
+    readonly message: string;
+    readonly visible: boolean;
 }
