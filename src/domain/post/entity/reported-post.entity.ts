@@ -15,4 +15,8 @@ export class ReportedPost implements IPost {
     readonly reason: string;
     readonly handledById?: string;
     readonly status: ReportStatusEnum;
+
+    readonly subject: string;
+    readonly message: string;
+    readonly visible: boolean;
 }

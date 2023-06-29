@@ -4,6 +4,12 @@ import { isPlain } from '@common/utils';
 import { FindCriteria } from '@core/repository.interface';
 
 export function toMongoQuery<T>(criteria: FindCriteria<T & { id?: string; _id?: any }>): FilterQuery<T> {
+    const arrayOperators = new Map([
+        ['or', '$or'],
+        ['and', '$and'],
+        ['nor', '$nor'],
+    ]);
+
     const operators = new Map([
         ['lte', '$lte'],
         ['lt', '$lt'],
@@ -29,6 +35,12 @@ export function toMongoQuery<T>(criteria: FindCriteria<T & { id?: string; _id?: 
             if (isPlain(value)) {
                 target[key] = {};
                 stack.push([target[key], source[key]]);
+                continue;
+            }
+
+            if (arrayOperators.has(key)) {
+                const qry = Object.values(toMongoQuery(source[key] as FindCriteria<T & { id?: string; _id?: any }>));
+                target[arrayOperators.get(key)!] = qry;
                 continue;
             }
 

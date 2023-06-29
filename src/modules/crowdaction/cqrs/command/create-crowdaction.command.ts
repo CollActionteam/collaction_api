@@ -16,7 +16,7 @@ import { CreateCrowdActionDto } from '@infrastructure/crowdaction';
 import { Commitment } from '@domain/commitment';
 import { CreateThreadCommand } from '@modules/thread/cqrs/command';
 import { UserRole } from '@domain/auth/enum';
-import { FindDefaultForumQuery } from '@modules/forum';
+import { CreateForumPermissionCommand, FindDefaultForumQuery, FindForumPermissionByIdQuery } from '@modules/forum';
 
 export interface ICreateCrowdActionArgs {
     userId: string;
@@ -96,13 +96,19 @@ export class CreateCrowdActionCommand implements ICommand {
 
     async #createThread(userId: string, userRole: UserRole, data: CreateCrowdActionDto) {
         const forum = await this.cqrsHandler.fetch(FindDefaultForumQuery, true);
-        // TODO: Implement forum permission. Create forum permission if doesn't exi
-        // const forumPermission = await this.cqrsHandler.fetch(FindForumPermissionByIdQuery, { forumId: forum.id, role: userRole });
-        // if (forumPermission?.role !== userRole) throw new UserCannotCreateThreadInForumError();
-
-        console.log(userRole);
 
         if (forum) {
+            const forumPermission = await this.cqrsHandler.fetch(FindForumPermissionByIdQuery, { forumId: forum.id, role: userRole });
+
+            if (!forumPermission) {
+                await this.cqrsHandler.execute(CreateForumPermissionCommand, {
+                    forumId: forum.id,
+                    role: userRole,
+                    parentId: forum.parentId,
+                    parentList: forum.parentList,
+                });
+            }
+
             await this.cqrsHandler.execute(CreateThreadCommand, {
                 userId: userId,
                 forumId: forum.id,

@@ -22,7 +22,7 @@ export class ForumDto {
     readonly parentId?: string | undefined;
 
     @ApiProperty({ name: 'parentList', type: [String], isArray: true, required: false })
-    readonly parentList?: [string] | undefined;
+    readonly parentList?: string[] | undefined;
 
     @ApiProperty({ name: 'displayOrder', type: Number, required: true })
     readonly displayOrder: number;
@@ -38,4 +38,27 @@ export class ForumDto {
 
     @ApiProperty({ name: 'lastPostInfo', type: LastPostInfoDto, required: false })
     readonly lastPostInfo: LastPostInfoDto | undefined;
+}
+
+export class CreateForumDto {
+    @ApiProperty({ name: 'type', type: ForumTypeEnum, enum: ForumTypeEnum, required: true })
+    readonly type: ForumTypeEnum;
+
+    @ApiProperty({ name: 'icon', type: String, required: true })
+    readonly icon: string;
+
+    @ApiProperty({ name: 'name', type: String, required: true })
+    readonly name: string;
+
+    @ApiProperty({ name: 'description', type: String, required: true })
+    readonly description: string;
+
+    @ApiProperty({ name: 'parentId', type: String, required: false })
+    readonly parentId?: string;
+
+    @ApiProperty({ name: 'visible', type: Boolean, required: true })
+    readonly visible: boolean;
+
+    @ApiProperty({ name: 'isDefault', type: Boolean, required: true })
+    readonly isDefault: boolean;
 }

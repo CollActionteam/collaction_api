@@ -1,17 +1,16 @@
-import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import * as mime from 'mime';
-import { IS3ClientRepository } from '@core/s3-client.interface';
+import { IBlobClientRepository } from '@core/blob-client.interface';
 import { FileTypeInvalidError } from '../errors';
 import { UploadImageTypeEnum } from './enum';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png'];
 
 @Injectable()
-export class S3ClientService {
-    constructor(private readonly s3Client: IS3ClientRepository, private readonly configService: ConfigService) {}
+export class BlobClientService {
+    constructor(private readonly blobClient: IBlobClientRepository) {}
 
-    async upload(file: any, id: string, type: UploadImageTypeEnum): Promise<string> {
+    async upload(file: any, id: string, type: UploadImageTypeEnum) {
         const directory = this.getDirectory(type);
 
         if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
@@ -19,16 +18,9 @@ export class S3ClientService {
         }
 
         const extension = mime.getExtension(file.mimetype);
-        const uploadParams = {
-            Bucket: this.configService.get('AWS_BUCKET_NAME'),
-            Key: directory + id + '.' + extension,
-            ContentType: file.mimetype,
-            Body: file.buffer,
-            ACL: 'public-read',
-            ETag: id,
-        };
-
-        return await this.s3Client.upload(uploadParams);
+        const key = directory + id + '.' + extension;
+        await this.blobClient.upload(file.buffer, key);
+        return key;
     }
 
     private getDirectory(type: UploadImageTypeEnum) {
